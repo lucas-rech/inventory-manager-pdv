@@ -1,11 +1,10 @@
-from flet import *
-
+import flet as ft
 # Botão adicionar produtos: 
 def botao_adcionar(action):
-    return ElevatedButton(
+    return ft.ElevatedButton(
         text= "Adicionar",
-        bgcolor= Colors.BLUE_900,
-        color= Colors.WHITE,
+        bgcolor= ft.Colors.BLUE_900,
+        color= ft.Colors.WHITE,
         on_click=action,
         height=50,
         width=110,

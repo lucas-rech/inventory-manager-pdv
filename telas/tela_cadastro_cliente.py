@@ -33,7 +33,10 @@ def cadastrar_clientes(page, clientes):
             alignment=ft.MainAxisAlignment.CENTER
         ), 
 
-        expand=True
+        expand=True,
+        bgcolor=ft.Colors.WHITE,
+        margin=0,
+        border_radius=15,
     )
 
     return layout

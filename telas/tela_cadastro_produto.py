@@ -1,15 +1,15 @@
-from flet import *
+import flet as ft
 from botoes.botao_adicionar import botao_adcionar
 
 # Função que criará a tela de cadastro de produto
 def cadastrar_produtos(page, produtos):
     # Campos do formulário:
-    codigo = TextField(label= "Código:", width=610, bgcolor=Colors.WHITE)
-    nome = TextField(label= "Nome do Produto:", width=610, bgcolor=Colors.WHITE) 
-    preco_custo = TextField(label= "Preço de Custo:", bgcolor=Colors.WHITE, width=610)
-    preco_venda = TextField(label= "Preço de venda:", bgcolor=Colors.WHITE, width=610)
-    quantidade = TextField(label= "Quantidade:", bgcolor=Colors.WHITE, width=610)
-    validade = TextField(label= "Validade:", bgcolor=Colors.WHITE, width=610)
+    codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE)
+    nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE) 
+    preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610)
+    preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610)
+    quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610)
+    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=610)
 
     # Função que adicionará os items ao estoque:
     def adicionar_produto(e):
@@ -33,20 +33,23 @@ def cadastrar_produtos(page, produtos):
     botao = botao_adcionar(adicionar_produto)
 
     # Tela onde serão inseridas as informações dos produtos:
-    tela_informacoes_produto = Container(
-        Column(
+    tela_informacoes_produto = ft.Container(
+        ft.Column(
             [
-                Row([codigo, nome], alignment=MainAxisAlignment.CENTER),
-                Row([preco_custo, preco_venda], alignment=MainAxisAlignment.CENTER),
-                Row([quantidade, validade], alignment=MainAxisAlignment.CENTER),
+                ft.Row([codigo, nome], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([quantidade, validade], alignment=ft.MainAxisAlignment.CENTER),
 
-                Container(botao, alignment=alignment.center),
+                ft.Container(botao, alignment=ft.alignment.center),
             ],
 
-            alignment=MainAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
         ),
 
-        expand=True
+        expand=True,
+        bgcolor=ft.Colors.WHITE,
+        margin=0,
+        border_radius=15,
     )
 
     return tela_informacoes_produto

@@ -29,8 +29,6 @@ def criar_tela_clientes(clientes, page):
     atualizar()
 
     return ft.Container(
-        padding=20,
-        expand=True,
         content=ft.Column(
             [
                 ft.Text("Clientes Cadastrados", size=20, weight="bold"),
@@ -38,4 +36,11 @@ def criar_tela_clientes(clientes, page):
             ],
             spacing=10,
         ),
+
+        expand=True,
+        bgcolor=ft.Colors.WHITE,
+        margin=0,
+        padding=20,
+        border_radius=15,
+        alignment=ft.alignment.center
     )

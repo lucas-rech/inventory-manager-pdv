@@ -1,4 +1,4 @@
-from flet import *
+import flet as ft
 from conteudo.header import criar_header
 from conteudo.menu_lateral import criar_menu_lateral
 from botoes.escolha_de_cadastro import criar_botoes_cadastro
@@ -6,11 +6,12 @@ from telas.tela_cadastro_produto import cadastrar_produtos
 from telas.tela_estoque import criar_tela_estoque
 from telas.tela_cadastro_cliente import cadastrar_clientes
 from telas.tela_clientes import criar_tela_clientes
+from telas.tela_pdv import criar_tela_pdv
 
-def main(page: Page):
+def main(page: ft.Page):
     page.title = "Sistema Mercado"
     page.bgcolor = "#BECBDB"
-    page.theme_mode = ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = "center"
     page.window.maximized = True
     page.window.resizable = True
@@ -41,7 +42,7 @@ def main(page: Page):
     clientes = []
 
     # Cabeçalho:
-    header = criar_header("Escolha o tipo de cadastro")
+    header = criar_header("Venda")
 
     # Tela Cadastro de Produtos
     tela_produto = cadastrar_produtos(page, produtos)
@@ -49,8 +50,11 @@ def main(page: Page):
     # Tela Cadastro de Clientes:
     tela_cliente = cadastrar_clientes(page, clientes)
 
+    # Tela onde será feita a venda:
+    tela_pdv = criar_tela_pdv()
+
     # Layout completo:
-    conteudo_completo = Column([header, criar_botoes_cadastro(informacoes_produto, informacoes_cliente)], expand=True)
+    conteudo_completo = ft.Column([header, tela_pdv], expand=True)
 
 
     # Navegação do menu lateral:
@@ -59,17 +63,23 @@ def main(page: Page):
 
             if index == 0:
                 conteudo_completo.controls.clear()
+                header.content.value = "Venda"
+                conteudo_completo.controls.append(header)
+                conteudo_completo.controls.append(tela_pdv)
+
+            elif index == 1:
+                conteudo_completo.controls.clear()
                 header.content.value = "Escolha o tipo de cadastro"
                 conteudo_completo.controls.append(header)
                 conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente))
 
-            elif index == 1:
+            elif index == 2:
                 conteudo_completo.controls.clear()
                 header.content.value = "Estoque"
                 conteudo_completo.controls.append(header)
                 conteudo_completo.controls.append(criar_tela_estoque(produtos, page))
 
-            elif index == 2:
+            elif index == 3:
                 conteudo_completo.controls.clear()
                 header.content.value = "Clientes"
                 conteudo_completo.controls.append(header)
@@ -82,7 +92,7 @@ def main(page: Page):
     rail = criar_menu_lateral(selecionar_menu)
 
     # 
-    layout = Row(
+    layout = ft.Row(
         [
             rail,
             conteudo_completo 
@@ -95,4 +105,4 @@ def main(page: Page):
     page.add(layout)
 
 
-app(target=main)
+ft.app(target=main)
