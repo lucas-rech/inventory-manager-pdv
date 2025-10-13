@@ -1,5 +1,5 @@
 import flet as ft
-from ui.components.botoes import botao_adicionar
+from ui.components.botoes.botao_adicionar import botao_adicionar
 
 def cadastrar_clientes(page, clientes):
     # Campos do formulário para o cadastro de um cliente:
@@ -21,7 +21,7 @@ def cadastrar_clientes(page, clientes):
 
         page.update()
 
-    botao = adicionar_cliente(adicionar_cliente)
+    botao = botao_adicionar(adicionar_cliente)
 
     layout = ft.Container(
         ft.Column(
