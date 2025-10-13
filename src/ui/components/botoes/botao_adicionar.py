@@ -1,7 +1,7 @@
 from flet import *
 
 # Botão adicionar produtos: 
-def botao_adcionar(action):
+def botao_adicionar(action):
     return ElevatedButton(
         text= "Adicionar",
         bgcolor= Colors.BLUE_900,
