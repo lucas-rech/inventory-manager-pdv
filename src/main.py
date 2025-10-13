@@ -1,11 +1,11 @@
 from flet import *
-from conteudo.header import criar_header
-from conteudo.menu_lateral import criar_menu_lateral
-from botoes.escolha_de_cadastro import criar_botoes_cadastro
-from telas.tela_cadastro_produto import cadastrar_produtos
-from telas.tela_estoque import criar_tela_estoque
-from telas.tela_cadastro_cliente import cadastrar_clientes
-from telas.tela_clientes import criar_tela_clientes
+from ui.components.conteudo.header import criar_header
+from ui.components.conteudo.menu_lateral import criar_menu_lateral
+from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
+from ui.pages.tela_cadastro_produto import cadastrar_produtos
+from ui.pages.tela_estoque import criar_tela_estoque
+from ui.pages.tela_cadastro_cliente import cadastrar_clientes
+from ui.pages.tela_clientes import criar_tela_clientes
 
 def main(page: Page):
     page.title = "Sistema Mercado"
