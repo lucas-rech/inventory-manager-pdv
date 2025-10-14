@@ -1,4 +1,4 @@
-from flet import *
+import flet as ft
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
 from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
@@ -8,10 +8,10 @@ from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
 from ui.pages.tela_pdv import criar_tela_pdv
 
-def main(page: Page):
+def main(page: ft.Page):
     page.title = "Sistema Mercado"
     page.bgcolor = "#BECBDB"
-    page.theme_mode = ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = "center"
     page.window.maximized = True
     page.window.resizable = True
@@ -54,7 +54,7 @@ def main(page: Page):
     tela_pdv = criar_tela_pdv()
 
     # Layout completo:
-    conteudo_completo = Column([header, tela_pdv], expand=True)
+    conteudo_completo = ft.Column([header, tela_pdv], expand=True)
 
 
     # Navegação do menu lateral:
@@ -92,7 +92,7 @@ def main(page: Page):
     rail = criar_menu_lateral(selecionar_menu)
 
     # 
-    layout = Row(
+    layout = ft.Row(
         [
             rail,
             conteudo_completo 
@@ -105,4 +105,4 @@ def main(page: Page):
     page.add(layout)
 
 
-app(target=main)
+ft.app(target=main)
