@@ -1,14 +1,3 @@
-<<<<<<< HEAD:main.py
-import flet as ft
-from conteudo.header import criar_header
-from conteudo.menu_lateral import criar_menu_lateral
-from botoes.escolha_de_cadastro import criar_botoes_cadastro
-from telas.tela_cadastro_produto import cadastrar_produtos
-from telas.tela_estoque import criar_tela_estoque
-from telas.tela_cadastro_cliente import cadastrar_clientes
-from telas.tela_clientes import criar_tela_clientes
-from telas.tela_pdv import criar_tela_pdv
-=======
 from flet import *
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
@@ -17,12 +6,12 @@ from ui.pages.tela_cadastro_produto import cadastrar_produtos
 from ui.pages.tela_estoque import criar_tela_estoque
 from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
->>>>>>> febb6b79e84a1acb2e9089919cfbecf7f1edcc90:src/main.py
+from ui.pages.tela_pdv import criar_tela_pdv
 
-def main(page: ft.Page):
+def main(page: Page):
     page.title = "Sistema Mercado"
     page.bgcolor = "#BECBDB"
-    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme_mode = ThemeMode.LIGHT
     page.horizontal_alignment = "center"
     page.window.maximized = True
     page.window.resizable = True
@@ -65,7 +54,7 @@ def main(page: ft.Page):
     tela_pdv = criar_tela_pdv()
 
     # Layout completo:
-    conteudo_completo = ft.Column([header, tela_pdv], expand=True)
+    conteudo_completo = Column([header, tela_pdv], expand=True)
 
 
     # Navegação do menu lateral:
@@ -103,7 +92,7 @@ def main(page: ft.Page):
     rail = criar_menu_lateral(selecionar_menu)
 
     # 
-    layout = ft.Row(
+    layout = Row(
         [
             rail,
             conteudo_completo 
@@ -116,4 +105,4 @@ def main(page: ft.Page):
     page.add(layout)
 
 
-ft.app(target=main)
+app(target=main)
