@@ -1,3 +1,4 @@
+<<<<<<< HEAD:main.py
 import flet as ft
 from conteudo.header import criar_header
 from conteudo.menu_lateral import criar_menu_lateral
@@ -7,6 +8,16 @@ from telas.tela_estoque import criar_tela_estoque
 from telas.tela_cadastro_cliente import cadastrar_clientes
 from telas.tela_clientes import criar_tela_clientes
 from telas.tela_pdv import criar_tela_pdv
+=======
+from flet import *
+from ui.components.conteudo.header import criar_header
+from ui.components.conteudo.menu_lateral import criar_menu_lateral
+from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
+from ui.pages.tela_cadastro_produto import cadastrar_produtos
+from ui.pages.tela_estoque import criar_tela_estoque
+from ui.pages.tela_cadastro_cliente import cadastrar_clientes
+from ui.pages.tela_clientes import criar_tela_clientes
+>>>>>>> febb6b79e84a1acb2e9089919cfbecf7f1edcc90:src/main.py
 
 def main(page: ft.Page):
     page.title = "Sistema Mercado"
