@@ -41,6 +41,9 @@ def main(page: ft.Page):
     # Lista de clientes que armazenará os clientes cadastrados:
     clientes = []
 
+    # Lista com o resumo da compra:
+    resumo_compra = []
+
     # Cabeçalho:
     header = criar_header("Venda")
 
@@ -51,7 +54,7 @@ def main(page: ft.Page):
     tela_cliente = cadastrar_clientes(page, clientes)
 
     # Tela onde será feita a venda:
-    tela_pdv = criar_tela_pdv()
+    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page)
 
     # Layout completo:
     conteudo_completo = ft.Column([header, tela_pdv], expand=True)
