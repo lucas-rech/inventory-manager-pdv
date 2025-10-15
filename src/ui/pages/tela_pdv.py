@@ -1,78 +1,122 @@
 import flet as ft
 from ui.components.botoes.botao_adicionar import botao_adicionar
 
-# Tela que será mostrada ao selecionar venda no menu lateral:
 def criar_tela_pdv(resumo_compra, produtos, page):
-    codigo = ft.TextField(label="Código:", width=610, bgcolor=ft.Colors.WHITE) # Campo de texto que receberá o código do produto.
+    codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE)
 
-    tabela_resumo_venda = ft.DataTable( # Aqui nesta tabela serão adicionados os produtos de uma venda.
-        columns= [
-            ft.DataColumn(ft.Text("Código")), #Aqui são definidas as colunas e o qual será o título de cada uma. (Dentro de uma DataTable/Tabela, terão 4 colunas com os títulos: Código, Produto, Preço e quantidade, e X linhas que começam em 0 e serão incrementadas conforme forem sendo passados os produtos).
-            ft.DataColumn(ft.Text("Produto")),
-            ft.DataColumn(ft.Text("Preço")),
-            ft.DataColumn(ft.Text("Quantidade")),
+    tabela_resumo_venda = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("Código", weight="bold")),
+            ft.DataColumn(ft.Text("Produto", weight="bold")),
+            ft.DataColumn(ft.Text("Preço", weight="bold")),
+            ft.DataColumn(ft.Text("Quantidade", weight="bold")),
+            ft.DataColumn(ft.Text("Subtotal", weight="bold")),
         ],
-
-        rows=[]
+        rows=[],
     )
 
-    # Esta função fará o auto-complete dos dados do produto através do código conseguido no campo "codigo".
-    def get_informacoes_produto(codigo): 
+    def get_informacoes_produto(codigo):
         for c in produtos:
             if c["codigo"] == codigo:
                 return {
-                    "codigo":c["codigo"],
-                    "nome":c["nome"],
-                    "preco_venda":c["preco_venda"],
-                    "quantidade":c["quantidade"],
+                    "codigo": c["codigo"],
+                    "nome": c["nome"],
+                    "preco_venda": float(c["preco_venda"]),
+                    "quantidade": 1,
                 }
         return None
 
-    # Essa será a função responsável por atualizar os dados da tabela a cada produto adicionado à compra.
+    total = 0
+    texto_total = ft.Text(value=f"Total: R$ {total:.2f}", weight="bold", size=40)
+
     def atualizar(e):
-        produto_encontrado = get_informacoes_produto(codigo.value) # Adiciona a variável produto_encontrado as infonrmações do produto com o mesmo código inserido.
+        nonlocal total
+        produto_encontrado = get_informacoes_produto(codigo.value)
+        if not produto_encontrado:
+            return
 
         resumo_compra.append(produto_encontrado)
-
-        print(produto_encontrado)
-
         tabela_resumo_venda.rows.clear()
+        total = 0
 
-        for p in resumo_compra: # Para cada produto na lista com o resumo da compra.
-            tabela_resumo_venda.rows.append( # Adicione um alinha à tabela contendo:
-                ft.DataRow( # Uma linha de dados com os seguintes valores em cada célula de dados
-                    cells=[ 
-                        ft.DataCell(ft.Text(p["codigo"])),
-                        ft.DataCell(ft.Text(p["nome"])), # Aqui está como nome pois é como está salvo na lista "produtos" que contém os dicionários com cada produto cadastrado, mas preferi utilizar "produtos" na interface.
+        for p in resumo_compra:
+            subtotal = p["preco_venda"] * p["quantidade"]
+            total += subtotal
+            tabela_resumo_venda.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(value=p["codigo"])),
+                        ft.DataCell(ft.Text(p["nome"])),
                         ft.DataCell(ft.Text(p["preco_venda"])),
                         ft.DataCell(ft.Text(p["quantidade"])),
-                    ]
+                        ft.DataCell(ft.Text(f"{subtotal:.2f}")),
+                    ],
                 )
             )
 
+        texto_total.value = f"Total: R$ {total:.2f}"
         codigo.value = ""
-        codigo.focus() # Ativa o auto foco no campo de texto.
+        codigo.focus()
         page.update()
 
+    botao = botao_adicionar(atualizar)
 
-    botao = botao_adicionar(atualizar) # Chama a função para que as alterações sejam feitas.
-
-    layout = ft.Container(
+    # 🔹 Área da tabela limitada (com scroll)
+    area_tabela = ft.Container(
         content=ft.Column(
             [
-                ft.Row([codigo, botao]),
-                ft.Text("Resumo da Compra", size=20, weight="bold"),
-                tabela_resumo_venda,
+                ft.Text("Resumo da Compra", size=24, weight="bold"),
+                tabela_resumo_venda
             ],
-            spacing=10,
+            spacing=20,
+            height=400,
+            scroll=ft.ScrollMode.AUTO,
+        ),
+        width=750,  # Define o tamanho máximo da tabela
+        padding=20,
+        border=ft.border.all(1, ft.Colors.BLACK),
+        border_radius=10,
+    )
+
+    # 🔹 Campo total fixo
+    total_compra = ft.Container(
+        content=texto_total,
+        bgcolor="#D2DEEC",
+        padding=ft.padding.all(15),
+        border_radius=13,
+        alignment=ft.alignment.center_right,
+        width=400,
+        height=100,
+    )
+
+    # 🔹 Layout principal com Stack (mantém o total fixo)
+    layout = ft.Container(
+            ft.Stack(
+            controls=[
+                ft.Row(
+                    [
+                        ft.Column(
+                            [
+                                ft.Row([codigo, botao]),
+                                area_tabela,  # à esquerda
+                            ]
+                        )  
+                    ],
+                    expand=True,
+                ),
+                ft.Container(
+                    content=total_compra,
+                    right=30,   # canto inferior direito
+                    bottom=30,
+                ),
+            ],
+            expand=True,
         ),
 
-        expand=True,
+        expand=True, 
         bgcolor=ft.Colors.WHITE,
-        margin=0,
         padding=20,
-        border_radius=15,
-        alignment=ft.alignment.center
+        border_radius=13,
     )
 
     return layout
