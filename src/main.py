@@ -1,4 +1,6 @@
 import flet as ft
+
+from src.ui.pages.tela_login_usuario import tela_login
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
 from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
@@ -90,6 +92,14 @@ def main(page: ft.Page):
 
             page.update()
 
+    # Método do login no sistema
+    def entrar():
+        page.clean()
+        page.update()
+        page.add(layout)
+
+    conteudo_login = tela_login(page, entrar)
+    page.add(conteudo_login)
 
     # Menu lateral:
     rail = criar_menu_lateral(selecionar_menu)
@@ -105,7 +115,7 @@ def main(page: ft.Page):
     )
 
     # Adicionando tudo na página:
-    page.add(layout)
+
 
 
 ft.app(target=main)
