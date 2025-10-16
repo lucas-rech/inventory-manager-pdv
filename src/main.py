@@ -1,6 +1,6 @@
 import flet as ft
 
-from src.ui.pages.tela_login_usuario import tela_login
+from ui.pages.tela_login_usuario import tela_login
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
 from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
@@ -12,7 +12,7 @@ from ui.pages.tela_pdv import criar_tela_pdv
 
 def main(page: ft.Page):
     page.title = "Sistema Mercado"
-    page.bgcolor = "#BECBDB"
+    page.bgcolor = "#E8E3DE"
     page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = "center"
     page.window.maximized = True
@@ -113,9 +113,5 @@ def main(page: ft.Page):
 
         expand=True
     )
-
-    # Adicionando tudo na página:
-
-
 
 ft.app(target=main)

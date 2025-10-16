@@ -1,11 +1,11 @@
-from flet import *
+from flet import * # Lembrar de mudar o import para import flet as ft!
 
 usuarios = ["admin"]
 senhas = ["admin"]
 
 def tela_login(page, entrar):
 
-    page.bgcolor = "#FFFFFF"
+    page.bgcolor = "#E8E3DE"
     page.horizontal_alignment = "center"
     page.vertical_alignment = "center"
     # Campos de login:
@@ -23,7 +23,7 @@ def tela_login(page, entrar):
             alerta.open = True # Abre o alerta
             page.update() # Atualiza a página para mostrar o alerta
 
-    botao_entrar = ElevatedButton("Entrar", on_click=verificar_login, width=300, bgcolor="#4CAF50", color=Colors.WHITE)
+    botao_entrar = ElevatedButton("Entrar", on_click=verificar_login, width=300, height=40, bgcolor="#E8E3DE", color="#507656")
 
     alerta = CupertinoAlertDialog(
         title=Text("Erro"),
@@ -43,13 +43,13 @@ def tela_login(page, entrar):
         padding=20,
         width=650,
         height=450,
-        bgcolor="#BECBDB",
+        bgcolor="#507656",
         alignment=alignment.center,
         border_radius=20,
         content=Column(
             [
-                Image(src="assets/Logo.jpeg", width=150, height=150, fit=ImageFit.CONTAIN),
-                Text("Login", size=30, weight="bold"),
+                Image(src="src/assets/Logo.jpeg", width=150, height=150, fit=ImageFit.CONTAIN),
+                Text("Login", size=40, weight="bold"),
                 usuario,
                 senha,
                 botao_entrar,

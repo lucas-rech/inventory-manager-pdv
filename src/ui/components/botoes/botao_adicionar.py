@@ -3,7 +3,7 @@ import flet as ft
 def botao_adicionar(action):
     return ft.ElevatedButton(
         text= "Adicionar",
-        bgcolor= ft.Colors.BLUE_900,
+        bgcolor= "#507656",
         color= ft.Colors.WHITE,
         on_click=action,
         height=50,

@@ -2,7 +2,7 @@ import flet as ft
 from ui.components.botoes.botao_adicionar import botao_adicionar
 
 def criar_tela_pdv(resumo_compra, produtos, page):
-    codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE)
+    codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"))
 
     tabela_resumo_venda = ft.DataTable(
         columns=[
@@ -74,14 +74,14 @@ def criar_tela_pdv(resumo_compra, produtos, page):
         ),
         width=750,  # Define o tamanho máximo da tabela
         padding=20,
-        border=ft.border.all(1, ft.Colors.BLACK),
+        border=ft.border.all(1, color="#765070"),
         border_radius=10,
     )
 
     # 🔹 Campo total fixo
     total_compra = ft.Container(
         content=texto_total,
-        bgcolor="#D2DEEC",
+        bgcolor="#85A289",
         padding=ft.padding.all(15),
         border_radius=13,
         alignment=ft.alignment.center_right,
@@ -100,7 +100,9 @@ def criar_tela_pdv(resumo_compra, produtos, page):
                                 ft.Row([codigo, botao]),
                                 area_tabela,  # à esquerda
                             ]
-                        )  
+                        ),
+
+                        ft.Image(src="src/assets/LogoSombreado.png", expand=True)  
                     ],
                     expand=True,
                 ),

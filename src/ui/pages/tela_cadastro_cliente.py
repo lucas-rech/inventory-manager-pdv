@@ -34,7 +34,7 @@ def cadastrar_clientes(page, clientes):
         ), 
 
         expand=True,
-        bgcolor=ft.Colors.WHITE,
+        bgcolor="#E8E3DE",
         margin=0,
         border_radius=15,
     )
