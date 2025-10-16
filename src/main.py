@@ -11,6 +11,8 @@ from ui.pages.tela_pdv import criar_tela_pdv
 from core.database import engine, Base, SessionLocal
 from repository.product_repository import ProductRepository
 
+#Instancia de SQLAlchemy necessária para rodar o backend
+# TODO: Criar função de start do backend
 with SessionLocal() as db:
     Base.metadata.create_all(bind=engine)
     
