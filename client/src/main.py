@@ -8,19 +8,6 @@ from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
 from ui.pages.tela_pdv import criar_tela_pdv
 
-from core.database import engine, Base, SessionLocal
-from repository.product_repository import ProductRepository
-
-#Instancia de SQLAlchemy necessária para rodar o backend
-# TODO: Criar função de start do backend
-with SessionLocal() as db:
-    Base.metadata.create_all(bind=engine)
-    
-    repository = ProductRepository(db)
-    new_product = repository.create("Saugaudinho", "12345678901234", 12, 19.90)
-    print(repository.get_all())
-
-
 
 def main(page: Page):
     page.title = "Sistema Mercado"
