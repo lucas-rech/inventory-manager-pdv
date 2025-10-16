@@ -1,5 +1,5 @@
 import flet as ft
-from ui.components.botoes.botao_adicionar import botao_adicionar
+from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 
 def criar_tela_pdv(resumo_compra, produtos, page):
     codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"))
@@ -59,7 +59,7 @@ def criar_tela_pdv(resumo_compra, produtos, page):
         codigo.focus()
         page.update()
 
-    botao = botao_adicionar(atualizar)
+    botao = criar_botao_adicionar(atualizar)
 
     # 🔹 Área da tabela limitada (com scroll)
     area_tabela = ft.Container(

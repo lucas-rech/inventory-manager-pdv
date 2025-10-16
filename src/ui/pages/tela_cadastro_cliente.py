@@ -1,5 +1,6 @@
 import flet as ft
-from ui.components.botoes.botao_adicionar import botao_adicionar
+from ui.components.botoes.botao_adicionar import criar_botao_adicionar
+from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 
 def cadastrar_clientes(page, clientes):
     # Campos do formulário para o cadastro de um cliente:
@@ -21,14 +22,15 @@ def cadastrar_clientes(page, clientes):
 
         page.update()
 
-    botao = botao_adicionar(adicionar_cliente)
+    botao_adicionar = criar_botao_adicionar(adicionar_cliente)
+    botao_cancelar = criar_botao_cancelar(True)
 
     layout = ft.Container(
         ft.Column(
             [
                 ft.Row([nome], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([numero], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao], alignment=ft.MainAxisAlignment.CENTER)
+                ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER)
             ],
             alignment=ft.MainAxisAlignment.CENTER
         ), 

@@ -1,5 +1,5 @@
 import flet as ft
-from ui.components.botoes.botao_adicionar import botao_adicionar
+from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 
 
 # Função que criará a tela de cadastro de produto
@@ -31,7 +31,7 @@ def cadastrar_produtos(page, produtos):
         page.update() # Atualiza a página para mostrar o que foi alterado.
 
 
-    botao = botao_adicionar(adicionar_produto)
+    botao = criar_botao_adicionar(adicionar_produto)
 
     # Tela onde serão inseridas as informações dos produtos:
     tela_informacoes_produto = ft.Container(

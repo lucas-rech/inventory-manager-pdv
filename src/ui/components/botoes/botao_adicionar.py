@@ -1,6 +1,6 @@
 import flet as ft
 # Botão adicionar produtos: 
-def botao_adicionar(action):
+def criar_botao_adicionar(action):
     return ft.ElevatedButton(
         text= "Adicionar",
         bgcolor= "#507656",
