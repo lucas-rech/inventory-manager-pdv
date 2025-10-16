@@ -4,8 +4,8 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes):
 
     # Botão para cadastrar clientes:
     clientes = ft.Container(
-        content= ft.Text("Clientes", color=ft.Colors.WHITE, style=ft.TextStyle(weight=ft.FontWeight.BOLD), size=23),
-        bgcolor= ft.Colors.BLUE_900,
+        content= ft.Text("Clientes", color="#e8e3de", style=ft.TextStyle(weight=ft.FontWeight.BOLD), size=23),
+        bgcolor= "#765070",
         width= 200,
         height= 150,
         alignment= ft.alignment.center,
@@ -16,8 +16,8 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes):
 
     # Botão para cadastrar produtos:
     produtos = ft.Container(
-        content= ft.Text("Produtos", color=ft.Colors.WHITE, style=ft.TextStyle(weight=ft.FontWeight.BOLD), size=23),
-        bgcolor= ft.Colors.BLUE_900,
+        content= ft.Text("Produtos", color="#e8e3de", style=ft.TextStyle(weight=ft.FontWeight.BOLD), size=23),
+        bgcolor= "#765070",
         width= 200,
         height= 150,
         alignment= ft.alignment.center,

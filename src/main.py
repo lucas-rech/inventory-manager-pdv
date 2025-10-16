@@ -1,4 +1,6 @@
-from flet import *
+import flet as ft
+
+from ui.pages.tela_login_usuario import tela_login
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
 from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
@@ -8,10 +10,10 @@ from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
 from ui.pages.tela_pdv import criar_tela_pdv
 
-def main(page: Page):
+def main(page: ft.Page):
     page.title = "Sistema Mercado"
-    page.bgcolor = "#BECBDB"
-    page.theme_mode = ThemeMode.LIGHT
+    page.bgcolor = "#E8E3DE"
+    page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = "center"
     page.window.maximized = True
     page.window.resizable = True
@@ -41,6 +43,9 @@ def main(page: Page):
     # Lista de clientes que armazenará os clientes cadastrados:
     clientes = []
 
+    # Lista com o resumo da compra:
+    resumo_compra = []
+
     # Cabeçalho:
     header = criar_header("Venda")
 
@@ -51,10 +56,10 @@ def main(page: Page):
     tela_cliente = cadastrar_clientes(page, clientes)
 
     # Tela onde será feita a venda:
-    tela_pdv = criar_tela_pdv()
+    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page)
 
     # Layout completo:
-    conteudo_completo = Column([header, tela_pdv], expand=True)
+    conteudo_completo = ft.Column([header, tela_pdv], expand=True)
 
 
     # Navegação do menu lateral:
@@ -87,12 +92,20 @@ def main(page: Page):
 
             page.update()
 
+    # Método do login no sistema
+    def entrar():
+        page.clean()
+        page.update()
+        page.add(layout)
+
+    conteudo_login = tela_login(page, entrar)
+    page.add(conteudo_login)
 
     # Menu lateral:
     rail = criar_menu_lateral(selecionar_menu)
 
     # 
-    layout = Row(
+    layout = ft.Row(
         [
             rail,
             conteudo_completo 
@@ -101,8 +114,4 @@ def main(page: Page):
         expand=True
     )
 
-    # Adicionando tudo na página:
-    page.add(layout)
-
-
-app(target=main)
+ft.app(target=main)
