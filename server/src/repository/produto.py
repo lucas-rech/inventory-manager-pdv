@@ -1,5 +1,5 @@
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from server.src.model import Produto
+from model import Produto
 from sqlalchemy.orm import Session
 
 from core.logger import LOGGER
