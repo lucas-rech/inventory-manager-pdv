@@ -1,6 +1,7 @@
 import flet as ft
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.pages.tela_finalizar_compra import criar_tela_finalizar_compra
+from ui.components.botoes.botao_finalizar import criar_botao_finalizar
 
 def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
     codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"))
@@ -70,7 +71,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
                 tabela_resumo_venda
             ],
             spacing=20,
-            height=400,
+            height=370,
             scroll=ft.ScrollMode.AUTO,
         ),
         width=750,  # Define o tamanho máximo da tabela
@@ -100,14 +101,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
 
         page.update() # Atualiza a página para mostrar as alterações
 
-    botao_finalizar_compra = ft.ElevatedButton(
-        text= "Finalizar Compra",
-        bgcolor= "#507656",
-        color= ft.Colors.WHITE,
-        on_click=finalizar_compra,
-        height=50,
-        width=200,
-    )
+    botao_finalizar_compra = criar_botao_finalizar(finalizar_compra)
 
     # 🔹 Layout principal com Stack (mantém o total fixo)
     layout = ft.Container(
@@ -119,7 +113,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
                             [
                                 ft.Row([codigo, botao_adicionar]),
                                 area_tabela,  # à esquerda
-                                botao_finalizar_compra,
+                                ft.Row([botao_finalizar_compra], width=750, alignment=ft.MainAxisAlignment.END),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER
                         ),

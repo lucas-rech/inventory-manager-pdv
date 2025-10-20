@@ -9,13 +9,13 @@ def main(page: ft.Page):
     grupo_pagamento = ft.RadioGroup(
         content=ft.Column(
             [
-                ft.Radio(label="Dinheiro", value="dinheiro"),
+                ft.Radio(label="Dinheiro", value="dinheiro"), 
                 ft.Radio(label="Pix", value="pix"),
                 ft.Radio(label="Débito", value="debito"),
                 ft.Radio(label="Crédito", value="credito"),
             ]
         ),
-        value="dinheiro",  # valor inicial
+        value=None,  # valor inicial
         on_change=selecionar_pagamento,
     )
 
