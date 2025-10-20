@@ -1,6 +1,6 @@
 import flet as ft
 
-from ui.pages.tela_login_usuario import tela_login
+from ui.pages.tela_login_usuario import criar_tela_login
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
 from ui.components.botoes.escolha_de_cadastro import criar_botoes_cadastro
@@ -55,11 +55,24 @@ def main(page: ft.Page):
     # Tela Cadastro de Clientes:
     tela_cliente = cadastrar_clientes(page, clientes)
 
-    # Tela onde será feita a venda:
-    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page)
+    # Método do login no sistema
+    def entrar():
+        page.clean()
+        page.update()
+        page.add(layout)
 
-    # Layout completo:
-    conteudo_completo = ft.Column([header, tela_pdv], expand=True)
+    # Tela Login:
+    tela_login = criar_tela_login(page, entrar)
+    page.add(tela_login)
+
+    # Layout inicial completo: (Começa vazio)
+    conteudo_completo = ft.Column(expand=True)
+    
+    # Tela onde será feita a venda:
+    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo)
+
+    # Aqui sim adicionamos o conteúdo inicial:
+    conteudo_completo.controls.extend([header, tela_pdv])
 
 
     # Navegação do menu lateral:
@@ -91,15 +104,6 @@ def main(page: ft.Page):
                 conteudo_completo.controls.append(criar_tela_clientes(clientes, page))
 
             page.update()
-
-    # Método do login no sistema
-    def entrar():
-        page.clean()
-        page.update()
-        page.add(layout)
-
-    conteudo_login = tela_login(page, entrar)
-    page.add(conteudo_login)
 
     # Menu lateral:
     rail = criar_menu_lateral(selecionar_menu)

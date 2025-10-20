@@ -1,16 +1,16 @@
-from flet import * # Lembrar de mudar o import para import flet as ft!
+import flet as ft
 
 usuarios = ["admin"]
 senhas = ["admin"]
 
-def tela_login(page, entrar):
+def criar_tela_login(page, entrar):
 
     page.bgcolor = "#E8E3DE"
     page.horizontal_alignment = "center"
     page.vertical_alignment = "center"
     # Campos de login:
-    usuario = TextField(label="Usuário:", width=300, bgcolor=Colors.WHITE)
-    senha = TextField(label="Senha:", width=300, bgcolor=Colors.WHITE, password=True, can_reveal_password=True)
+    usuario = ft.TextField(label="Usuário:", width=300, bgcolor=ft.Colors.WHITE, autofocus=True)
+    senha = ft.TextField(label="Senha:", width=300, bgcolor=ft.Colors.WHITE, password=True, can_reveal_password=True)
 
     # Lista de usuários válidos
 
@@ -23,13 +23,13 @@ def tela_login(page, entrar):
             alerta.open = True # Abre o alerta
             page.update() # Atualiza a página para mostrar o alerta
 
-    botao_entrar = ElevatedButton("Entrar", on_click=verificar_login, width=300, height=40, bgcolor="#E8E3DE", color="#507656")
+    botao_entrar = ft.ElevatedButton("Entrar", on_click=verificar_login, width=300, height=40, bgcolor="#E8E3DE", color="#507656")
 
-    alerta = CupertinoAlertDialog(
-        title=Text("Erro"),
-        content=Text(""),
+    alerta = ft.CupertinoAlertDialog(
+        title=ft.Text("Erro"),
+        content=ft.Text(""),
         actions=[
-            CupertinoButton("OK", on_click=lambda e: fechar_alerta(e, page, alerta))
+            ft.CupertinoButton("OK", on_click=lambda e: fechar_alerta(e, page, alerta))
         ],
         modal=True,
     )
@@ -39,24 +39,24 @@ def tela_login(page, entrar):
         page.update()
 
     # Tela de login:
-    return Container(
+    return ft.Container(
         padding=20,
         width=650,
         height=450,
         bgcolor="#507656",
-        alignment=alignment.center,
+        alignment=ft.alignment.center,
         border_radius=20,
-        content=Column(
+        content=ft.Column(
             [
-                Image(src="src/assets/Logo.jpeg", width=150, height=150, fit=ImageFit.CONTAIN),
-                Text("Login", size=40, weight="bold"),
+                ft.Image(src="src/assets/Logo.jpeg", width=150, height=150, fit=ft.ImageFit.CONTAIN),
+                ft.Text("Login", size=40, weight="bold"),
                 usuario,
                 senha,
                 botao_entrar,
                 alerta
             ],
-            alignment=MainAxisAlignment.CENTER,
-            horizontal_alignment=CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=10,
         ),
     )

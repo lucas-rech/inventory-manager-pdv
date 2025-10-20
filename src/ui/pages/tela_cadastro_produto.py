@@ -1,5 +1,6 @@
 import flet as ft
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
+from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 
 
 # Função que criará a tela de cadastro de produto
@@ -31,7 +32,8 @@ def cadastrar_produtos(page, produtos):
         page.update() # Atualiza a página para mostrar o que foi alterado.
 
 
-    botao = criar_botao_adicionar(adicionar_produto)
+    botao_adicionar = criar_botao_adicionar(adicionar_produto)
+    botao_cancelar = criar_botao_cancelar(True)
 
     # Tela onde serão inseridas as informações dos produtos:
     tela_informacoes_produto = ft.Container(
@@ -41,7 +43,7 @@ def cadastrar_produtos(page, produtos):
                 ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([quantidade, validade], alignment=ft.MainAxisAlignment.CENTER),
 
-                ft.Container(botao, alignment=ft.alignment.center),
+                ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
             ],
 
             alignment=ft.MainAxisAlignment.CENTER,

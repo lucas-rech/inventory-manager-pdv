@@ -1,7 +1,8 @@
 import flet as ft
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
+from ui.pages.tela_finalizar_compra import criar_tela_finalizar_compra
 
-def criar_tela_pdv(resumo_compra, produtos, page):
+def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
     codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"))
 
     tabela_resumo_venda = ft.DataTable(
@@ -59,7 +60,7 @@ def criar_tela_pdv(resumo_compra, produtos, page):
         codigo.focus()
         page.update()
 
-    botao = criar_botao_adicionar(atualizar)
+    botao_adicionar = criar_botao_adicionar(atualizar)
 
     # 🔹 Área da tabela limitada (com scroll)
     area_tabela = ft.Container(
@@ -89,6 +90,25 @@ def criar_tela_pdv(resumo_compra, produtos, page):
         height=100,
     )
 
+    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total) # Cirando a tela de finalizar compra
+    
+    def finalizar_compra(e): # Atualização do conteúdo para a tela de finaizar compra
+        conteudo_completo.controls.clear() # Limpa tudo
+        header.content.value = "Finalizar Compra" # Atualiza o header
+        conteudo_completo.controls.append(header) # Adiciona ele na página
+        conteudo_completo.controls.append(tela_finalizar_compra) # Adiciona a tela de finaliar compra
+
+        page.update() # Atualiza a página para mostrar as alterações
+
+    botao_finalizar_compra = ft.ElevatedButton(
+        text= "Finalizar Compra",
+        bgcolor= "#507656",
+        color= ft.Colors.WHITE,
+        on_click=finalizar_compra,
+        height=50,
+        width=200,
+    )
+
     # 🔹 Layout principal com Stack (mantém o total fixo)
     layout = ft.Container(
             ft.Stack(
@@ -97,9 +117,11 @@ def criar_tela_pdv(resumo_compra, produtos, page):
                     [
                         ft.Column(
                             [
-                                ft.Row([codigo, botao]),
+                                ft.Row([codigo, botao_adicionar]),
                                 area_tabela,  # à esquerda
-                            ]
+                                botao_finalizar_compra,
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER
                         ),
 
                         ft.Image(src="src/assets/LogoSombreado.png", expand=True)  
