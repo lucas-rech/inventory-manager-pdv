@@ -1,81 +1,38 @@
-# InventoryManagerPdv app
+# 🧩 Server Boilerplate — TypeScript + Express + MikroORM
 
-## Run the app
+Este projeto é a base do servidor escrito em **TypeScript**, utilizando **Express** para o roteamento HTTP e **MikroORM** para o mapeamento objeto-relacional.  
+O ambiente de desenvolvimento é padronizado com **ESLint** e **Prettier**, garantindo qualidade e consistência de código.
 
-### uv
+No banco de dados, utilizamos MySQL.
 
-Run as a desktop app:
+---
 
-```
-uv run flet run
-```
+## 🚀 Tecnologias Utilizadas
 
-Run as a web app:
+- **TypeScript** — Tipagem estática para JavaScript.
+- **Express** — Framework web minimalista para Node.js.
+- **MikroORM** — ORM para TypeScript e Node.js, com suporte a múltiplos bancos.
+- **ESLint** — Linter para padronização e boas práticas.
+- **Prettier** — Formatador de código.
+- **ts-node-dev** — Reinicialização automática durante o desenvolvimento.
 
-```
-uv run flet run --web
-```
+---
 
-### Poetry
+## 📁 Estrutura do Projeto
 
-Install dependencies from `pyproject.toml`:
-
-```
-poetry install
-```
-
-Run as a desktop app:
-
-```
-poetry run flet run
-```
-
-Run as a web app:
-
-```
-poetry run flet run --web
-```
-
-For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
-
-## Build the app
-
-### Android
-
-```
-flet build apk -v
-```
-
-For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
-
-### iOS
-
-```
-flet build ipa -v
-```
-
-For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
-
-### macOS
-
-```
-flet build macos -v
-```
-
-For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
-
-### Linux
-
-```
-flet build linux -v
-```
-
-For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
-
-### Windows
-
-```
-flet build windows -v
-```
-
-For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+```bash
+server/
+│
+├── src/
+│   │
+│   ├── modules/
+│   │   └── clientes/
+│   │       ├── cliente.entity.ts  # Exemplo de entidade do MikroORM
+│   │       └── example.route.ts   # Exemplo de rota Express
+│   │
+│   └── server.ts                     # Ponto de entrada principal
+│
+├── .eslintrc.json                 # Configurações do ESLint
+├── .prettierrc                    # Configurações do Prettier
+├── tsconfig.json                  # Configurações do TypeScript
+├── package.json
