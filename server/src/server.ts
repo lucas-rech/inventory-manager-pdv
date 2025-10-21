@@ -1,9 +1,10 @@
 import { MikroORM } from "@mikro-orm/core";
 import { Cliente } from "./modules/clientes/cliente.entity.js";
+import config from "../mikro-orm.config.js";
 
-//Inicializa o ORM
-const orm = await MikroORM.init();
+const orm = await MikroORM.init(config);
 await orm.schema.refreshDatabase();
+
 
 //Exemplo de criação de usuário
 const user = new Cliente();
