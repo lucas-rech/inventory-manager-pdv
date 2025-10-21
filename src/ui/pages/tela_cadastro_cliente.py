@@ -15,7 +15,28 @@ def cadastrar_clientes(page, clientes):
 
         page.update()
 
-    # Função que irá formatar o value do text field para o formato de cpf:
+    # Função que formatará o value to text field "numero" para o formato de número de telefone:
+    def formatar_numero(e):
+        # Filtra o que não é número (isdigit) na string (str), e junta ao texto apenas o que passar do filtro (filter).
+        texto = "".join(filter(str.isdigit, e.control.value))
+
+        # Limita o texto a 11 caracteres
+        texto = texto[:11] # 0 a 10
+
+        # Adiciona a máscara:
+        formatado = "" # A string formatada começa vazia
+
+        if len(texto) > 0: # Se o len de texto for maior que 0, junta o que foi digitado, dentro de parênteses.
+            formatado = f"({texto[:2]}) "
+        if len(texto) > 2: # Se for maior que 2, apenas junta o que foi digitado.
+            formatado += texto[2:7]
+        if len(texto) > 7: # Se for maior que 7, adiciona um traço antes e junta com o que foi digitado.
+            formatado += "-" + texto[7:11]
+
+        campo_numero.value = formatado # Atualiza o que foi formatado já dentro do text field enquanto o usuário digita.   
+        page.update() # Atualiza a página para que as alterações sejam mostradas.
+
+    # Função que irá formatar o value do text field "cmapo_cpf" para o formato de cpf:
     def formatar_cpf(e):
         # Filtra o que não é número (isdigit) na string (str), e junta ao texto apenas o que passar do filtro (filter).
         texto = "".join(filter(str.isdigit, e.control.value))
@@ -39,7 +60,7 @@ def cadastrar_clientes(page, clientes):
         campo_cpf.value = formatado # Atualiza o que foi formatado já dentro do text field enquanto o usuário digita.   
         page.update() # Atualiza a página para que as alterações sejam mostradas.
 
-    # Função que irá formatar o value do text field para o formato de cnpj:
+    # Função que irá formatar o value do text field "campo_cnpj" para o formato de cnpj:
     def formatar_cnpj(e):
         # Filtra o que não é número (isdigit) na string (str), e junta ao texto apenas o que passar do filtro (filter).
         texto = "".join(filter(str.isdigit, e.control.value))
@@ -67,9 +88,9 @@ def cadastrar_clientes(page, clientes):
 
 
     # Campos do formulário para o cadastro de um cliente:
-    nome = ft.TextField(label="Nome do cliente", bgcolor=ft.Colors.WHITE, width=610)
+    campo_nome = ft.TextField(label="Nome do cliente", bgcolor=ft.Colors.WHITE, width=610, autofocus=True)
 
-    numero = ft.TextField(label="Número de telefone do cliente", hint_text="Ex: (XX) XXXX-XXXX", bgcolor=ft.Colors.WHITE, width=610)
+    campo_numero = ft.TextField(label="Número de telefone do cliente", hint_text="Ex: (XX) XXXX-XXXX", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_numero)
 
     # O campo de cadastro do cpf ou cnpj do cliente será diferente para cada tipo, mudando a formatação do campo de acordo com o dado que será diigtado.
     cpf_cnpj = ft.RadioGroup( # Grupo de seleção
@@ -92,17 +113,26 @@ def cadastrar_clientes(page, clientes):
     campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cnpj)
 
     def adicionar_cliente(e):
-        novo_cliente = {
-            "nome":nome.value,
-            "numero":numero.value,
-        }
+        if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
+            novo_cliente = {
+                "nome":campo_nome.value,
+                "numero":campo_numero.value,
+                "cpf_cnpj":campo_cpf.value     
+            }
+
+        if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
+            novo_cliente = {
+                "nome":campo_nome.value,
+                "numero":campo_numero.value,
+                "cpf_cnpj":campo_cnpj.value     
+            }
 
         clientes.append(novo_cliente)
-        print(clientes)
 
-        for campo in [nome, numero]:
+        for campo in [campo_nome, campo_numero, campo_cpf, campo_cnpj]:
             campo.value = ""
 
+        campo_nome.focus()
         page.update()
 
     botao_adicionar = criar_botao_adicionar(adicionar_cliente)
@@ -111,8 +141,8 @@ def cadastrar_clientes(page, clientes):
     layout = ft.Container(
         ft.Column(
             [
-                ft.Row([nome], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([numero], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([campo_nome], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([campo_numero], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([cpf_cnpj, campo_cpf, campo_cnpj], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
             ],

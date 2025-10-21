@@ -38,15 +38,27 @@ def criar_tela_estoque(produtos, page):
 
     atualizar()
 
+    # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
+    container_tabela = ft.Container(
+        content=ft.Column(
+            [tabela_estoque],
+            scroll=ft.ScrollMode.AUTO # Habilita o scroll automaticamente quando a altura máxima é atingida.
+        ),
+
+        expand=True,
+        border=ft.border.all(2, color="#765070"),
+        border_radius=10,
+    )
 
     # Tela de estoque:
     return ft.Container(
         content=ft.Column(
             [
                 ft.Text("Produtos Cadastrados", size=20, weight="bold"),
-                tabela_estoque,
+                container_tabela,
             ],
             spacing=10,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
 
         expand=True,
@@ -54,6 +66,6 @@ def criar_tela_estoque(produtos, page):
         margin=0,
         padding=20,
         border_radius=15,
-        alignment=ft.alignment.center
+        alignment=ft.alignment.center,
     )
     
