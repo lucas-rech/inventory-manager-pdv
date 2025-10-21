@@ -17,7 +17,6 @@ export default [
             },
         },
     },
-    perfectionist.configs["recommended-natural"],
     {
         files: ["**/*.ts", "**/*.spec.ts"],
     },

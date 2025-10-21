@@ -2,7 +2,18 @@
     "extends": "@tsconfig/node22/tsconfig.json",
     "compilerOptions": {
         "outDir": "./dist",
-        "rootDir": "./"
+        "rootDir": "./",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "target": "es2022",
+        "strict": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true
+    },
+    "ts-node": {
+        "esm": true,
+        "transpileOnly": true
     },
     "include": ["**/*.ts"],
     "exclude": ["dist"]
