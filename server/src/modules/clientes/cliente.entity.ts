@@ -1,12 +1,7 @@
 import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
-<<<<<<< HEAD
-
-@Entity({ tableName: "clientes" })
-=======
 import { ClienteRepository } from "./cliente.repository.js";
 
-@Entity({ tableName: "clientes", repository: () => ClienteRepository})
->>>>>>> 3a0133359c87bb345b81e433fd69f22b1831746d
+@Entity({ tableName: "clientes", repository: () => ClienteRepository })
 export class Cliente {
     @PrimaryKey()
     id!: number;
