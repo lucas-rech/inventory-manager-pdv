@@ -144,3 +144,4 @@ vite.config.ts.timestamp-*
 temp
 
 .venv
+package-lock.json
