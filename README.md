@@ -1,81 +1,51 @@
-# InventoryManagerPdv app
+# 🧾 Sistema de PDV e Gestão de Estoque
 
-## Run the app
+Projeto acadêmico desenvolvido no **Instituto Federal do Rio Grande do Sul (IFRS)** como parte das atividades práticas da disciplina de **Engenharia e Software II / IHC e Sistemas de Informação e Apoio a Decisão**.  
+O sistema tem como objetivo **simular o funcionamento de um ponto de venda (PDV)** integrado a um **módulo de gestão de estoque**, permitindo o controle de produtos, clientes e vendas em tempo real.
 
-### uv
+---
 
-Run as a desktop app:
+## 🧩 Arquitetura do Projeto
 
-```
-uv run flet run
-```
+O sistema é dividido em **duas camadas principais**:
 
-Run as a web app:
+### 🖥️ Frontend
+- Desenvolvido em **Python** utilizando o framework **[Flet](https://flet.dev/)**.
+- Interface desktop moderna e responsiva.
+- Comunicação com o backend via **requisições HTTP (REST API)**.
+- Foco na simplicidade e na experiência do operador de caixa.
 
-```
-uv run flet run --web
-```
+### ⚙️ Backend
+- Desenvolvido em **Node.js** com **[Express](https://expressjs.com/)**.
+- ORM: **[MikroORM](https://mikro-orm.io/)** para abstração do banco de dados.
+- Banco de dados relacional MySQL.
+- Fornece endpoints REST para operações de CRUD e controle de estoque.
 
-### Poetry
+---
 
-Install dependencies from `pyproject.toml`:
-
-```
-poetry install
-```
-
-Run as a desktop app:
-
-```
-poetry run flet run
-```
-
-Run as a web app:
-
-```
-poetry run flet run --web
-```
-
-For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
-
-## Build the app
-
-### Android
-
-```
-flet build apk -v
-```
-
-For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
-
-### iOS
-
-```
-flet build ipa -v
-```
-
-For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
-
-### macOS
-
-```
-flet build macos -v
-```
-
-For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
-
-### Linux
-
-```
-flet build linux -v
-```
-
-For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
-
-### Windows
-
-```
-flet build windows -v
-```
-
-For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+## 🗃️ Estrutura de Pastas
+```bash
+project-root/
+│
+├── client/                      # Aplicação Flet (Python)
+│   ├── src/
+│   │   ├── main.py              # Ponto de entrada da aplicação
+│   │   ├── assets/              # Recursos visuais (imagens, ícones, etc.)
+│   │   ├── ui/                  # Elementos da interface
+│   │   │   ├── components/      # Componentes reutilizáveis da UI
+│   │   │   ├── pages/           # Páginas principais da aplicação
+│   │   └── services/            # Comunicação com o backend
+│   ├── requirements.txt
+│   └── README.md
+│
+├── server/                      # Backend Node.js
+│   ├── src/
+│   │   ├── modules/             # Módulos do sistema (produtos, vendas, clientes, etc.)
+│   │   ├── core/                # Configurações globais (ORM, logger, middlewares)
+│   │   ├── app.ts
+│   │   └── server.ts
+│   ├── mikro-orm.config.ts
+│   ├── package.json
+│   └── tsconfig.json
+│
+└── README.md                    # Este arquivo
