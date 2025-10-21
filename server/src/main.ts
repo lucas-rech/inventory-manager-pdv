@@ -12,3 +12,5 @@ user.nomeCompleto = "lucas rech";
 user.documento = "123455667";
 user.senha = "asd2342edas";
 await orm.em.persist(user).flush();
+
+
