@@ -6,10 +6,14 @@ def cadastrar_clientes(page, clientes):
     # Função que exibirá cada campo (CPF/CNPJ) com sua formatação própria.
     def selecionar_cpf_cnpj(e):
         if cpf_cnpj.value == "cpf": # Teste se o valor selecionado é "cpf"
-            print("CPF")
+            campo_cnpj.visible = False
+            campo_cpf.visible = True
 
         elif cpf_cnpj.value == "cnpj": # Teste se o valor selecionado é "cpnj"
-            print("CNPJ")
+            campo_cpf.visible = False
+            campo_cnpj.visible = True
+
+        page.update()
 
 
     # Campos do formulário para o cadastro de um cliente:
@@ -27,14 +31,15 @@ def cadastrar_clientes(page, clientes):
             ]
         ),
 
-        value=None,
+        value="cpf",
         on_change=selecionar_cpf_cnpj, # a cada mudança, chama a função de seleção.
     )
 
     # Campo para que o cpf seja digitado:
-    campo_cpf = ft.TextField(label="CPF:", hint_text="EX: XXX.XXX.XXX-XX", visible=False, bgcolor=ft.Colors.WHITE)
+    campo_cpf = ft.TextField(label="CPF:", hint_text="EX: XXX.XXX.XXX-XX", visible=True, bgcolor=ft.Colors.WHITE, width=532)
 
-    #
+    # Campo para que o cnpj seja digitado:
+    campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532)
 
     def adicionar_cliente(e):
         novo_cliente = {
@@ -58,7 +63,7 @@ def cadastrar_clientes(page, clientes):
             [
                 ft.Row([nome], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([numero], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([cpf_cnpj], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([cpf_cnpj, campo_cpf, campo_cnpj], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
