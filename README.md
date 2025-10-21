@@ -49,3 +49,15 @@ project-root/
 │   └── tsconfig.json
 │
 └── README.md                    # Este arquivo
+
+
+## 🛠️ Tecnologias Utilizadas
+
+| Camada | Tecnologia | Descrição |
+|--------|-------------|------------|
+| Frontend | [Flet](https://flet.dev/) | Framework Python para interfaces gráficas modernas |
+| Backend | [Node.js](https://nodejs.org/) | Plataforma JavaScript para o servidor |
+| ORM | [MikroORM](https://mikro-orm.io/) | ORM TypeScript para bancos SQL |
+| Framework Web | [Express](https://expressjs.com/) | Framework para APIs REST |
+| Banco de Dados | PostgreSQL / SQLite | Persistência relacional dos dados |
+| Linguagens | Python, TypeScript | Camadas de apresentação e lógica de negócios |
