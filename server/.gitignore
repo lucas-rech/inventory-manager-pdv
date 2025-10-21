@@ -143,4 +143,9 @@ vite.config.ts.timestamp-*
 # MikroORM
 temp
 
+<<<<<<< HEAD
 .venv
+=======
+.venv
+package-lock.json
+>>>>>>> 3a0133359c87bb345b81e433fd69f22b1831746d
