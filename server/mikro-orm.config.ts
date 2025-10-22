@@ -12,7 +12,6 @@ const config: Options = {
     entities: ["dist/**/*.entity.js"],
     entitiesTs: ["src/**/*.entity.ts"],
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     metadataProvider: TsMorphMetadataProvider,
     allowGlobalContext: true,
 };
