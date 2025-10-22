@@ -24,7 +24,7 @@ def cadastrar_clientes(page, clientes):
         if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Aqui defino o padrão para A a Z maiúsculos, a a z minúsculos, letras com acentos e espaços, caso o usuário digite um número, dispara o alerta na tela.
             campo_nome.error_text = None
         else:
-            campo_nome.error_text = "O nome deve conter apenas letras e espaços" # Alerta que será mostrado na tela.
+            campo_nome.error_text = "O nome deve conter apenas letras!" # Alerta que será mostrado na tela.
 
         # Remove espaços duplicados acidentalmente
         campo_nome.value = re.sub(r"\s{2,}", " ", texto) # Aqui ele substitui qualquer espaço que apareça 2 ou mais vezes ({2,}) por um espaço apenas (" ").
