@@ -1,10 +1,11 @@
 import { MySqlDriver, Options } from "@mikro-orm/mysql";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
+import { variables } from "./src/config/index.js";
 
 const config: Options = {
-    dbName: "nome-banco",
-    user: "USUARIO",
-    password: "SENHA",
+    dbName: variables.db.name,
+    user: variables.db.user,
+    password: variables.db.password,
 
     debug: true,
     driver: MySqlDriver,

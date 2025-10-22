@@ -4,8 +4,8 @@
     "main": "src/main.ts",
     "type": "module",
     "scripts": {
-        "dev": "tsx --watch src/server.ts",
-        "start": "node dist/src/server.js",
+        "dev": "tsx --watch src/main.ts",
+        "start": "node dist/src/main.js",
         "build": "tsc",
         "type-check": "tsc --noEmit",
         "lint": "eslint .",
@@ -22,6 +22,7 @@
         "@mikro-orm/core": "^6.5.8",
         "@mikro-orm/mysql": "^6.5.8",
         "@mikro-orm/reflection": "^6.5.8",
+        "dotenv": "^17.2.3",
         "express": "^5.1.0"
     },
     "devDependencies": {
