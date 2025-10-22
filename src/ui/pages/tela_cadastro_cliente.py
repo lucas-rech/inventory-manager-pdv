@@ -1,4 +1,5 @@
 import flet as ft
+import re
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 
@@ -14,6 +15,21 @@ def cadastrar_clientes(page, clientes):
             campo_cnpj.visible = True
 
         page.update()
+
+    # Função que formatará o value to text field "numero" para validar o nome permitindo apenas letras e espaços.:
+    def formatar_nome(e):
+        texto = e.control.value
+
+        # Expressão regular que aceita letras (inclusive acentuadas) e espaços
+        if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Aqui defino o padrão para A a Z maiúsculos, a a z minúsculos, letras com acentos e espaços, caso o usuário digite um número, dispara o alerta na tela.
+            campo_nome.error_text = None
+        else:
+            campo_nome.error_text = "O nome deve conter apenas letras e espaços" # Alerta que será mostrado na tela.
+
+        # Remove espaços duplicados acidentalmente
+        campo_nome.value = re.sub(r"\s{2,}", " ", texto) # Aqui ele substitui qualquer espaço que apareça 2 ou mais vezes ({2,}) por um espaço apenas (" ").
+
+        page.update() # Atulaiza a página para mostrar as alterações.
 
     # Função que formatará o value to text field "numero" para o formato de número de telefone:
     def formatar_numero(e):
@@ -88,7 +104,7 @@ def cadastrar_clientes(page, clientes):
 
 
     # Campos do formulário para o cadastro de um cliente:
-    campo_nome = ft.TextField(label="Nome do cliente", bgcolor=ft.Colors.WHITE, width=610, autofocus=True)
+    campo_nome = ft.TextField(label="Nome do cliente", bgcolor=ft.Colors.WHITE, width=610, autofocus=True, on_change=formatar_nome)
 
     campo_numero = ft.TextField(label="Número de telefone do cliente", hint_text="Ex: (XX) XXXX-XXXX", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_numero)
 

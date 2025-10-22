@@ -71,10 +71,10 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
                 tabela_resumo_venda
             ],
             spacing=20,
-            height=370,
             scroll=ft.ScrollMode.AUTO,
         ),
         width=750,  # Define o tamanho máximo da tabela
+        expand=True,
         padding=20,
         border=ft.border.all(1, color="#765070"),
         border_radius=10,
