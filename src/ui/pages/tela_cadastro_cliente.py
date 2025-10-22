@@ -115,7 +115,7 @@ def cadastrar_clientes(page, clientes):
                 ft.Radio(label="CPF", value="cpf"), # Opção cpf, altera o value da variável "cpf_cnpj" para cpf.
 
                 ft.Radio(label="CNPJ", value="cnpj"), # Opção cnpj, altera o value da variável "cpf_cnpj" para "cnpj"
-            ]
+            ],
         ),
 
         value="cpf",
@@ -163,6 +163,7 @@ def cadastrar_clientes(page, clientes):
                 ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
+            spacing=15
         ), 
 
         expand=True,
