@@ -1,6 +1,6 @@
 import { Collection, OneToMany, Property } from "@mikro-orm/core";
 import { BaseEntity } from "../common/base.entity.js";
-import { Lote } from "./lote.entity.js";
+import { Lote } from "./lotes/lote.entity.js";
 
 export class Produto extends BaseEntity {
   

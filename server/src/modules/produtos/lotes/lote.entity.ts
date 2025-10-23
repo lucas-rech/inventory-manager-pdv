@@ -1,5 +1,5 @@
 import { Property } from "@mikro-orm/core";
-import { BaseEntity } from "../common/base.entity.js";
+import { BaseEntity } from "../../common/base.entity.js";
 
 export class Lote extends BaseEntity {
 
