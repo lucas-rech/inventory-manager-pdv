@@ -22,7 +22,7 @@ def main(page: ft.Page):
     # Função para trocar para a tela de cadastro de produtos:
     def informacoes_produto(e):
         conteudo_completo.controls.clear() # Limpa toda a tela (menos o menu lateral).
-        header.content.value = "Cadastro de Produtos"
+        header.content.value = "Cadastrar Produtos"
         conteudo_completo.controls.append(header) # Adiciona o cabeçalho à tela.
         conteudo_completo.controls.append(tela_produto) # Adiciona os campos de informações do produto à tela.
 
@@ -30,7 +30,7 @@ def main(page: ft.Page):
 
     def informacoes_cliente(e):
         conteudo_completo.controls.clear()
-        header.content.value = "Cadastro de Clientes"
+        header.content.value = "Cadastrar Clientes"
         conteudo_completo.controls.append(header)
         conteudo_completo.controls.append(tela_cliente)
 
@@ -46,14 +46,17 @@ def main(page: ft.Page):
     # Lista com o resumo da compra:
     resumo_compra = []
 
+    # Layout inicial completo: (Começa vazio)
+    conteudo_completo = ft.Column(expand=True)
+
     # Cabeçalho:
     header = criar_header("Venda")
 
     # Tela Cadastro de Produtos
-    tela_produto = cadastrar_produtos(page, produtos)
+    tela_produto = cadastrar_produtos(page, produtos, conteudo_completo, header)
 
     # Tela Cadastro de Clientes:
-    tela_cliente = cadastrar_clientes(page, clientes)
+    tela_cliente = cadastrar_clientes(page, clientes, conteudo_completo, header)
 
     # Método do login no sistema
     def entrar():
@@ -64,9 +67,6 @@ def main(page: ft.Page):
     # Tela Login:
     tela_login = criar_tela_login(page, entrar)
     page.add(tela_login)
-
-    # Layout inicial completo: (Começa vazio)
-    conteudo_completo = ft.Column(expand=True)
     
     # Tela onde será feita a venda:
     tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo)

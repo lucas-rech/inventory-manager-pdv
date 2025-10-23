@@ -17,13 +17,19 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
         rows=[],
     )
 
+    # Função que irá formatar o preco de venda para float novamente sem a formatação contábil:
+    def formatar_preco_venda(pvenda):
+        valor_pvenda = pvenda.replace("R$", "").replace(".", "").replace(",", ".") # Retira o cifrão e muda as vírgulas para o padrão de pontos.
+        return valor_pvenda # Retorna o valor bruto, sem formatação nenhuma.
+
     def get_informacoes_produto(codigo):
         for c in produtos:
             if c["codigo"] == codigo:
+                formatar_preco_venda(c["preco_venda"])
                 return {
                     "codigo": c["codigo"],
                     "nome": c["nome"],
-                    "preco_venda": float(c["preco_venda"]),
+                    "preco_venda": float(formatar_preco_venda(c["preco_venda"])),
                     "quantidade": 1,
                 }
         return None
@@ -32,9 +38,9 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
     texto_total = ft.Text(value=f"Total: R$ {total:.2f}", weight="bold", size=40)
 
     def atualizar(e):
-        nonlocal total
+        nonlocal total # nonlocal se refere ao total decarado acima
         produto_encontrado = get_informacoes_produto(codigo.value)
-        if not produto_encontrado:
+        if not produto_encontrado: # Se não encontrar o produto não retorna nada e para a função aqui.
             return
 
         resumo_compra.append(produto_encontrado)

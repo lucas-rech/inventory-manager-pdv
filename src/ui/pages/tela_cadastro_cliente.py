@@ -2,8 +2,9 @@ import flet as ft
 import re
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
+from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
 
-def cadastrar_clientes(page, clientes):
+def cadastrar_clientes(page, clientes, conteudo_completo, header):
     # Função que exibirá cada campo (CPF/CNPJ) com sua formatação própria.
     def selecionar_cpf_cnpj(e):
         if cpf_cnpj.value == "cpf": # Teste se o valor selecionado é "cpf"
@@ -128,6 +129,8 @@ def cadastrar_clientes(page, clientes):
     # Campo para que o cnpj seja digitado:
     campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cnpj)
 
+    campos = [campo_nome, campo_numero, campo_cpf, campo_cnpj]
+
     def adicionar_cliente(e):
         if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
             novo_cliente = {
@@ -153,6 +156,7 @@ def cadastrar_clientes(page, clientes):
 
     botao_adicionar = criar_botao_adicionar(adicionar_cliente)
     botao_cancelar = criar_botao_cancelar(True)
+    botao_limpar_campos = criar_botao_limpar(campos, page)
 
     layout = ft.Container(
         ft.Column(
@@ -160,7 +164,7 @@ def cadastrar_clientes(page, clientes):
                 ft.Row([campo_nome], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([campo_numero], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([cpf_cnpj, campo_cpf, campo_cnpj], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([botao_adicionar, botao_cancelar, botao_limpar_campos], alignment=ft.MainAxisAlignment.CENTER),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=15

@@ -2,10 +2,11 @@ import flet as ft
 import re
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
+from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
 
 
 # Função que criará a tela de cadastro de produto
-def cadastrar_produtos(page, produtos):
+def cadastrar_produtos(page, produtos, conteudo_completo, header):
     # Função que fará a verificação da opção do cálculo do preço de venda escolhida.
     def selecionar_porcentagem(e):
         if porcentagem_preco_venda.value == "porcentagem": # Teste se o valor selecionado é "porcentagem"
@@ -90,15 +91,38 @@ def cadastrar_produtos(page, produtos):
         preco_venda.value = formatado
         page.update()
 
+    def formatar_quantidade(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        quantidade.value = texto
+        page.update()
+
+    def formatar_validade(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:8]
+        
+        formatado = ""
+
+        if len(texto) > 0:
+            formatado += texto[:2]
+        if len(texto) > 2:
+            formatado += "/" + texto[2:4]
+        if len(texto) > 4:
+            formatado += "/" + texto[4:8]
+
+        validade.value = formatado
+        page.update()
+
 
     # Campos do formulário:
     codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_codigo)
     nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_nome) 
     preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_preco_custo)
     preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True, on_change=formatar_preco_venda)
-    quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610)
-    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=610)
+    quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_quantidade)
+    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_validade)
     porcentagem = ft.TextField(label= "Porcentagem de lucro:", bgcolor=ft.Colors.WHITE, width=610, visible=True, on_change=formatar_preco_venda)
+
+    campos = [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]
 
     porcentagem_preco_venda = ft.RadioGroup(
         content=ft.Column(
@@ -133,6 +157,7 @@ def cadastrar_produtos(page, produtos):
 
     botao_adicionar = criar_botao_adicionar(adicionar_produto)
     botao_cancelar = criar_botao_cancelar(True)
+    botao_limpar_campos = criar_botao_limpar(campos, page)
 
     # Tela onde serão inseridas as informações dos produtos:
     tela_informacoes_produto = ft.Container(
@@ -142,7 +167,7 @@ def cadastrar_produtos(page, produtos):
                 ft.Row([quantidade, validade], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([porcentagem_preco_venda, porcentagem], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([botao_adicionar, botao_cancelar, botao_limpar_campos], alignment=ft.MainAxisAlignment.CENTER),
             ],
 
             alignment=ft.MainAxisAlignment.CENTER,

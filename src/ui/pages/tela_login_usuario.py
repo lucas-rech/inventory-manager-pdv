@@ -19,7 +19,7 @@ def criar_tela_login(page, entrar):
         if usuario.value in usuarios and senha.value in senhas: # Verifica se o usuário e senha estão corretos
             entrar() # Chama a função entrar (que está em main.py) para entrar no sistema
         else:
-            alerta.content.value = "Usuário ou senha incorretos!" # Se estiverem errados, mostra uma mensagem de erro
+            alerta.content.value = "Usuário e/ou senha incorretos!" # Se estiverem errados, mostra uma mensagem de erro
             alerta.open = True # Abre o alerta
             page.update() # Atualiza a página para mostrar o alerta
 

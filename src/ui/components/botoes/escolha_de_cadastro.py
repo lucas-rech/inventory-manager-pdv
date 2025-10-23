@@ -28,13 +28,7 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes):
 
     # Juntando os dois botões em um container só:
     return ft.Container(
-        ft.Column(
-            [
-                ft.Row([clientes, produtos], alignment=ft.MainAxisAlignment.CENTER),
-            ],
-
-            alignment=ft.MainAxisAlignment.CENTER,
-        ),
-        
+        ft.Row([clientes, produtos], alignment=ft.MainAxisAlignment.CENTER),
+        alignment=ft.alignment.center,   
         expand=True
     )
