@@ -1,20 +1,24 @@
-import { Property } from "@mikro-orm/core";
+import { Entity, ManyToOne, Property } from "@mikro-orm/core";
 import { BaseEntity } from "../../common/base.entity.js";
+import { Produto } from "../produto.entity.js";
 
+@Entity({ tableName: "lotes" })
 export class Lote extends BaseEntity {
-
-    @Property({nullable: false})
+    @Property({ nullable: false })
     identificador!: string;
 
-    @Property({nullable: false})
+    @ManyToOne(() => Produto)
+    produto!: Produto;
+
+    @Property({ nullable: false })
     custo!: number;
 
-    @Property({nullable: false})
+    @Property({ nullable: false })
     quantidade!: number;
 
-    @Property({nullable: false})
+    @Property({ nullable: false })
     dataEntrada!: Date;
 
-    @Property({nullable: false})
+    @Property({ nullable: false })
     dataValidade!: Date;
 }
