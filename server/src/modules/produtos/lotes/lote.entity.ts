@@ -21,4 +21,5 @@ export class Lote extends BaseEntity {
 
     @Property({ nullable: false })
     dataValidade!: Date;
+
 }

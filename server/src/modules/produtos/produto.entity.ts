@@ -1,8 +1,7 @@
 import { Entity, Property } from "@mikro-orm/core";
 import { BaseEntity } from "../common/base.entity.js";
-import { ProdutoRepository } from "./produto.repository.js";
 
-@Entity({ tableName: "produtos", repository: () => ProdutoRepository })
+@Entity({ tableName: "produtos" })
 export class Produto extends BaseEntity {
     @Property({ length: 150, nullable: true })
     nome!: string;
