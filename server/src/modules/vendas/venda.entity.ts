@@ -14,4 +14,7 @@ export class Venda extends BaseEntity {
 
     @ManyToOne(() => Cliente)
     cliente!: Cliente;
+
+    @Property({nullable: false, type: "numeric"})
+    totalVenda!: number;
 }
