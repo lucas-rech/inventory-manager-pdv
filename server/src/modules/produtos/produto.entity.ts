@@ -1,9 +1,8 @@
-import { Collection, Entity, ManyToMany, OneToMany, Property } from "@mikro-orm/core";
+import { Entity, Property } from "@mikro-orm/core";
 import { BaseEntity } from "../common/base.entity.js";
-import { Lote } from "./lotes/lote.entity.js";
-import { Venda } from "../vendas/venda.entity.js";
+import { ProdutoRepository } from "./produto.repository.js";
 
-@Entity({ tableName: "produtos" })
+@Entity({ tableName: "produtos", repository: () => ProdutoRepository })
 export class Produto extends BaseEntity {
     @Property({ length: 150, nullable: true })
     nome!: string;
@@ -14,15 +13,18 @@ export class Produto extends BaseEntity {
     @Property({ length: 14, nullable: false })
     gtin!: string;
 
-    @OneToMany({ mappedBy: "produto" })
-    lotes = new Collection<Lote>(this);
-
     @Property({ nullable: false })
     precoVenda!: number;
 
     @Property({ nullable: false })
     precoCusto!: number;
 
-    @ManyToMany(() => Venda, (venda) => venda.produtos)
-    vendas = new Collection<Venda>(this);
+    constructor(nome: string, gtin: string, precoVenda: number, precoCusto: number, descricao?: string) {
+        super();
+        this.nome = nome;
+        this.descricao = descricao ?? "null";
+        this.gtin = gtin;
+        this.precoVenda = precoVenda;
+        this.precoCusto = precoCusto;
+    }
 }

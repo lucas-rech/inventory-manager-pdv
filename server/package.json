@@ -15,7 +15,6 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "schema:create": "npm run build && npx mikro-orm schema:create --run",
         "schema:update": "npm run build && npx mikro-orm schema:update --run"
-
     },
     "keywords": [],
     "author": "Lucas Rech",

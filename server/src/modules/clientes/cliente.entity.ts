@@ -15,4 +15,12 @@ export class Cliente extends BaseEntity {
 
     @Property({ nullable: false })
     senha!: string;
+
+    constructor(nomeCompleto: string, documento: string, senha: string, numeroTelefone?: string) {
+        super();
+        this.nomeCompleto = nomeCompleto;
+        this.documento = documento;
+        this.senha = senha;
+        this.numeroTelefone = numeroTelefone;
+    }
 }
