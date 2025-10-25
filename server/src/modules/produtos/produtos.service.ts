@@ -1,6 +1,7 @@
 import { EntityManager, EntityRepository, FindOptions } from "@mikro-orm/mysql";
 import { Produto } from "./produto.entity.js";
 import { Lote } from "./lotes/lote.entity.js";
+import { LoteRepository } from "./lotes/lote.repository.js";
 
 interface CriarProdutoDTO {
     nome: string;
@@ -21,7 +22,7 @@ interface AtualizarProdutoDTO {
 export class ProdutosService {
     private readonly em: EntityManager;
     private readonly produtoRepo: EntityRepository<Produto>;
-    private readonly loteRepo: EntityRepository<Lote>;
+    private readonly loteRepo: LoteRepository;
 
     constructor(em: EntityManager) {
         this.em = em;
@@ -64,10 +65,11 @@ export class ProdutosService {
     }
 
     async calcularEstoqueTotal(productId: number): Promise<number> {
-        const lotes = await this.loteRepo.findAll();
-        if (lotes.length == 0) {
-            throw new Error(`Não existe estoque para o produto id ${productId.toString()}`);
+        const lotes = await this.loteRepo.findByProduct(productId) ?? [];
+        if (lotes.length === 0) {
+            return 0;
         }
+
         let quantidadeTotal = 0;
         lotes.forEach((lote) => {
             quantidadeTotal += lote.quantidade;

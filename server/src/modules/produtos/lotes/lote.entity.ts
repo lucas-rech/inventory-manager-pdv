@@ -1,8 +1,9 @@
 import { Entity, ManyToOne, Property } from "@mikro-orm/core";
 import { BaseEntity } from "../../common/base.entity.js";
 import { Produto } from "../produto.entity.js";
+import { LoteRepository } from "./lote.repository.js";
 
-@Entity({ tableName: "lotes" })
+@Entity({ tableName: "lotes", repository: () => LoteRepository})
 export class Lote extends BaseEntity {
     @Property({ nullable: false })
     identificador!: string;
