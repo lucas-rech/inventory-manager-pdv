@@ -4,7 +4,7 @@ from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
 
-def cadastrar_clientes(page, clientes, conteudo_completo, header):
+def cadastrar_clientes(page, clientes, voltar_para_escolha):
     # Função que exibirá cada campo (CPF/CNPJ) com sua formatação própria.
     def selecionar_cpf_cnpj(e):
         if cpf_cnpj.value == "cpf": # Teste se o valor selecionado é "cpf"
@@ -154,10 +154,14 @@ def cadastrar_clientes(page, clientes, conteudo_completo, header):
         campo_nome.focus()
         page.update()
 
+
+    # Botões:
     botao_adicionar = criar_botao_adicionar(adicionar_cliente)
-    botao_cancelar = criar_botao_cancelar(True)
+    botao_cancelar = criar_botao_cancelar(voltar_para_escolha, page)
     botao_limpar_campos = criar_botao_limpar(campos, page)
 
+
+    # Layout:
     layout = ft.Container(
         ft.Column(
             [

@@ -6,7 +6,7 @@ from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
 
 
 # Função que criará a tela de cadastro de produto
-def cadastrar_produtos(page, produtos, conteudo_completo, header):
+def cadastrar_produtos(page, produtos, voltar_para_escolha):
     # Função que fará a verificação da opção do cálculo do preço de venda escolhida.
     def selecionar_porcentagem(e):
         if porcentagem_preco_venda.value == "porcentagem": # Teste se o valor selecionado é "porcentagem"
@@ -156,7 +156,7 @@ def cadastrar_produtos(page, produtos, conteudo_completo, header):
 
 
     botao_adicionar = criar_botao_adicionar(adicionar_produto)
-    botao_cancelar = criar_botao_cancelar(True)
+    botao_cancelar = criar_botao_cancelar(voltar_para_escolha, page)
     botao_limpar_campos = criar_botao_limpar(campos, page)
 
     # Tela onde serão inseridas as informações dos produtos:

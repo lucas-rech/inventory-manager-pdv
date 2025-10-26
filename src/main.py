@@ -18,13 +18,20 @@ def main(page: ft.Page):
     page.window.maximized = True
     page.window.resizable = True
 
+    def voltar_para_escolha(e):
+        conteudo_completo.controls.clear()
+        header.content.value = "Escolha o tipo de cadastro"
+        conteudo_completo.controls.append(header)
+        conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente))
+
+        page.update()
 
     # Função para trocar para a tela de cadastro de produtos:
     def informacoes_produto(e):
         conteudo_completo.controls.clear() # Limpa toda a tela (menos o menu lateral).
         header.content.value = "Cadastrar Produtos"
         conteudo_completo.controls.append(header) # Adiciona o cabeçalho à tela.
-        conteudo_completo.controls.append(tela_produto) # Adiciona os campos de informações do produto à tela.
+        conteudo_completo.controls.append(cadastrar_produtos(page, produtos, voltar_para_escolha)) # Adiciona os campos de informações do produto à tela.
 
         page.update()
 
@@ -32,7 +39,7 @@ def main(page: ft.Page):
         conteudo_completo.controls.clear()
         header.content.value = "Cadastrar Clientes"
         conteudo_completo.controls.append(header)
-        conteudo_completo.controls.append(tela_cliente)
+        conteudo_completo.controls.append(cadastrar_clientes(page, clientes, voltar_para_escolha))
 
         page.update()
 
@@ -51,12 +58,6 @@ def main(page: ft.Page):
 
     # Cabeçalho:
     header = criar_header("Venda")
-
-    # Tela Cadastro de Produtos
-    tela_produto = cadastrar_produtos(page, produtos, conteudo_completo, header)
-
-    # Tela Cadastro de Clientes:
-    tela_cliente = cadastrar_clientes(page, clientes, conteudo_completo, header)
 
     # Método do login no sistema
     def entrar():
