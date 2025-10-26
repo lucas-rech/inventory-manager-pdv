@@ -12,10 +12,10 @@ export class Produto extends BaseEntity {
     @Property({ length: 14, nullable: false })
     gtin!: string;
 
-    @Property({ nullable: false })
+    @Property({ nullable: false, type: "double" })
     precoVenda!: number;
 
-    @Property({ nullable: false })
+    @Property({ nullable: false, type: "double" })
     precoCusto!: number;
 
     constructor(nome: string, gtin: string, precoVenda: number, precoCusto: number, descricao?: string) {

@@ -3,7 +3,7 @@ import { Produto } from "./produto.entity.js";
 import { Lote } from "./lotes/lote.entity.js";
 import { LoteRepository } from "./lotes/lote.repository.js";
 
-interface CriarProdutoDTO {
+export interface CriarProdutoDTO {
     nome: string;
     descricao?: string;
     gtin: string;
@@ -17,6 +17,15 @@ interface AtualizarProdutoDTO {
     gtin?: string;
     precoVenda?: number;
     precoCusto?: number;
+}
+
+export interface CriarLoteDTO {
+    identificador: string;
+    produto: Produto;
+    custo: number;
+    quantidadeLote: number;
+    dataEntrada: Date;
+    dataValidade: Date;
 }
 
 export class ProdutosService {
@@ -34,6 +43,16 @@ export class ProdutosService {
         const produto = this.produtoRepo.create(new Produto(dto.nome, dto.gtin, dto.precoVenda, dto.precoCusto, dto.descricao));
         await this.em.persistAndFlush(produto);
         return produto;
+    }
+
+    async inserirNovoLote(dto: CriarLoteDTO): Promise<Lote> {
+        if (!(await this.produtoRepo.findOne(dto.produto.id))) {
+            throw new Error(`Produto não existe`);
+        }
+
+        const lote = this.loteRepo.create(new Lote(dto.identificador, dto.produto, dto.custo, dto.quantidadeLote, dto.dataEntrada, dto.dataValidade));
+        await this.em.persistAndFlush(lote);
+        return lote;
     }
 
     //Pode receber parâmetro de range, ordem etc.
@@ -65,7 +84,7 @@ export class ProdutosService {
     }
 
     async calcularEstoqueTotal(productId: number): Promise<number> {
-        const lotes = await this.loteRepo.findByProduct(productId) ?? [];
+        const lotes = (await this.loteRepo.findByProduct(productId)) ?? [];
         if (lotes.length === 0) {
             return 0;
         }
@@ -74,7 +93,16 @@ export class ProdutosService {
         lotes.forEach((lote) => {
             quantidadeTotal += lote.quantidade;
         });
-
         return quantidadeTotal;
+    }
+
+    async remover(productId: number): Promise<Produto> {
+        const produto = await this.produtoRepo.findOne(productId);
+
+        if (!produto) {
+            throw new Error("Produto não encontrado");
+        }
+        void this.em.removeAndFlush(produto);
+        return produto;
     }
 }
