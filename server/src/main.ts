@@ -23,15 +23,20 @@ const product: CriarProdutoDTO = {
     precoVenda: 30.0,
 };
 
+console.log(await productService.criar(product));
+console.log(await clienteService.criar(user));
+
 const lote: CriarLoteDTO = {
     identificador: "1234534",
     produto: await productService.buscarporId(1),
     quantidadeLote: 50,
-    custo: 200.00,
+    custo: 200.0,
     dataEntrada: new Date(),
-    dataValidade: new Date()
+    dataValidade: new Date(2025, 10, 30),
 };
-
-//console.log(await productService.criar(product));
-//console.log(await clienteService.criar(user));
 console.log(await productService.inserirNovoLote(lote));
+
+console.log(await productService.inserirNovoLote(lote));
+console.log(await productService.calcularEstoqueTotal(1));
+
+console.log(await productService.consumirEstoque(1, 20));

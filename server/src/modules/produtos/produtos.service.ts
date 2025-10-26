@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindOptions } from "@mikro-orm/mysql";
+import { EntityManager, EntityRepository, FindOptions, QueryOrder } from "@mikro-orm/mysql";
 import { Produto } from "./produto.entity.js";
 import { Lote } from "./lotes/lote.entity.js";
 import { LoteRepository } from "./lotes/lote.repository.js";
@@ -40,7 +40,12 @@ export class ProdutosService {
     }
 
     async criar(dto: CriarProdutoDTO): Promise<Produto> {
+        if (await this.produtoRepo.findOne({ gtin: dto.gtin })) {
+            throw new Error(`Um produto com o GTIN ${dto.gtin} já existe`);
+        }
+
         const produto = this.produtoRepo.create(new Produto(dto.nome, dto.gtin, dto.precoVenda, dto.precoCusto, dto.descricao));
+
         await this.em.persistAndFlush(produto);
         return produto;
     }
@@ -49,9 +54,13 @@ export class ProdutosService {
         if (!(await this.produtoRepo.findOne(dto.produto.id))) {
             throw new Error(`Produto não existe`);
         }
+        if (await this.loteRepo.findOne({ identificador: dto.identificador })) {
+            throw new Error(`Já existe um lote com o identificador ${dto.identificador}`);
+        }
 
         const lote = this.loteRepo.create(new Lote(dto.identificador, dto.produto, dto.custo, dto.quantidadeLote, dto.dataEntrada, dto.dataValidade));
         await this.em.persistAndFlush(lote);
+
         return lote;
     }
 
@@ -104,5 +113,24 @@ export class ProdutosService {
         }
         void this.em.removeAndFlush(produto);
         return produto;
+    }
+
+    //Consome do lote com data de validade mais próxima de vencer
+    async consumirEstoque(productId: number, quantidade: number): Promise<number> {
+        const produto = await this.produtoRepo.findOne(productId);
+        if (!produto) {
+            throw new Error(`Não foi possível encotnrar um produto com id ${productId.toString()}`);
+        }
+
+        const loteAntigo = await this.loteRepo.findOne({ produto: produto }, { orderBy: { dataValidade: QueryOrder.DESC } });
+
+        if (!loteAntigo) {
+            throw new Error(`Nenhum lote encontrado para o produto com id ${productId.toString()}`);
+        }
+
+        this.loteRepo.assign(loteAntigo, { quantidade: loteAntigo.quantidade - quantidade });
+        await this.em.flush();
+
+        return this.calcularEstoqueTotal(productId);
     }
 }

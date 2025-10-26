@@ -17,10 +17,10 @@ export class Lote extends BaseEntity {
     @Property({ nullable: false })
     quantidade!: number;
 
-    @Property({ nullable: false })
+    @Property({ nullable: false, type: "date" })
     dataEntrada!: Date;
 
-    @Property({ nullable: false })
+    @Property({ nullable: false, type: "date" })
     dataValidade!: Date;
 
     constructor(identificador: string, produto: Produto, custo: number, quantidade: number, dataEntrada: Date, dataValidade: Date) {
@@ -30,6 +30,6 @@ export class Lote extends BaseEntity {
         this.custo = custo;
         this.quantidade = quantidade;
         this.dataEntrada = dataEntrada;
-        this.dataValidade = dataValidade;
+        this.dataValidade = new Date(dataValidade.getFullYear(), dataValidade.getMonth(), dataValidade.getDay());
     }
 }
