@@ -4,7 +4,14 @@ from ui.pages.tela_finalizar_compra import criar_tela_finalizar_compra
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
 
 def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
-    codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"))
+    # Função que permitirá apenas números no campo de código:
+    def formatar_codigo(e):
+        texto = "".join(filter(str.isdigit, e.control.value)) # Apenas junte a string do que está sendo digitado o que for número.
+        codigo.value = texto # Atualiza o campo enquanto o usuário digita.
+        page.update() # Atualiza a tela
+
+
+    codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"), on_change=formatar_codigo)
 
     tabela_resumo_venda = ft.DataTable(
         columns=[
@@ -17,7 +24,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
         rows=[],
     )
 
-    # Função que irá formatar o preco de venda para float novamente sem a formatação contábil:
+    # Função que irá formatar o preco de venda para float novamente sem a formatação contábil para que não dê TypeError, já que o preco_venda está armazenado como string na lista de produtos:
     def formatar_preco_venda(pvenda):
         valor_pvenda = pvenda.replace("R$", "").replace(".", "").replace(",", ".") # Retira o cifrão e muda as vírgulas para o padrão de pontos.
         return valor_pvenda # Retorna o valor bruto, sem formatação nenhuma.
