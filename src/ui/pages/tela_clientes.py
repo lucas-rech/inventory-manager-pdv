@@ -5,7 +5,8 @@ def criar_tela_clientes(clientes, page):
         columns=[ # Define as 2 colunas que terão dados (Nome, Número)
             ft.DataColumn(ft.Text("Nome")),
             ft.DataColumn(ft.Text("Número de Telefone")),
-            ft.DataColumn(ft.Text("CPF / CNPJ"))
+            ft.DataColumn(ft.Text("CPF / CNPJ")),
+            ft.DataColumn(ft.Text("Ações"))
         ],
 
         rows = [] # As linhas começam vazias, sem nenhum cliente cadstrado.
@@ -16,17 +17,29 @@ def criar_tela_clientes(clientes, page):
         tabela_clientes.rows.clear() # Limpa todas as tabelas anteriores para atualizar tudo do zero.
 
         for c in clientes:# Para cada indice da lista "produtos"
+            # Botão para editar as informações:
+            botao_editar = ft.TextButton(
+                text="Editar",
+            )
+
+            # Botão para remover clientes da lista:
+            botao_excluir = ft.TextButton(
+                text="Excluir"
+            )
+
             tabela_clientes.rows.append( # Cria uma nova linha na tabela
                 ft.DataRow( # Cada linha/row (neste caso DataRow por ser a linha de uma tabela) é feita de várias células (DataCell), uma para cada coluna.
                     cells = [
                         ft.DataCell(ft.Text(c["nome"])), # Busca o valor atráves do nome no dicionário da função adicionar produto.
                         ft.DataCell(ft.Text(c["numero"])),
-                        ft.DataCell(ft.Text(c["cpf_cnpj"]))
+                        ft.DataCell(ft.Text(c["cpf_cnpj"])),
+                        ft.DataCell(ft.Row([botao_editar, botao_excluir])),
+                        
                     ]
                 )
             )
 
-        page.update()
+            page.update()
 
     atualizar()
 

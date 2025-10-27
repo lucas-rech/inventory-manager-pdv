@@ -16,7 +16,7 @@ def criar_botao_limpar(campos, page):
         nonlocal confirmado # permite alterar a variável 'confirmado' que está no escopo externo.
         confirmado = True # marca que o usuário confirmou.
 
-        layout_botao.content.value = "Cancelar" # volta o texto do botão para "Cancelar"
+        layout_botao.content.value = "Limpar Campos" # volta o texto do botão para "Cancelar"
         layout_botao.on_click = lambda e: page.run_task(confirmar_acao, e) # redefine o clique para iniciar a contagem novamente quando clicado no futuro. (Se você passar direto confirmar_acao, vai dar erro do tipo AssertionError)
 
         page.update() # atualiza a UI para refletir as mudanças
@@ -38,7 +38,7 @@ def criar_botao_limpar(campos, page):
             await asyncio.sleep(1) # Pausa 1 segundo sem travar a interface. (se fosse com o sleep, até que o loop não terminasse, a tela permaneceria "congelada".)
 
         # quando a contagem termina (ou foi interrompida), volta ao estado inicial
-        layout_botao.content.value = "Cancelar" # O texto do botão volta para "Cancelar"
+        layout_botao.content.value = "Limpar Campos" # O texto do botão volta para "Cancelar"
         layout_botao.on_click = lambda e: page.run_task(confirmar_acao, e) # A função que ele executará a ser clicado volta a ser confirmar_acao. (Se você passar direto confirmar_acao, vai dar erro do tipo AssertionError)
         page.update() # Atualiza a tela.
 

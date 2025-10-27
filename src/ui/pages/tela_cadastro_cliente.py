@@ -136,14 +136,16 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
             novo_cliente = {
                 "nome":campo_nome.value,
                 "numero":campo_numero.value,
-                "cpf_cnpj":campo_cpf.value     
+                "cpf_cnpj":campo_cpf.value,
+                "editando":False,     
             }
 
         if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
             novo_cliente = {
                 "nome":campo_nome.value,
                 "numero":campo_numero.value,
-                "cpf_cnpj":campo_cnpj.value     
+                "cpf_cnpj":campo_cnpj.value,
+                "editando":False,     
             }
 
         clientes.append(novo_cliente)

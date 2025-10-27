@@ -1,59 +1,129 @@
-import flet as ft         # biblioteca Flet para UI
-import asyncio            # usado para await asyncio.sleep() (não bloqueia a UI)
+import flet as ft  # Importa a biblioteca Flet
 
 def main(page: ft.Page):
-    # cria uma função que retorna um botão "Cancelar" que pede confirmação
-    # action: função externa a ser executada quando a confirmação ocorrer
-    def criar_botao_cancelar(action, page):
-        confirmado = False  # flag que indica se o usuário já confirmou
+    page.title = "Tabela simples com editar e excluir"
 
-        # Função executada quando o usuário confirma (clica novamente durante a contagem)
-        def acao_confirmada(e):
-            nonlocal confirmado                     # permite alterar a variável 'confirmado' que está no escopo externo
-            confirmado = True                       # marca que o usuário confirmou
-            print("Confirmado!")                    # log para depuração
-            layout_botao.content.value = "Cancelar" # volta o texto do botão para "Cancelar"
-            # redefine o clique para iniciar a contagem novamente quando clicado no futuro
-            layout_botao.on_click = lambda e: page.run_task(confirmar_acao, e)
-            page.update()                           # atualiza a UI para refletir as mudanças
-            action(e)                               # executa a ação externa passada (por exemplo: cancelar algo)
+    # Lista que armazenará os dados (cada item será um dicionário)
+    dados = []
 
-        # Função assíncrona que faz a contagem regressiva sem travar a interface
-        async def confirmar_acao(e):
-            nonlocal confirmado                     # permite alterar 'confirmado' dentro desta função
-            confirmado = False                      # recomeça com confirmado = False (antes do usuário confirmar)
-            layout_botao.on_click = acao_confirmada # durante a contagem, o próximo clique chama acao_confirmada
-            # loop de contagem regressiva (10, 9, ..., 1)
-            for i in range(10, 0, -1):
-                if confirmado:                      # se o usuário clicou para confirmar, interrompe a contagem
-                    break
-                layout_botao.content.value = f"Confirma? ({i})"  # atualiza o texto para mostrar a contagem
-                page.update()                       # atualiza a UI para mostrar o novo texto
-                await asyncio.sleep(1)              # pausa 1 segundo de forma não bloqueante
-            # quando a contagem termina (ou foi interrompida), volta ao estado inicial
-            layout_botao.content.value = "Cancelar"
-            layout_botao.on_click = lambda e: page.run_task(confirmar_acao, e)
-            page.update()                           # atualiza a UI
+    # Campos de entrada para adicionar novos itens
+    nome = ft.TextField(label="Nome", width=200)
+    numero = ft.TextField(label="Número", width=150)
 
-        # Criação visual do botão com estilo simples
-        layout_botao = ft.ElevatedButton(
-            bgcolor="#9B3E3E",                                 # cor de fundo do botão
-            content=ft.Text("Cancelar", size=16),              # texto inicial do botão
-            color=ft.Colors.WHITE,                             # cor do texto
-            on_click=lambda e: page.run_task(confirmar_acao, e),# ao clicar, inicia a contagem sem travar a UI
-            height=50,                                         # altura do botão
-            width=125,                                         # largura do botão
+    # Cria a tabela inicial (sem linhas)
+    tabela = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("Nome")),
+            ft.DataColumn(ft.Text("Número")),
+            ft.DataColumn(ft.Text("Ações")),
+        ],
+        rows=[],
+    )
+
+    # --- FUNÇÕES ---
+
+    # Atualiza a tabela exibida na tela
+    def atualizar():
+        tabela.rows.clear()  # Remove todas as linhas atuais
+
+        # Percorre a lista de dados e cria uma linha para cada item
+        for i, item in enumerate(dados):
+            if item.get("editando", False):  # Se estiver no modo edição
+                # Campos para editar o nome e o número
+                campo_nome = ft.TextField(value=item["nome"], width=120)
+                campo_num = ft.TextField(value=item["numero"], width=100)
+
+                # Botão para salvar as alterações
+                btn_salvar = ft.ElevatedButton(
+                    text="Salvar",
+                    on_click=lambda e, i=i, n=campo_nome, nu=campo_num: salvar(i, n, nu)
+                )
+
+                # Botão para cancelar a edição
+                btn_cancelar = ft.TextButton(
+                    text="Cancelar",
+                    on_click=lambda e, i=i: cancelar(i)
+                )
+
+                # Linha com campos de edição
+                tabela.rows.append(
+                    ft.DataRow(
+                        cells=[
+                            ft.DataCell(campo_nome),
+                            ft.DataCell(campo_num),
+                            ft.DataCell(ft.Row([btn_salvar, btn_cancelar]))
+                        ]
+                    )
+                )
+
+            else:  # Modo normal (somente leitura)
+                # Botão de editar
+                btn_editar = ft.TextButton(
+                    text="Editar",
+                    on_click=lambda e, i=i: editar(i)
+                )
+
+                # Botão de excluir
+                btn_excluir = ft.TextButton(
+                    text="Excluir",
+                    on_click=lambda e, i=i: excluir(i),
+                    style=ft.ButtonStyle(color=ft.Colors.RED)
+                )
+
+                # Linha normal da tabela
+                tabela.rows.append(
+                    ft.DataRow(
+                        cells=[
+                            ft.DataCell(ft.Text(item["nome"])),
+                            ft.DataCell(ft.Text(item["numero"])),
+                            ft.DataCell(ft.Row([btn_editar, btn_excluir]))
+                        ]
+                    )
+                )
+
+        page.update()  # Atualiza a interface
+
+    # Adiciona um novo item à lista
+    def adicionar(e):
+        if nome.value and numero.value:  # Verifica se os campos não estão vazios
+            dados.append({"nome": nome.value, "numero": numero.value, "editando": False})
+            nome.value = ""
+            numero.value = ""
+            atualizar()  # Recria a tabela
+
+    # Coloca o item em modo de edição
+    def editar(index):
+        dados[index]["editando"] = True
+        atualizar()
+
+    # Salva as alterações feitas na linha
+    def salvar(index, campo_nome, campo_num):
+        dados[index]["nome"] = campo_nome.value
+        dados[index]["numero"] = campo_num.value
+        dados[index]["editando"] = False
+        atualizar()
+
+    # Cancela o modo de edição (sem salvar)
+    def cancelar(index):
+        dados[index]["editando"] = False
+        atualizar()
+
+    # Exclui o item da lista
+    def excluir(index):
+        dados.pop(index)
+        atualizar()
+
+    # Botão principal para adicionar novos dados
+    botao_add = ft.ElevatedButton(text="Adicionar", on_click=adicionar)
+
+    # Adiciona tudo na página
+    page.add(
+        ft.Column(
+            [
+                ft.Row([nome, numero, botao_add]),  # Linha superior de entrada
+                tabela,  # Tabela principal
+            ]
         )
+    )
 
-        return layout_botao  # retorna o botão criado
-
-    # Exemplo de função externa que será passada como 'action'
-    def acao_cancelar(e):
-        print("Ação externa executada! (por exemplo: voltar para outra tela)")
-
-    # Cria o botão passando a função externa que deve rodar quando confirmado
-    botao_cancelar = criar_botao_cancelar(acao_cancelar, page)
-
-    page.add(botao_cancelar)  # adiciona o botão à página
-
-ft.app(target=main)  # inicia o app Flet com a função main como entrypoint
+ft.app(target=main)
