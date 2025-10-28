@@ -29,13 +29,20 @@ def criar_tela_clientes(clientes, page):
                 global campo_numero
                 campo_numero = ft.TextField(label="Número:", value=cliente["numero"], width=200, on_change=formatar_numero)
 
-                global campo_cpf
-                campo_cpf = ft.TextField(label="CPF/CNPJ", value=cliente["cpf_cnpj"], width=200, on_change=formatar_cpf)
+                global campo_cpf_cnpj # Campo global genérico para receber CPF ou CNPJ.
+
+                # Se o tamanho da informação guardada na chave "cpf_cnpj" da lista de clientes for igual a 11 (tamanho de um cpf com sua formatação):
+                if len(cliente["cpf_cnpj"]) == 14:
+                    campo_cpf_cnpj = ft.TextField(label="CPF:", value=cliente["cpf_cnpj"], width=200, on_change=formatar_cpf)
+
+                # Se o tamanho da informação guardada na chave "cpf_cnpj" da lista de clientes for igual a 18 (tamanho de um cnpj com sua formatação):
+                elif len(cliente["cpf_cnpj"]) == 18:
+                    campo_cpf_cnpj = ft.TextField(label="CNPJ:", value=cliente["cpf_cnpj"], width=200, on_change=formatar_cnpj)
 
                 # Botão para salvar as alterações:
                 botao_salvar = ft.TextButton(
                     text="Salvar",
-                    on_click=lambda e, index=i: salvar(index, campo_nome, campo_numero, campo_cpf),
+                    on_click=lambda e, index=i: salvar(index, campo_nome, campo_numero, campo_cpf_cnpj),
                     style=ft.ButtonStyle(color="#507656"),
                 )
 
@@ -51,7 +58,7 @@ def criar_tela_clientes(clientes, page):
                         cells=[
                             ft.DataCell(campo_nome), # Adiciona os campos já preenchidos para que as informações ejam alteradas.
                             ft.DataCell(campo_numero),
-                            ft.DataCell(campo_cpf),
+                            ft.DataCell(campo_cpf_cnpj),
                             ft.DataCell(ft.Row([botao_salvar, botao_cancelar])),
                         ],
                     ),
@@ -137,7 +144,27 @@ def criar_tela_clientes(clientes, page):
         if len(texto) > 9:
             formatado += "-" + texto[9:11]
 
-        campo_cpf.value = formatado
+        campo_cpf_cnpj.value = formatado
+        page.update()
+
+    def formatar_cnpj(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        texto[:14]
+
+        formatado = ""
+
+        if len(texto) > 0:
+            formatado += texto[:2]
+        if len(texto) > 2:
+            formatado += "." + texto[2:5]
+        if len(texto) > 5:
+            formatado += "." + texto[5:8]
+        if len(texto) > 8:
+            formatado += "/" + texto[8:12]
+        if len(texto) > 12:
+            formatado += "-" + texto[12:14]
+
+        campo_cpf_cnpj.value = formatado
         page.update()
 
     def formatar_numero(e):
