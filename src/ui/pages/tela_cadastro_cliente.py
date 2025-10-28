@@ -145,7 +145,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
                 "nome":campo_nome.value,
                 "numero":campo_numero.value,
                 "cpf_cnpj":campo_cnpj.value,
-                "editando":False,     
+                "editando":False     
             }
 
         clientes.append(novo_cliente)
