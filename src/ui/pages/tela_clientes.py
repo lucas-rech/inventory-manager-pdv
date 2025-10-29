@@ -74,7 +74,7 @@ def criar_tela_clientes(clientes, page):
 
                 # Botão para remover clientes da lista:
                 botao_excluir = ft.TextButton(
-                    content=ft.Text("Excluir", size=16),# Texto escrito no botão
+                    content=ft.Text("Excluir", size=16), # Texto escrito no botão
                     on_click=lambda e, index=i: excluir(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função excluir.
                     style=ft.ButtonStyle(color="#9B3E3E"), # Cor do texto.
                 )

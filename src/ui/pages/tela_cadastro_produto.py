@@ -144,7 +144,8 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
             "preco_custo":preco_custo.value,
             "preco_venda":preco_venda.value,
             "quantidade":quantidade.value,
-            "validade":validade.value
+            "validade":validade.value,
+            "editando":False,
         }
 
         produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
