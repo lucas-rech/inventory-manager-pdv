@@ -16,7 +16,7 @@ def criar_tela_estoque(produtos, page):
 
         rows=[], # As linhas começam vazias, sem nenhum item em estoque.
 
-        width=1300,
+        width=1500,
     )
 
     # Função que adicionará itens à tabela de estoque:
@@ -44,16 +44,45 @@ def criar_tela_estoque(produtos, page):
                     value=produto["preco_custo"],
                 )
 
+                campo_preco_venda = ft.TextField(
+                    label="Preço de Venda:",
+                    value=produto["preco_venda"],
+                    width=120,
+                )
+
+                campo_quantidade = ft.TextField(
+                    label="Quantidade:",
+                    value=produto["quantidade"],
+                    width=100,
+                )
+
+                campo_validade = ft.TextField(
+                    label="Validade:",
+                    value=produto["validade"],
+                    width=120,
+                )
+
+                botao_salvar = ft.TextButton(
+                    text="Salvar",
+                    style=ft.ButtonStyle(color="#507656"),
+                    on_click=lambda e, index=i: salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade)
+                )
+
+                botao_cancelar = ft.TextButton(
+                    text="Cancelar",
+                    style=ft.ButtonStyle(color="#9B3E3E"),
+                )
+
                 tabela_estoque.rows.append(
                     ft.DataRow( # IMPORTANTE: É obrigatório passar a mesma quantidade de datacells em relação à quantidade de colunas.
                         cells=[
                             ft.DataCell(campo_codigo_barras),
                             ft.DataCell(campo_nome_produto),
                             ft.DataCell(campo_preco_custo),
-                            ft.DataCell(ft.Text("teste")),
-                            ft.DataCell(ft.Text("teste")),
-                            ft.DataCell(ft.Text("teste")),
-                            ft.DataCell(ft.Text("teste")),
+                            ft.DataCell(campo_preco_venda),
+                            ft.DataCell(campo_quantidade),
+                            ft.DataCell(campo_validade),
+                            ft.DataCell(ft.Row([botao_salvar, botao_cancelar])),
                         ]
                     )
                 )
@@ -100,6 +129,17 @@ def criar_tela_estoque(produtos, page):
     def excluir(index): # Recebe o index dos dados que serão excluidos.
         produtos.pop(index) # Exclui o item contido no index.
         atualizar() # Atualiza a tabela.
+
+    # Função de salar os novos dados na tabela:
+    def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade):
+        produtos[index]["codigo"] = campo_codigo_barras.value
+        produtos[index]["nome"] = campo_nome_produto.value
+        produtos[index]["preco_custo"] = campo_preco_custo.value
+        produtos[index]["preco_venda"] = campo_preco_venda.value
+        produtos[index]["quantidade"] = campo_quantidade.value
+        produtos[index]["validade"] = campo_validade.value
+        produtos[index]["editando"] = False
+        atualizar()
 
     # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
     container_tabela = ft.Container(

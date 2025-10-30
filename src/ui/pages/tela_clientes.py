@@ -23,10 +23,9 @@ def criar_tela_clientes(clientes, page):
         for i, cliente in enumerate(clientes):# Para cada indice e item que está naquele índice, da lista "clientes".
 
             if cliente.get("editando", False):
-                global campo_nome
                 campo_nome = ft.TextField(label="Nome:", value=cliente["nome"], width=200)
 
-                global campo_numero
+                
                 campo_numero = ft.TextField(label="Número:", value=cliente["numero"], width=200, on_change=formatar_numero)
 
                 global campo_cpf_cnpj # Campo global genérico para receber CPF ou CNPJ.
