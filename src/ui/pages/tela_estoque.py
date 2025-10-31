@@ -1,4 +1,5 @@
 import flet as ft
+import re
 
 # Função que irá criar a tela de estoque:
 def criar_tela_estoque(produtos, page):
@@ -26,22 +27,28 @@ def criar_tela_estoque(produtos, page):
         for i, produto in enumerate(produtos): # Para cada indice da lista "produtos"
 
             if produto.get("editando", False):
+                global campo_codigo_barras
                 campo_codigo_barras = ft.TextField(
                     label="Código de Barras",
                     value=produto["codigo"],
                     width=100,
+                    on_change=formatar_codigo_barras,
                 )
 
+                global campo_nome_produto
                 campo_nome_produto = ft.TextField(
                     label="Nome:",
                     width=120,
                     value=produto["nome"],
+                    on_change=formatar_nome_produto,
                 )
 
+                global campo_preco_custo
                 campo_preco_custo = ft.TextField(
                     label="Preço de Custo:",
                     width=120,
                     value=produto["preco_custo"],
+                    on_change=formatar_preco_custo,
                 )
 
                 campo_preco_venda = ft.TextField(
@@ -146,6 +153,43 @@ def criar_tela_estoque(produtos, page):
     def cancelar(index): # Recebe o index de onde a alteração está sendo feita.
         produtos[index]["editando"] = False # Muda o valor contido na chave editando, no index passado.
         atualizar() # Atualiza a tabela.
+
+
+    # FUNÇÕES DE FORMATAÇÃO DOS DADOS DA TABELA: 
+    def formatar_codigo_barras(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        campo_codigo_barras.value = texto
+        page.update()
+
+    def formatar_nome_produto(e):
+        texto = e.control.value
+
+        if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Verifica se os caracteres contidos em "texto" casam com o filtro especificado (A até Z, a até Z, letras com acentos e espaços).
+            campo_nome_produto.error_text = None
+
+        else: # Se não bater com o filtro
+            campo_nome_produto.error_text = "Apenas letras!"
+
+        campo_nome_produto.value = re.sub(r"\s{2,}", " ", texto)
+        page.update()
+
+    def formatar_preco_custo(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+
+        if not texto:
+            campo_preco_custo.value = "R$ 0,00"
+            page.update()
+            return # O return está vazio aqui para quefuncione como um "Break" da função, ou seja para aqui.
+
+        # Converte para inteiro e divide por 100 para colocar vírgula decimal
+        valor = int(texto) / 100
+
+        # Formata com separador de milhar (.) e decimal (,)
+        formatado = f"R$ {valor:.2f}".replace(",", "v").replace(".", ",").replace("v", ".") # A ideia aqui é usar uma letra provisória (v) pra segurar o lugar das vírgulas, e só depois trocar tudo certinho.
+        # essa troca dupla inverte o padrão americano (1,234.56 → 1.234,56)
+
+        campo_preco_custo.value = formatado
+        page.update()
 
     # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
     container_tabela = ft.Container(

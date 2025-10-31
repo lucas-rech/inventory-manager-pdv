@@ -32,7 +32,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Verifica se os caracteres contidos em "texto" casam com o filtro especificado (A até Z, a até Z, letras com acentos e espaços).
             nome.error_text = None
 
-        else: # Se não batere com o filtro
+        else: # Se não bater com o filtro
             nome.error_text = "O nome deve conter apenas letras!"
 
         # Remove espaços duplicados acidentalmente
