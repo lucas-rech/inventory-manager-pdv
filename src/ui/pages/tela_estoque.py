@@ -71,6 +71,7 @@ def criar_tela_estoque(produtos, page):
                 botao_cancelar = ft.TextButton(
                     text="Cancelar",
                     style=ft.ButtonStyle(color="#9B3E3E"),
+                    on_click=lambda e, index=i: cancelar(index),
                 )
 
                 tabela_estoque.rows.append(
@@ -130,16 +131,21 @@ def criar_tela_estoque(produtos, page):
         produtos.pop(index) # Exclui o item contido no index.
         atualizar() # Atualiza a tabela.
 
-    # Função de salar os novos dados na tabela:
-    def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade):
-        produtos[index]["codigo"] = campo_codigo_barras.value
-        produtos[index]["nome"] = campo_nome_produto.value
-        produtos[index]["preco_custo"] = campo_preco_custo.value
-        produtos[index]["preco_venda"] = campo_preco_venda.value
-        produtos[index]["quantidade"] = campo_quantidade.value
-        produtos[index]["validade"] = campo_validade.value
-        produtos[index]["editando"] = False
-        atualizar()
+    # Função de salvar os novos dados na tabela:
+    def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade): # Recebe os campos que recebem as novas informações.
+        produtos[index]["codigo"] = campo_codigo_barras.value # Muda o dado contido na chave codigo, no index passado.
+        produtos[index]["nome"] = campo_nome_produto.value # Muda o dado contido na chave nome, no index passado.
+        produtos[index]["preco_custo"] = campo_preco_custo.value # Muda o dado contido na chave preco_custo, no index passado.
+        produtos[index]["preco_venda"] = campo_preco_venda.value # Muda o dado contido na chave preco_venda, no index passado.
+        produtos[index]["quantidade"] = campo_quantidade.value # Muda o dado contido na chave quantidade, no index passado.
+        produtos[index]["validade"] = campo_validade.value # Muda o dado contido na chave validade, no index passado.
+        produtos[index]["editando"] = False # Muda o valor contido na chave editando, no index passado.
+        atualizar() # Atualiza a tabela.
+
+    # Função que irá cancelar as alterações:
+    def cancelar(index): # Recebe o index de onde a alteração está sendo feita.
+        produtos[index]["editando"] = False # Muda o valor contido na chave editando, no index passado.
+        atualizar() # Atualiza a tabela.
 
     # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
     container_tabela = ft.Container(
