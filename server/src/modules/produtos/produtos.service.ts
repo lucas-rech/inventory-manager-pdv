@@ -1,4 +1,4 @@
-import { EntityManager, EntityRepository, FindOptions, QueryOrder } from "@mikro-orm/mysql";
+import { EntityManager, EntityRepository, QueryOrder } from "@mikro-orm/mysql";
 import { Produto } from "./produto.entity.js";
 import { Lote } from "./lotes/lote.entity.js";
 import { LoteRepository } from "./lotes/lote.repository.js";
@@ -65,8 +65,8 @@ export class ProdutosService {
     }
 
     //Pode receber parâmetro de range, ordem etc.
-    async buscarTodos(options: FindOptions<Produto> = {}): Promise<Produto[]> {
-        return this.produtoRepo.find({}, options);
+    async buscarTodos(): Promise<Produto[]> {
+        return await this.produtoRepo.findAll();
     }
 
     async buscarporId(id: number): Promise<Produto> {

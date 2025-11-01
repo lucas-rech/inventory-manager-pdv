@@ -1,13 +1,22 @@
-import { MikroORM } from "@mikro-orm/core";
-import config from "../mikro-orm.config.js";
-import { ClienteService, CriarClienteDTO } from "./modules/clientes/cliente.service.js";
-import { CriarLoteDTO, CriarProdutoDTO, ProdutosService } from "./modules/produtos/produtos.service.js";
+import express from "express";
+import { variables } from "./config/index.js";
+import router from "./modules/produtos/produtos.router.js";
 
-const orm = await MikroORM.init(config);
+const app = express();
+app.use(express.json());
+app.use("/produtos", router);
 
-const clienteService = new ClienteService(orm.em);
-const productService = new ProdutosService(orm.em);
 
+app.listen(variables.port, () => {
+    console.log(`Web server rodando na porta ${variables.port.toString()}`)
+});
+
+
+
+
+
+
+/* 
 const user: CriarClienteDTO = {
     nomeCompleto: "Lucas Rech",
     documento: "12453345",
@@ -33,10 +42,6 @@ const lote: CriarLoteDTO = {
     custo: 200.0,
     dataEntrada: new Date(),
     dataValidade: new Date(2025, 10, 30),
-};
-console.log(await productService.inserirNovoLote(lote));
+}; */
 
-console.log(await productService.inserirNovoLote(lote));
-console.log(await productService.calcularEstoqueTotal(1));
 
-console.log(await productService.consumirEstoque(1, 20));
