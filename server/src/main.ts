@@ -1,10 +1,14 @@
 import express from "express";
 import { variables } from "./config/index.js";
-import router from "./modules/produtos/produtos.router.js";
+import produtosRouter from "./modules/produtos/produtos.router.js";
+import clientesRouter from "./modules/clientes/cliente.router.js";
+import usuarioRouter from "./modules/admin/user.router.js";
 
 const app = express();
 app.use(express.json());
-app.use("/produtos", router);
+app.use("/produtos", produtosRouter);
+app.use("/cliente", clientesRouter);
+app.use("/usuario", usuarioRouter);
 
 app.listen(variables.port, () => {
     console.log(`Web server rodando na porta ${variables.port.toString()}`);

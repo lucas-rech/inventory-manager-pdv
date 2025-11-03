@@ -1,20 +1,9 @@
 import { EntityManager } from "@mikro-orm/mysql";
 import { ClienteRepository } from "./cliente.repository.js";
 import { Cliente } from "./cliente.entity.js";
+import { AtualizarClienteDTO, CriarClienteDTO } from "./cliente.interface.js";
+import hash from "../../utils/hash-password.js";
 
-export interface CriarClienteDTO {
-    nomeCompleto: string;
-    documento: string;
-    numeroTelefone?: string;
-    senha: string;
-}
-
-export interface AtualizarClienteDTO {
-    nomeCompleto?: string;
-    documento?: string;
-    numeroTelefone?: string;
-    senha?: string;
-}
 
 export class ClienteService {
     private readonly em: EntityManager;
@@ -30,7 +19,7 @@ export class ClienteService {
             throw new Error(`Usuário com o documento ${dto.documento} já existe`);
         }
 
-        const cliente = this.clienteRepo.create(new Cliente(dto.nomeCompleto, dto.documento, dto.senha, dto.numeroTelefone));
+        const cliente = this.clienteRepo.create(new Cliente(dto.nomeCompleto, dto.documento, hash(dto.senha), dto.numeroTelefone));
         await this.em.persistAndFlush(cliente);
 
         return cliente;
