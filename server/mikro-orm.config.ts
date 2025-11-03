@@ -6,6 +6,7 @@ import { Produto } from "./src/modules/produtos/produto.entity.js";
 import { Lote } from "./src/modules/produtos/lotes/lote.entity.js";
 import { Venda } from "./src/modules/vendas/venda.entity.js";
 import { ProdutoVenda } from "./src/modules/vendas/produto-venda.entity.js";
+import { Usuario } from "./src/modules/admin/user.entity.js";
 
 const config: Options = {
     dbName: variables.db.name,
@@ -15,7 +16,7 @@ const config: Options = {
     debug: true,
     driver: MySqlDriver,
     entities: ["dist/**/*.entity.js"],
-    entitiesTs: [Cliente, Produto, Lote, Venda, ProdutoVenda],
+    entitiesTs: [Cliente, Produto, Lote, Venda, ProdutoVenda, Usuario],
 
     metadataProvider: TsMorphMetadataProvider,
     allowGlobalContext: true,

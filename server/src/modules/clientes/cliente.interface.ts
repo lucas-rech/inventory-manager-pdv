@@ -1,3 +1,5 @@
+import { type Request } from "express";
+
 export interface CriarClienteDTO {
     nomeCompleto: string;
     documento: string;
@@ -10,4 +12,9 @@ export interface AtualizarClienteDTO {
     documento?: string;
     numeroTelefone?: string;
     senha?: string;
+}
+
+
+export interface CriarClienteRequestBody extends Request {
+    body: CriarClienteDTO;
 }

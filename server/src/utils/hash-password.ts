@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 
-export default function hash(valor: string, saltRounds: number) {
+export default function hashPassword(valor: string) {
+    const saltRounds = 10;
     return bcrypt.hashSync(valor, saltRounds)
 }
