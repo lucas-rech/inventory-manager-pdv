@@ -24,15 +24,29 @@ No banco de dados, utilizamos MySQL.
 server/
 │
 ├── src/
+│   ├── config/                                # Arquivos de configuração
 │   │
 │   ├── modules/
 │   │   └── clientes/
-│   │       ├── cliente.entity.ts  # Exemplo de entidade do MikroORM
-│   │       └── example.route.ts   # Exemplo de rota Express
+│   │       ├── cliente.entity.ts              # Entidade de cliente
+│   │       └── cliente.repository.ts          # Repositório que entra em contato com o db
+│   │       └── cliente.service.ts             # Regras de negócio de clientes
+│   │   └── common/
+│   │       ├── base.entity.ts                 # Entidade abstrata
+│   │       └── enums.ts                       # Enums
+│   │   └── produtos/
+│   │           └── lotes/
+│   │               ├── lote.entity.ts         # Entidade de lotes
+│   │               └── lote.repository.ts     # Repositório customizado que entra em contato com o db
+│   │       ├── produto.entity.ts              # Entidade de produtos
+│   │       └── produtos.service.ts            # Regras de negócios de produtos
+│   │   └── vendas/               
+│   │       ├── produto-venda.entity.ts        # Tabela many to many
+│   │       └── venda.entity.ts                # Entidade de venda           
 │   │
-│   └── server.ts                     # Ponto de entrada principal
+│   └── main.ts                                # Ponto de entrada principal
 │
-├── .eslintrc.json                 # Configurações do ESLint
-├── .prettierrc                    # Configurações do Prettier
-├── tsconfig.json                  # Configurações do TypeScript
+├── .eslintrc.json                             # Configurações do ESLint
+├── .prettierrc                                # Configurações do Prettier
+├── tsconfig.json                              # Configurações do TypeScript
 ├── package.json
