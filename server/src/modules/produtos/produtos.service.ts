@@ -2,7 +2,7 @@ import { EntityManager, EntityRepository, QueryOrder } from "@mikro-orm/mysql";
 import { Produto } from "./produto.entity.js";
 import { Lote } from "./lotes/lote.entity.js";
 import { LoteRepository } from "./lotes/lote.repository.js";
-import { AtualizarProdutoDTO, CriarLoteDTO, CriarProdutoDTO } from "./produtos.interface.js";
+import { AtualizarProdutoDTO, CriarLoteDTO, CriarProdutoDTO, ProdutoDTO } from "./produtos.interface.js";
 
 export class ProdutosService {
     private readonly em: EntityManager;
@@ -27,17 +27,29 @@ export class ProdutosService {
     }
 
     async inserirNovoLote(dto: CriarLoteDTO): Promise<Lote> {
-        if (!(await this.produtoRepo.findOne(dto.produto.id))) {
+        const produto = await this.produtoRepo.findOne(dto.idProduto);
+        if (!produto) {
             throw new Error(`Produto não existe`);
         }
         if (await this.loteRepo.findOne({ identificador: dto.identificador })) {
             throw new Error(`Já existe um lote com o identificador ${dto.identificador}`);
         }
 
-        const lote = this.loteRepo.create(new Lote(dto.identificador, dto.produto, dto.custo, dto.quantidadeLote, dto.dataEntrada, dto.dataValidade));
+        const lote = this.loteRepo.create(new Lote(dto.identificador, produto, dto.custo, dto.quantidadeLote, dto.dataEntrada, dto.dataValidade));
         await this.em.persistAndFlush(lote);
 
         return lote;
+    }
+
+    async buscarLotesDoProduto(productId: number): Promise<Lote[]> {
+        const produto = await this.produtoRepo.findOne(productId);
+        if (!produto) {
+            throw new Error(`Produto com ID ${productId.toString()} não encontrado`);
+        }
+
+        const lotes = await this.loteRepo.findByProduct(productId);
+
+        return lotes ?? [];
     }
 
     //Pode receber parâmetro de range, ordem etc.
@@ -45,14 +57,26 @@ export class ProdutosService {
         return await this.produtoRepo.findAll();
     }
 
-    async buscarporId(id: number): Promise<Produto> {
+    async buscarporId(id: number): Promise<ProdutoDTO> {
         const produto = await this.produtoRepo.findOne(id);
 
         if (!produto) {
             throw new Error(`Produto com ID ${id.toString()} não encontrado`);
         }
 
-        return produto;
+        const quantidadeEstoque = await this.calcularEstoqueTotal(id);
+
+        const produtoDTO: ProdutoDTO = {
+            id: produto.id,
+            nome: produto.nome,
+            descricao: produto.descricao,
+            gtin: produto.gtin,
+            precoVenda: produto.precoVenda,
+            precoCusto: produto.precoCusto,
+            quantidadeEstoque: quantidadeEstoque,
+        };
+
+        return produtoDTO;
     }
 
     async atualizar(id: number, dto: AtualizarProdutoDTO): Promise<Produto> {

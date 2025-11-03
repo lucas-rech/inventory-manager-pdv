@@ -1,4 +1,3 @@
-import { Produto } from "./produto.entity.js";
 import { Request } from "express";
 
 export interface CriarProdutoDTO {
@@ -7,6 +6,16 @@ export interface CriarProdutoDTO {
     gtin: string;
     precoVenda: number;
     precoCusto: number;
+}
+
+export interface ProdutoDTO {
+    id: number;
+    nome: string;
+    descricao?: string;
+    gtin: string;
+    precoVenda: number;
+    precoCusto: number;
+    quantidadeEstoque: number;
 }
 
 export interface AtualizarProdutoDTO {
@@ -19,7 +28,7 @@ export interface AtualizarProdutoDTO {
 
 export interface CriarLoteDTO {
     identificador: string;
-    produto: Produto;
+    idProduto: number;
     custo: number;
     quantidadeLote: number;
     dataEntrada: Date;
