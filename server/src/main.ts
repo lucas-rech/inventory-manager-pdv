@@ -6,15 +6,9 @@ const app = express();
 app.use(express.json());
 app.use("/produtos", router);
 
-
 app.listen(variables.port, () => {
-    console.log(`Web server rodando na porta ${variables.port.toString()}`)
+    console.log(`Web server rodando na porta ${variables.port.toString()}`);
 });
-
-
-
-
-
 
 /* 
 const user: CriarClienteDTO = {
@@ -43,5 +37,3 @@ const lote: CriarLoteDTO = {
     dataEntrada: new Date(),
     dataValidade: new Date(2025, 10, 30),
 }; */
-
-
