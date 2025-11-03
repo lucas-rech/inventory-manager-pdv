@@ -1,20 +1,8 @@
 import { EntityManager } from "@mikro-orm/mysql";
 import { ClienteRepository } from "./cliente.repository.js";
 import { Cliente } from "./cliente.entity.js";
+import { AtualizarClienteDTO, CriarClienteDTO } from "./cliente,interface.js";
 
-export interface CriarClienteDTO {
-    nomeCompleto: string;
-    documento: string;
-    numeroTelefone?: string;
-    senha: string;
-}
-
-export interface AtualizarClienteDTO {
-    nomeCompleto?: string;
-    documento?: string;
-    numeroTelefone?: string;
-    senha?: string;
-}
 
 export class ClienteService {
     private readonly em: EntityManager;
