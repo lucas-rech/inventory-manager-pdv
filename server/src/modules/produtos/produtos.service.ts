@@ -2,31 +2,7 @@ import { EntityManager, EntityRepository, QueryOrder } from "@mikro-orm/mysql";
 import { Produto } from "./produto.entity.js";
 import { Lote } from "./lotes/lote.entity.js";
 import { LoteRepository } from "./lotes/lote.repository.js";
-
-export interface CriarProdutoDTO {
-    nome: string;
-    descricao?: string;
-    gtin: string;
-    precoVenda: number;
-    precoCusto: number;
-}
-
-interface AtualizarProdutoDTO {
-    nome?: string;
-    descricao?: string;
-    gtin?: string;
-    precoVenda?: number;
-    precoCusto?: number;
-}
-
-export interface CriarLoteDTO {
-    identificador: string;
-    produto: Produto;
-    custo: number;
-    quantidadeLote: number;
-    dataEntrada: Date;
-    dataValidade: Date;
-}
+import { AtualizarProdutoDTO, CriarLoteDTO, CriarProdutoDTO } from "./produtos.interface.js";
 
 export class ProdutosService {
     private readonly em: EntityManager;
@@ -117,6 +93,10 @@ export class ProdutosService {
 
     //Consome do lote com data de validade mais próxima de vencer
     async consumirEstoque(productId: number, quantidade: number): Promise<number> {
+        if (quantidade <= 0) {
+            throw new Error("A quantidade a ser consumida deve ser maior que zero");
+        }
+
         const produto = await this.produtoRepo.findOne(productId);
         if (!produto) {
             throw new Error(`Não foi possível encotnrar um produto com id ${productId.toString()}`);
