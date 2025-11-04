@@ -1,7 +1,8 @@
 import flet as ft
+from ui.pages.tela_cadastro_usuarios import primeiro_acesso, cadastro_usuarios
 
-usuarios = ["admin"]
-senhas = ["admin"]
+usuarios = ["admin", ""]
+senhas = ["admin", ""]
 
 def criar_tela_login(page, entrar):
 
@@ -16,8 +17,21 @@ def criar_tela_login(page, entrar):
 
     # Função que verifica se os campos foram preenchidos corretamente:
     def verificar_login(e):
+
         if usuario.value in usuarios and senha.value in senhas: # Verifica se o usuário e senha estão corretos
-            entrar() # Chama a função entrar (que está em main.py) para entrar no sistema
+            # Esse if é para o primeiro acesso do sistema, onde o usuário e senha são "admin", por enquanto não está operando, pois o if principal já verifica se o usuário e senha estão corretos.
+            # if usuario.value.lower() == "admin" and senha.value.lower() == "admin":
+            #     page.clean()
+            #     primeiro_acesso(usuario.value, senha.value)
+            #     page.theme_mode = ft.ThemeMode.LIGHT
+            #     page.window.maximized = True
+            #     page.window.resizable = True
+
+            #     conteudo_cadastro_usuarios = cadastro_usuarios(page)
+            #     page.add(conteudo_cadastro_usuarios)
+            # else:
+                entrar() # Chama a função entrar (que está em main.py) para entrar no sistema
+            
         else:
             alerta.content.value = "Usuário e/ou senha incorretos!" # Se estiverem errados, mostra uma mensagem de erro
             alerta.open = True # Abre o alerta
@@ -48,7 +62,7 @@ def criar_tela_login(page, entrar):
         border_radius=20,
         content=ft.Column(
             [
-                ft.Image(src="src/assets/Logo.jpeg", width=150, height=150, fit=ft.ImageFit.CONTAIN),
+                ft.Image(src="src/assets/Logo.jpeg", width=150, height=150, fit=ft.ImageFit.CONTAIN, border_radius=10),
                 ft.Text("Login", size=40, weight="bold"),
                 usuario,
                 senha,

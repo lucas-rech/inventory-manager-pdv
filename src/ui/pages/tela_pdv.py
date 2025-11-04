@@ -1,7 +1,7 @@
 import flet as ft
-import time
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
+from ui.pages.tela_finalizar_compra import criar_tela_finalizar_compra
 
 def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
     # Função que permitirá apenas números no campo de código:
@@ -104,7 +104,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
         height=100,
     )
 
-    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total, page) # Cirando a tela de finalizar compra
+    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total) # Cirando a tela de finalizar compra
     
     def finalizar_compra(e): # Atualização do conteúdo para a tela de finaizar compra
         conteudo_completo.controls.clear() # Limpa tudo
@@ -146,85 +146,6 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
 
         expand=True, 
         bgcolor=ft.Colors.WHITE,
-        padding=20,
-        border_radius=13,
-    )
-
-    return layout
-
-def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será inserido a tabela com o resumo da compra, já formatada.
-
-    # Estou fazendo uma cópia do campo de total para evitar conflitos.
-    novo_total_compra = ft.Container(
-        content=texto_total,
-        bgcolor="#85A289",
-        padding=ft.padding.all(15),
-        border_radius=13,
-        alignment=ft.alignment.center,
-        width=750,
-        height=100,
-    )
-
-    qr_code = ft.Image(src="src/assets/qr-code.png", width=200, height=200, visible=False)
-
-    # escolha conforme o método de pagamento
-    def escolha_pagamento(e):
-        if e.control.value == "pix":
-            qr_code.visible = True
-            page.update()
-            time.sleep(3)
-            qr_code.visible = False
-            page.update()
-
-        if e.control.value == "dinheiro":
-            pass
-        if e.control.value == "débito":
-            pass
-        if e.control.value == "crédito":
-            pass
-
-    # Menu de seleção da forma de pagamento:
-    menu_forma_pagamento = ft.Container(
-        ft.RadioGroup(
-            content=ft.Column(
-                [
-                    ft.Radio(label="💠 Pix", value="pix"), # O value será util para capturar a forma de pagamento selecionada, para que possa ser utilizada posteriormente.
-                    ft.Radio(label="💵 Dinheiro", value="dinheiro"),
-                    ft.Radio(label="💳 Débito", value="débito"),
-                    ft.Radio(label="💳 Crédito", value="crédito"),
-                ],
-                spacing=10,
-            ),
-            on_change=escolha_pagamento,
-            value=None, # O valor inicial é nulo, nenhuma opção selecionada
-        ),
-
-        width=250,
-        height=180,
-        border=ft.border.all(1, "#765070"),
-        border_radius=10,
-    )
-
-
-
-
-
-    botao_finalizar = criar_botao_finalizar(True)
-    botao_finalizar.width = 250
-
-    layout = ft.Container(
-        ft.Row(
-            [
-                ft.Column([area_tabela, novo_total_compra], alignment=ft.MainAxisAlignment.START),
-                ft.Column([menu_forma_pagamento, botao_finalizar, qr_code], alignment=ft.MainAxisAlignment.START),
-            ],
-
-            spacing=10,
-            alignment=ft.MainAxisAlignment.CENTER,
-        ),
-
-        bgcolor=ft.Colors.WHITE,
-        expand=True,
         padding=20,
         border_radius=13,
     )
