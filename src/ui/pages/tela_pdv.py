@@ -1,5 +1,5 @@
 import flet as ft
-import time
+import asyncio
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
 
@@ -165,15 +165,40 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         height=100,
     )
 
-    qr_code = ft.Image(src="src/assets/qr-code.png", width=200, height=200, visible=False)
+    qr_code = ft.Image(src="src/assets/qr-code.png", width=200, height=200) # Imagem do qrcode.
+    transacao_aceita = ft.Icon( # Icone de transação validada
+        name=ft.Icons.CHECK_CIRCLE,
+        color="#507656",
+        size=40,
+        visible=False,
+    )
+
+    container_qr_code = ft.Container( # Container onde ficarão a imagem do qrcode e o icone de validação.
+        content=ft.Column(
+            controls=[
+                ft.Row([qr_code], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([transacao_aceita], alignment=ft.MainAxisAlignment.CENTER),
+            ],
+
+            alignment=ft.MainAxisAlignment.CENTER,
+        ),
+
+        alignment=ft.alignment.center,
+        bgcolor="#E8E3DE",
+        width=250,
+        height=300,
+        border_radius=10,
+        visible=False,
+    )
 
     # escolha conforme o método de pagamento
-    def escolha_pagamento(e):
+    async def escolha_pagamento(e): # Define a função como assíncrona para evitar que a interface congele. (async)
         if e.control.value == "pix":
-            qr_code.visible = True
-            page.update()
-            time.sleep(3)
-            qr_code.visible = False
+            container_qr_code.visible = True
+            page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
+
+            await asyncio.sleep(3) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!  
+            transacao_aceita.visible = True
             page.update()
 
         if e.control.value == "dinheiro":
@@ -195,7 +220,8 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
                 ],
                 spacing=10,
             ),
-            on_change=escolha_pagamento,
+            on_change=lambda e: page.run_task(escolha_pagamento, e), # Criamos uma função anônima (lambda) que recebe o evento "e" como parâmetro "e", quando o evento on_change é disparado, ela executa de forma assíncrona a função escolha_pagamento(e) usando asyncio.create_task().
+
             value=None, # O valor inicial é nulo, nenhuma opção selecionada
         ),
 
@@ -205,10 +231,6 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         border_radius=10,
     )
 
-
-
-
-
     botao_finalizar = criar_botao_finalizar(True)
     botao_finalizar.width = 250
 
@@ -216,7 +238,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         ft.Row(
             [
                 ft.Column([area_tabela, novo_total_compra], alignment=ft.MainAxisAlignment.START),
-                ft.Column([menu_forma_pagamento, botao_finalizar, qr_code], alignment=ft.MainAxisAlignment.START),
+                ft.Column([menu_forma_pagamento, botao_finalizar, container_qr_code], alignment=ft.MainAxisAlignment.START),
             ],
 
             spacing=10,

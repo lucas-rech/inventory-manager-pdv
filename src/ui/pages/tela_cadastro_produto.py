@@ -22,12 +22,14 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
     # Função que formatará o código inserido no campo código.
     def formatar_codigo(e):
         texto = "".join(filter(str.isdigit, e.control.value)) # Filtra para que apenas números sejam adicionados à string.
+        texto = texto[:13]
         codigo.value = texto # Atualiza enquanto o usuário digita com o valor formatado.
         page.update() # Atualiza a página para mostrar as alterações.
 
     # Função que formatará o nome inserido no campo nome.
     def formatar_nome(e): 
         texto = e.control.value
+        texto = texto[:90]
          
         if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Verifica se os caracteres contidos em "texto" casam com o filtro especificado (A até Z, a até Z, letras com acentos e espaços).
             nome.error_text = None
@@ -42,6 +44,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
     # Função que formatará o preco de custo inserido no campo preco_custo.
     def formatar_preco_custo(e):
         texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:11]
 
         if not texto:
             preco_custo.value = "R$ 0,00"
@@ -93,6 +96,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
 
     def formatar_quantidade(e):
         texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:5]
         quantidade.value = texto
         page.update()
 

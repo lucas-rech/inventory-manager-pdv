@@ -136,6 +136,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
     def apenas_digitos(texto):
         return re.sub(r"\D", "", texto or "")
+    
     def adicionar_cliente(e):
         if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
             
@@ -148,9 +149,11 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
                     "cpf_cnpj":campo_cpf.value,
                     "editando":False,     
                 }
+
             else :
                 invalid = True
                 campo_cpf.error_text="CPF INVÁLIDO"
+                campo_cpf.focus()
 
         if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
             invalid = False
@@ -161,19 +164,21 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
                     "cpf_cnpj":campo_cnpj.value,
                     "editando":False     
                 }
+
             else :
                 invalid = True
                 campo_cnpj.error_text="CNPJ INVÁLIDO"
+                campo_cnpj.focus()
 
         if invalid == False :
             clientes.append(novo_cliente)
             for campo in [campo_nome, campo_numero, campo_cpf, campo_cnpj]:
                 campo.value = ""
-            campo_cpf.error_text="CPF INVÁLIDO"
 
+            campo_cpf.error_text = None
+            campo_cnpj.error_text = None
+            campo_nome.focus()
 
-
-        campo_nome.focus()
         page.update()
 
 
