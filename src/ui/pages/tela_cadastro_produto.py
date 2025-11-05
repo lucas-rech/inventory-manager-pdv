@@ -1,5 +1,6 @@
 import flet as ft
 import re
+import datetime
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
@@ -116,6 +117,29 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         validade.value = formatado
         page.update()
 
+    def handle_change(e):
+        # Atualiza o TextField com a data selecionada formatada
+        data_formatada = e.control.value.strftime('%d/%m/%Y')
+        validade.value = data_formatada
+        validade.update()
+        page.close(date_picker)
+
+    def handle_dismissal(e):
+        # Ação quando o DatePicker é fechado sem selecionar
+        page.close(date_picker)
+
+    # Cria o DatePicker com as configurações
+    date_picker = ft.DatePicker(
+        first_date=datetime.datetime(year=2025, month=1, day=1),
+        last_date=datetime.datetime.today() + datetime.timedelta(90),
+        on_change=handle_change,
+        on_dismiss=handle_dismissal,
+    )
+
+    def abrir_datepicker(e):
+        # Abre o DatePicker quando clicar no botão ou no campo
+        page.open(date_picker)
+
 
     # Campos do formulário:
     codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_codigo)
@@ -123,7 +147,9 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
     preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_preco_custo)
     preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True, on_change=formatar_preco_venda)
     quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_quantidade)
-    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_validade)
+    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=560)
+    selecionar_data = ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, on_click=abrir_datepicker, icon_color=ft.Colors.BLACK)
+    
     porcentagem = ft.TextField(label= "Porcentagem de lucro:", bgcolor=ft.Colors.WHITE, width=610, visible=True, on_change=formatar_preco_venda)
 
     campos = [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]
@@ -169,7 +195,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         ft.Column(
             [
                 ft.Row([codigo, nome], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([quantidade, validade], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([quantidade, validade, selecionar_data], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([porcentagem_preco_venda, porcentagem], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([botao_adicionar, botao_cancelar, botao_limpar_campos], alignment=ft.MainAxisAlignment.CENTER),
