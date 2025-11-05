@@ -1,4 +1,5 @@
 import flet as ft
+from validate_docbr import CPF,CNPJ
 
 def criar_tela_clientes(clientes, page):
     tabela_clientes = ft.DataTable(
@@ -31,13 +32,14 @@ def criar_tela_clientes(clientes, page):
                 global campo_cpf_cnpj # Campo global genérico para receber CPF ou CNPJ.
 
                 # Se o tamanho da informação guardada na chave "cpf_cnpj" da lista de clientes for igual a 11 (tamanho de um cpf com sua formatação):
-                if len(cliente["cpf_cnpj"]) == 14:
+                if len(cliente["cpf_cnpj"]) == 14 :
+
                     campo_cpf_cnpj = ft.TextField(label="CPF:", value=cliente["cpf_cnpj"], width=200, on_change=formatar_cpf)
+                
 
                 # Se o tamanho da informação guardada na chave "cpf_cnpj" da lista de clientes for igual a 18 (tamanho de um cnpj com sua formatação):
                 elif len(cliente["cpf_cnpj"]) == 18:
                     campo_cpf_cnpj = ft.TextField(label="CNPJ:", value=cliente["cpf_cnpj"], width=200, on_change=formatar_cnpj)
-
                 # Botão para salvar as alterações:
                 botao_salvar = ft.TextButton(
                     text="Salvar",
@@ -114,9 +116,9 @@ def criar_tela_clientes(clientes, page):
 
     # Função que salvará as alterações:
     def salvar(index, campo_nome, campo_numero, campo_cpf_cnpj): # Receberá o index e os campos onde serão inseridas as novas informações.
+        clientes[index]["cpf_cnpj"] = campo_cpf_cnpj.value # Muda o valor da chave "cpf_cnpj" no index passado.
         clientes[index]["nome"] = campo_nome.value # Muda o valor da chave "nome" no index passado.
         clientes[index]["numero"] = campo_numero.value # Muda o valor da chave "numero" no index passado.
-        clientes[index]["cpf_cnpj"] = campo_cpf_cnpj.value # Muda o valor da chave "cpf_cnpj" no index passado.
         clientes[index]["editando"] = False # Muda o valor da chave "editando" no index passado.
         atualizar() # Atualiza a tabela.
 
