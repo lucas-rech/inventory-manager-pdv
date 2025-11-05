@@ -3,6 +3,7 @@ import re
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
+from validate_docbr import CPF,CNPJ
 
 def cadastrar_clientes(page, clientes, voltar_para_escolha):
     # Função que exibirá cada campo (CPF/CNPJ) com sua formatação própria.
@@ -130,28 +131,47 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
     campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cnpj)
 
     campos = [campo_nome, campo_numero, campo_cpf, campo_cnpj]
+    cpf_valid = CPF()
+    cnpj_valid = CNPJ()
 
+    def apenas_digitos(texto):
+        return re.sub(r"\D", "", texto or "")
     def adicionar_cliente(e):
         if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
-            novo_cliente = {
-                "nome":campo_nome.value,
-                "numero":campo_numero.value,
-                "cpf_cnpj":campo_cpf.value,
-                "editando":False,     
-            }
+            
+
+            invalid = False
+            if cpf_valid.validate(apenas_digitos(campo_cpf.value)):
+                novo_cliente = {
+                    "nome":campo_nome.value,
+                    "numero":campo_numero.value,
+                    "cpf_cnpj":campo_cpf.value,
+                    "editando":False,     
+                }
+            else :
+                invalid = True
+                campo_cpf.error_text="CPF INVÁLIDO"
 
         if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
-            novo_cliente = {
-                "nome":campo_nome.value,
-                "numero":campo_numero.value,
-                "cpf_cnpj":campo_cnpj.value,
-                "editando":False     
-            }
+            invalid = False
+            if cnpj_valid.validate(apenas_digitos(campo_cnpj.value)):
+                novo_cliente = {
+                    "nome":campo_nome.value,
+                    "numero":campo_numero.value,
+                    "cpf_cnpj":campo_cnpj.value,
+                    "editando":False     
+                }
+            else :
+                invalid = True
+                campo_cnpj.error_text="CNPJ INVÁLIDO"
 
-        clientes.append(novo_cliente)
+        if invalid == False :
+            clientes.append(novo_cliente)
+            for campo in [campo_nome, campo_numero, campo_cpf, campo_cnpj]:
+                campo.value = ""
+            campo_cpf.error_text="CPF INVÁLIDO"
 
-        for campo in [campo_nome, campo_numero, campo_cpf, campo_cnpj]:
-            campo.value = ""
+
 
         campo_nome.focus()
         page.update()
