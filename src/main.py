@@ -1,5 +1,6 @@
 import flet as ft
 
+from ui.pages.tela_cadastro_usuarios import cadastro_usuarios
 from ui.pages.tela_login_usuario import criar_tela_login
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
@@ -22,7 +23,7 @@ def main(page: ft.Page):
         conteudo_completo.controls.clear()
         header.content.value = "Escolha o tipo de cadastro"
         conteudo_completo.controls.append(header)
-        conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente))
+        conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente, informacoes_usuarios))
 
         page.update()
 
@@ -43,9 +44,22 @@ def main(page: ft.Page):
 
         page.update()
 
+    def informacoes_usuarios(e):
+        conteudo_completo.controls.clear()
+        header.content.value = "Cadastrar Usuários"
+        conteudo_completo.controls.append(header)
+        conteudo_completo.controls.append(cadastro_usuarios(page, voltar_para_escolha))
+
+        page.update()
+
+    
+
 
     # Lista de produtos que armazenará os produtos adicionados ao estoque:
     produtos = []
+
+    # Lista de clientes que armazenará os clientes cadastrados:
+    clientes = []
 
     # Lista de clientes que armazenará os clientes cadastrados:
     clientes = []
@@ -69,7 +83,7 @@ def main(page: ft.Page):
     tela_login = criar_tela_login(page, entrar)
     page.add(tela_login)
     
-    # Tela onde será feita a venda:
+    # Tela onde será feita a venda:voltar_para_escolha
     tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo)
 
     # Aqui sim adicionamos o conteúdo inicial:
@@ -90,7 +104,7 @@ def main(page: ft.Page):
                 conteudo_completo.controls.clear()
                 header.content.value = "Escolha o tipo de cadastro"
                 conteudo_completo.controls.append(header)
-                conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente))
+                conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente, informacoes_usuarios))
 
             elif index == 2:
                 conteudo_completo.controls.clear()

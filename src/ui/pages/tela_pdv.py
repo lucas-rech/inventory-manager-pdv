@@ -131,7 +131,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
                             alignment=ft.MainAxisAlignment.CENTER
                         ),
 
-                        ft.Image(src="src/assets/LogoSombreado.png", expand=True)  
+                        ft.Image(src="src/assets/Logo_semfundo.png", expand=True)  
                     ],
                     expand=True,
                 ),
