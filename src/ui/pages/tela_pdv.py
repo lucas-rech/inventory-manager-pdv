@@ -131,7 +131,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                             alignment=ft.MainAxisAlignment.CENTER
                         ),
 
-                        ft.Image(src="src/assets/LogoSombreado.png", expand=True)  
+                        ft.Image(src="src/assets/Logo_semfundo.png", expand=True)  
                     ],
                     expand=True,
                 ),
@@ -192,6 +192,27 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         visible=False,
     )
 
+    # Janela que irá ser aberta ao selecionar o método de pagamento "Dinheiro":
+    def valor_recebido():
+        layout_valor = ft.AlertDialog( # Cria um alert dialog que é a mini-janela ou popup.
+            content=ft.Container(
+                content=ft.TextField(label="Valor Recebido: ", width=300),
+                width=400,
+                height=200,
+            ),
+
+            modal=True, # Desabilita a interação do usuário com qualquer elemento fora da mini-janela.
+            title=ft.Text("Valor Recebido"),
+            actions=[
+                ft.TextButton("Cancelar", on_click=True),
+                ft.ElevatedButton("Confirmar", on_click=True),
+            ],
+
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+
+        return layout_valor
+
     # Container onde ficará o troco que será necessário retornar ao cliente:
     troco = ft.Container(
         width=250,
@@ -216,6 +237,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
             container_qr_code.visible = False # Esconde o container com o qr code
             transacao_aceita.visible = False # Esconde o sinal de validação da transação
             troco.visible = True # Deixa o campo que mostrará o campo com o troco necessário visível.
+            page.open(valor_recebido())
             page.update()
         
         if e.control.value == "débito":
