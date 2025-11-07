@@ -165,6 +165,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         height=100,
     )
 
+    # QR code: 
     qr_code = ft.Image(src="src/assets/qr-code.png", width=200, height=200) # Imagem do qrcode.
     transacao_aceita = ft.Icon( # Icone de transação validada
         name=ft.Icons.CHECK_CIRCLE,
@@ -191,6 +192,15 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         visible=False,
     )
 
+    # Container onde ficará o troco que será necessário retornar ao cliente:
+    troco = ft.Container(
+        width=250,
+        height=85,
+        visible=False,
+        bgcolor="#507656",
+        border_radius=10,
+    )
+
     # escolha conforme o método de pagamento
     async def escolha_pagamento(e): # Define a função como assíncrona para evitar que a interface congele. (async)
         if e.control.value == "pix":
@@ -202,7 +212,11 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
             page.update()
 
         if e.control.value == "dinheiro":
-            pass
+            container_qr_code.visible = False
+            transacao_aceita.visible = False
+            troco.visible = True
+            page.update()
+        
         if e.control.value == "débito":
             pass
         if e.control.value == "crédito":
@@ -238,7 +252,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         ft.Row(
             [
                 ft.Column([area_tabela, novo_total_compra], alignment=ft.MainAxisAlignment.START),
-                ft.Column([menu_forma_pagamento, botao_finalizar, container_qr_code], alignment=ft.MainAxisAlignment.START),
+                ft.Column([menu_forma_pagamento, botao_finalizar, container_qr_code, troco], alignment=ft.MainAxisAlignment.START),
             ],
 
             spacing=10,
