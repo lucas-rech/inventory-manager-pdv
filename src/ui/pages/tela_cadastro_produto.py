@@ -147,7 +147,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
     preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_preco_custo)
     preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True, on_change=formatar_preco_venda)
     quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_quantidade)
-    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=560)
+    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=560, on_change=formatar_validade)
     selecionar_data = ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, on_click=abrir_datepicker, icon_color=ft.Colors.BLACK)
     
     porcentagem = ft.TextField(label= "Porcentagem de lucro:", bgcolor=ft.Colors.WHITE, width=610, visible=True, on_change=formatar_preco_venda)

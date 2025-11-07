@@ -204,6 +204,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
     # escolha conforme o método de pagamento
     async def escolha_pagamento(e): # Define a função como assíncrona para evitar que a interface congele. (async)
         if e.control.value == "pix":
+            troco.visible = False
             container_qr_code.visible = True
             page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
 
@@ -212,9 +213,9 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
             page.update()
 
         if e.control.value == "dinheiro":
-            container_qr_code.visible = False
-            transacao_aceita.visible = False
-            troco.visible = True
+            container_qr_code.visible = False # Esconde o container com o qr code
+            transacao_aceita.visible = False # Esconde o sinal de validação da transação
+            troco.visible = True # Deixa o campo que mostrará o campo com o troco necessário visível.
             page.update()
         
         if e.control.value == "débito":

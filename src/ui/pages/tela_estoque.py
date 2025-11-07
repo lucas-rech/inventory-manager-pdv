@@ -6,13 +6,13 @@ def criar_tela_estoque(produtos, page):
     # Tabela dos itens em estoque:
     tabela_estoque = ft.DataTable(
         columns=[ # Define as 6 colunas que terão dados (Código, Nome, Preço de custo, Preço de venda, Quantidade e Validade)
-            ft.DataColumn(ft.Text("Código de Barras", size=18)),
-            ft.DataColumn(ft.Text("Nome", size=18)),
-            ft.DataColumn(ft.Text("Preço de custo", size=18)),
-            ft.DataColumn(ft.Text("Preço de venda", size=18)),
-            ft.DataColumn(ft.Text("Quantidade", size=18)),
-            ft.DataColumn(ft.Text("Validade", size=18)),
-            ft.DataColumn(ft.Text("Ações", size=18))
+            ft.DataColumn(ft.Text("Código de Barras", size=16)),
+            ft.DataColumn(ft.Text("Nome", size=16)),
+            ft.DataColumn(ft.Text("Preço de custo", size=16)),
+            ft.DataColumn(ft.Text("Preço de venda", size=16)),
+            ft.DataColumn(ft.Text("Quantidade", size=16)),
+            ft.DataColumn(ft.Text("Validade", size=16)),
+            ft.DataColumn(ft.Text("Ações", size=16))
         ],
 
         rows=[], # As linhas começam vazias, sem nenhum item em estoque.
@@ -51,22 +51,26 @@ def criar_tela_estoque(produtos, page):
                     on_change=formatar_preco_custo,
                 )
 
-                campo_preco_venda = ft.TextField(
+                campo_preco_venda = ft.TextField( # Terminar a formatação deste campo
                     label="Preço de Venda:",
                     value=produto["preco_venda"],
                     width=120,
                 )
 
+                global campo_quantidade
                 campo_quantidade = ft.TextField(
                     label="Quantidade:",
                     value=produto["quantidade"],
                     width=100,
+                    on_change=formatar_quantidade,
                 )
 
+                global campo_validade
                 campo_validade = ft.TextField(
                     label="Validade:",
                     value=produto["validade"],
                     width=120,
+                    on_change=formatar_validade,
                 )
 
                 botao_salvar = ft.TextButton(
@@ -112,12 +116,12 @@ def criar_tela_estoque(produtos, page):
 
                     ft.DataRow( # Cada linha/row (neste caso DataRow por ser a linha de uma tabela) é feita de várias células (DataCell), uma para cada coluna.
                         cells=[
-                            ft.DataCell(ft.Text(produto["codigo"], size=16)), # Busca o valor atráves do nome no dicionário da função adicionar produto.
-                            ft.DataCell(ft.Text(produto["nome"], size=16)),
-                            ft.DataCell(ft.Text(produto["preco_custo"], size=16)),
-                            ft.DataCell(ft.Text(produto["preco_venda"], size=16)),
-                            ft.DataCell(ft.Text(produto["quantidade"], size=16)),
-                            ft.DataCell(ft.Text(produto["validade"], size=16)),
+                            ft.DataCell(ft.Text(produto["codigo"], size=14)), # Busca o valor atráves do nome no dicionário da função adicionar produto.
+                            ft.DataCell(ft.Text(produto["nome"], size=14)),
+                            ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
+                            ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
+                            ft.DataCell(ft.Text(produto["quantidade"], size=14)),
+                            ft.DataCell(ft.Text(produto["validade"], size=14)),
                             ft.DataCell(ft.Row([botao_editar, botao_excluir])),
                         ]
                     )
@@ -189,6 +193,28 @@ def criar_tela_estoque(produtos, page):
         # essa troca dupla inverte o padrão americano (1,234.56 → 1.234,56)
 
         campo_preco_custo.value = formatado
+        page.update()
+
+    def formatar_quantidade(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:5]
+        campo_quantidade.value = texto
+        page.update()
+
+    def formatar_validade(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:8]
+        
+        formatado = ""
+
+        if len(texto) > 0:
+            formatado += texto[:2]
+        if len(texto) > 2:
+            formatado += "/" + texto[2:4]
+        if len(texto) > 4:
+            formatado += "/" + texto[4:8]
+
+        campo_validade.value = formatado
         page.update()
 
     # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
