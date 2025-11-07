@@ -27,6 +27,13 @@ def main(page: ft.Page):
 
         page.update()
 
+    def voltar_venda_inicio(e):
+        conteudo_completo.controls.clear()
+        header.content.value = "Venda"
+        conteudo_completo.controls.append(header)
+        conteudo_completo.controls.append(criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio))
+        page.update()
+
     # Função para trocar para a tela de cadastro de produtos:
     def informacoes_produto(e):
         conteudo_completo.controls.clear() # Limpa toda a tela (menos o menu lateral).
@@ -84,7 +91,7 @@ def main(page: ft.Page):
     page.add(tela_login)
     
     # Tela onde será feita a venda:voltar_para_escolha
-    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo)
+    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio)
 
     # Aqui sim adicionamos o conteúdo inicial:
     conteudo_completo.controls.extend([header, tela_pdv])

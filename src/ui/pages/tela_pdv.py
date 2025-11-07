@@ -3,7 +3,7 @@ import asyncio
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
 
-def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
+def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio):
     # Função que permitirá apenas números no campo de código:
     def formatar_codigo(e):
         texto = "".join(filter(str.isdigit, e.control.value)) # Apenas junte a string do que está sendo digitado o que for número.
@@ -104,7 +104,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
         height=100,
     )
 
-    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total, page) # Cirando a tela de finalizar compra
+    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio) # Cirando a tela de finalizar compra
     
     def finalizar_compra(e): # Atualização do conteúdo para a tela de finaizar compra
         conteudo_completo.controls.clear() # Limpa tudo
@@ -152,7 +152,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo):
 
     return layout
 
-def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será inserido a tabela com o resumo da compra, já formatada.
+def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio): # Aqui será inserido a tabela com o resumo da compra, já formatada.
 
     # Estou fazendo uma cópia do campo de total para evitar conflitos.
     novo_total_compra = ft.Container(
@@ -231,7 +231,8 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page): # Aqui será in
         border_radius=10,
     )
 
-    botao_finalizar = criar_botao_finalizar(True)
+
+    botao_finalizar = criar_botao_finalizar(voltar_venda_inicio)
     botao_finalizar.width = 250
 
     layout = ft.Container(
