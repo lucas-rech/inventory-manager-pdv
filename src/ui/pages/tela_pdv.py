@@ -191,17 +191,32 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
     # Ações que serão executadas dentro da mini-janela:
     # Confirmar valor recebido:
     def confirmar(e):
-        calcular_troco(campo_valor_recebido)
-        page.close(layout_valor)
-        page.update()
+        total = calcular_total(resumo_compra) # Recalculo o total para que eu possa usar depois.
+
+        # Se o troco for menor que o total da compra:
+        if float(campo_valor_recebido.value) < total:
+            page.open(troco_errado) # Mensagem de erro
+            page.update()
+        
+        else:
+            calcular_troco(campo_valor_recebido)
+            page.close(layout_valor)
+            page.update()
 
     # Cancelar ação:
     def cancelar(e):
         page.close(layout_valor)
         page.update()
 
-    # Função para validar o troco:
-    
+    def fechar_erro(e):
+        page.close(troco_errado) # Abre o popup de erro.
+        page.update() # Atualiza a interface primeiro.
+        page.run_task(reabrir_valor) # Depois de atualizar dá run no próximo processo para evitar deadlock
+
+    async def reabrir_valor():
+        await asyncio.sleep(0.05) # Dá um tempo para a interface até executar o próximo processo para evitar deadlock.
+        page.open(layout_valor) # Abre para o minijanela "layout_valor" para que o usuário insira o troco.
+        page.update()
 
     # Janela que irá ser aberta ao selecionar o método de pagamento "Dinheiro":
     layout_valor = ft.AlertDialog( # Cria um alert dialog que é a mini-janela ou popup.
@@ -253,15 +268,32 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
             valor_total += p["preco_venda"] * p["quantidade"]
 
         return valor_total
+    
+    # Pup-up de erro caso o troco inserido seja menor que o total da compra:
+    troco_errado = ft.AlertDialog(
+        content=ft.Container(
+            content=ft.Text("O valor recebido não pode ser menor que o total da compra!", size=16, color="#9B3E3E"),
+            width=300,
+            height=50,
+        ),
+        modal=True, # Desabilita qualquer ação fora do popup.
+        title=ft.Text("Erro!", weight="bold"),
+        actions=[
+            ft.FilledButton(content=ft.Text("Ok", size=16), style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE), on_click=fechar_erro),
+        ],
+
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+    )
 
     # Função que calculará o troco:
     def calcular_troco(valor_recebido):
         v = valor_recebido.value
         total = calcular_total(resumo_compra)
-        print(total)
 
         nonlocal total_troco
         total_troco = float(v) - total
+
         texto_troco.value = f"Troco: {formatar_troco(total_troco)}"
         page.update()
 
@@ -276,28 +308,136 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         alignment=ft.alignment.center,
     )
 
+    # Função caso pix seja a forma de pagamento selecionada:
+    async def processsar_pix():
+        container_troco.visible = False
+        container_qr_code.visible = True
+        transacao_aceita.visible = False    
+        page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
+
+        await asyncio.sleep(3) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!  
+
+        transacao_aceita.visible = True
+        page.update()
+
+    task_pix = None # Variável para guardar o estado atual da forma de pagamento via pix.
+
+    # Função caso débito seja a forma de pagamento selecionada:
+    async def processar_debito():
+        container_qr_code.visible = False
+        container_troco.visible = False
+        transacao_aceita.visible = False
+        page.open(debito)
+        page.update()
+
+        await asyncio.sleep(3) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
+
+        transacao_aceita.visible = True
+        page.update() 
+
+        await asyncio.sleep(2) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
+        page.close(debito)
+        page.update()
+
+    task_debito = None
+    imagem = ft.Image(src="src/assets/pagamento-cartao.jpg", width=200, height=130)
+
+    # Definição do modal de débito:
+    debito = ft.AlertDialog(
+        content=ft.Container(
+            ft.Column(
+                controls=[
+                    ft.Row([imagem], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([ft.Text("Aproxime ou insira o cartão na maquininha", size=20)], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([transacao_aceita], alignment=ft.MainAxisAlignment.CENTER),
+                ], 
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            width=400,
+            height=200,
+        ),
+
+        modal=True,
+        title=ft.Text("Efetuar pagamento: DÉBITO"),
+        bgcolor=ft.Colors.WHITE,
+    )
+
+    # Função caso crédito seja a forma de pagamento selecionada:
+    async def processar_credito():
+        container_qr_code.visible = False
+        container_troco.visible = False
+        transacao_aceita.visible = False
+        page.open(credito)
+        page.update()
+
+        await asyncio.sleep(3) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
+        
+        transacao_aceita.visible = True
+        page.update()
+
+        await asyncio.sleep(2) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
+        page.close(credito)
+        page.update()
+
+    task_credito = None
+
+    credito = ft.AlertDialog(
+        content=ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Row([imagem], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([ft.Text("Aproxime ou insira o cartão na maquininha", size=20)], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([transacao_aceita], alignment=ft.MainAxisAlignment.CENTER),
+                ],
+
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+
+            width=400,
+            height=200,
+        ),
+
+        modal=True,
+        title=ft.Text("Efetuar pagamento: CRÉDITO"),
+        bgcolor=ft.Colors.WHITE,
+    )
+
     # escolha conforme o método de pagamento
     async def escolha_pagamento(e): # Define a função como assíncrona para evitar que a interface congele. (async)
-        if e.control.value == "pix":
-            container_troco.visible = False
-            container_qr_code.visible = True
-            page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
+        nonlocal task_pix
+        nonlocal task_debito
+        nonlocal task_credito
 
-            await asyncio.sleep(3) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!  
-            transacao_aceita.visible = True
-            page.update()
+        if task_pix and not task_pix.done(): # Cancelar taskpix em andamento, se estiver ativo mas não estiver terminada:
+            task_pix.cancel() # Cancela o processo.
+            await asyncio.sleep(0) # Libera o loop
 
-        if e.control.value == "dinheiro":
+        metodo = e.control.value # Método de pagamento escolhido
+
+        if metodo == "pix":
+            task_debito = None
+            task_credito = None
+            task_pix = asyncio.create_task(processsar_pix())
+
+        elif metodo == "dinheiro":
+            task_pix = None
+            task_debito = None
+            task_credito = None
             container_qr_code.visible = False # Esconde o container com o qr code
             transacao_aceita.visible = False # Esconde o sinal de validação da transação
             container_troco.visible = True # Deixa o campo que mostrará o campo com o troco necessário visível.
             page.open(layout_valor)
             page.update()
         
-        if e.control.value == "débito":
-            pass
-        if e.control.value == "crédito":
-            pass
+        elif metodo == "débito":
+            task_pix = None
+            task_credito = None
+            task_debito = asyncio.create_task(processar_debito())
+
+        elif e.control.value == "crédito":
+            task_debito = None
+            task_pix = None
+            task_credito = asyncio.create_task(processar_credito())
 
     # Menu de seleção da forma de pagamento:
     menu_forma_pagamento = ft.Container(

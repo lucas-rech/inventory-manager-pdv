@@ -1,12 +1,7 @@
 import flet as ft
 
 def main(page: ft.Page):
-
-    # TextField que ficará DENTRO do modal
-    campo_valor = ft.TextField(label="Digite algo", width=100)
-    campo_nome = ft.TextField(label="Digite o nome", width=100)
-    campo3 = ft.TextField(label="Digite o nome", width=100)
-    campo4 = ft.TextField(label="Digite o nome", width=100)
+    imagem = ft.Image(src="src/assets/pagamento-cartao.jpg")
 
     # Funções de controle
     def abrir_modal(e):
@@ -18,7 +13,7 @@ def main(page: ft.Page):
         page.update()
 
     def confirmar(e):
-        print("Valor digitado:", campo_valor.value)
+        print("Valor digitado:")
         fechar_modal()
 
     # Definição do modal
@@ -26,9 +21,10 @@ def main(page: ft.Page):
         content=ft.Container(
             ft.Column(
                 [
-                    ft.Row([campo_valor, campo_nome], alignment=ft.MainAxisAlignment.CENTER),
-                    ft.Row([campo3, campo4], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([imagem], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([ft.Text("Aproxime ou insira o cartão na maquininha", size=20)], alignment=ft.MainAxisAlignment.CENTER)
                 ], 
+                alignment=ft.MainAxisAlignment.CENTER,
             ),
             width=500,
             height=400,
@@ -41,6 +37,7 @@ def main(page: ft.Page):
             ft.ElevatedButton("Confirmar", on_click=confirmar),
         ],
         actions_alignment=ft.MainAxisAlignment.END,
+        bgcolor=ft.Colors.WHITE,
     )
 
     # Botão que abre o modal
