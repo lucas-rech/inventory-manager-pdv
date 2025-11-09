@@ -45,7 +45,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
     texto_total = ft.Text(value=f"Total: R$ {total:.2f}", weight="bold", size=40)
 
     def atualizar(e):
-        nonlocal total # nonlocal se refere ao total decarado acima
+        nonlocal total # nonlocal se refere ao total declarado acima
         produto_encontrado = get_informacoes_produto(codigo.value)
         if not produto_encontrado: # Se não encontrar o produto não retorna nada e para a função aqui.
             return
@@ -104,7 +104,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         height=100,
     )
 
-    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio) # Cirando a tela de finalizar compra
+    tela_finalizar_compra = criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio, resumo_compra) # Cirando a tela de finalizar compra
     
     def finalizar_compra(e): # Atualização do conteúdo para a tela de finaizar compra
         conteudo_completo.controls.clear() # Limpa tudo
@@ -152,19 +152,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
 
     return layout
 
-def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio): # Aqui será inserido a tabela com o resumo da compra, já formatada.
-
-    # Estou fazendo uma cópia do campo de total para evitar conflitos.
-    novo_total_compra = ft.Container(
-        content=texto_total,
-        bgcolor="#85A289",
-        padding=ft.padding.all(15),
-        border_radius=13,
-        alignment=ft.alignment.center,
-        width=750,
-        height=100,
-    )
-
+def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio, resumo_compra): # Aqui será inserido a tabela com o resumo da compra, já formatada.
     # QR code: 
     qr_code = ft.Image(src="src/assets/qr-code.png", width=200, height=200) # Imagem do qrcode.
     transacao_aceita = ft.Icon( # Icone de transação validada
@@ -192,40 +180,88 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         visible=False,
     )
 
+    campo_valor_recebido = ft.TextField(label="Valor Recebido: ", width=300) # Campo que receberá a quantida de dinheiro dado pelo cliente.
+
+    # Ações que serão executadas dentro da mini-janela:
+    # Confirmar valor recebido:
+    def confirmar(e):
+        calcular_troco(campo_valor_recebido)
+        page.close(layout_valor)
+        page.update()
+
+    # Cancelar ação:
+    def cancelar(e):
+        page.close(layout_valor)
+        page.update()
+
+
     # Janela que irá ser aberta ao selecionar o método de pagamento "Dinheiro":
-    def valor_recebido():
-        layout_valor = ft.AlertDialog( # Cria um alert dialog que é a mini-janela ou popup.
-            content=ft.Container(
-                content=ft.TextField(label="Valor Recebido: ", width=300),
-                width=400,
-                height=200,
-            ),
+    layout_valor = ft.AlertDialog( # Cria um alert dialog que é a mini-janela ou popup.
+        content=ft.Container( # O content da janela será um container que abrangerá tudo que estiver dentro.
+            content=campo_valor_recebido, # O conteudo do container será um text field.
+            width=400, # Largura do container
+            height=100, # Altura do container
+        ),
 
-            modal=True, # Desabilita a interação do usuário com qualquer elemento fora da mini-janela.
-            title=ft.Text("Valor Recebido"),
-            actions=[
-                ft.TextButton("Cancelar", on_click=True),
-                ft.ElevatedButton("Confirmar", on_click=True),
-            ],
+        modal=True, # Desabilita a interação do usuário com qualquer elemento fora da mini-janela.
+        title=ft.Text("Valor Recebido"),
+        actions=[ # Ações da janela: 
+            ft.TextButton("Cancelar", on_click=cancelar), # Botão para cancelar
+            ft.ElevatedButton("Confirmar", on_click=confirmar), # Botão para confirmar.
+        ],
 
-            actions_alignment=ft.MainAxisAlignment.END,
-        )
+        actions_alignment=ft.MainAxisAlignment.END,
+    )
 
-        return layout_valor
+    
+
+    # Estou fazendo uma cópia do campo de total para evitar conflitos.
+    novo_total_compra = ft.Container(
+        content=texto_total,
+        bgcolor="#85A289",
+        padding=ft.padding.all(15),
+        border_radius=13,
+        alignment=ft.alignment.center,
+        width=750,
+        height=100,
+    )
+
+    # Texto com o troco total:
+    total_troco = 0 # Variável para calcular o troco
+    texto_troco = ft.Text(value=f"Troco: R${total_troco}", weight="bold", size=40)
+
+    # Recalculando o total para utilizar no cálculo do troco:
+    def calcular_total(resumo_compra):
+        valor_total = 0
+        for p in resumo_compra:
+            valor_total += p["preco_venda"] * p["quantidade"]
+        return valor_total
+
+    # Função que calculará o troco:
+    def calcular_troco(valor_recebido):
+        v = valor_recebido.value
+        total = calcular_total()
+        nonlocal total_troco
+        print(total_troco)
+        total_troco = float(v) - total
+        texto_troco.value = f"Troco: R${total_troco}"
+        page.update()
 
     # Container onde ficará o troco que será necessário retornar ao cliente:
-    troco = ft.Container(
-        width=250,
-        height=85,
+    container_troco = ft.Container(
+        content=texto_troco,
+        width=750,
+        height=100,
         visible=False,
         bgcolor="#507656",
         border_radius=10,
+        alignment=ft.alignment.center_right,
     )
 
     # escolha conforme o método de pagamento
     async def escolha_pagamento(e): # Define a função como assíncrona para evitar que a interface congele. (async)
         if e.control.value == "pix":
-            troco.visible = False
+            container_troco.visible = False
             container_qr_code.visible = True
             page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
 
@@ -236,8 +272,8 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         if e.control.value == "dinheiro":
             container_qr_code.visible = False # Esconde o container com o qr code
             transacao_aceita.visible = False # Esconde o sinal de validação da transação
-            troco.visible = True # Deixa o campo que mostrará o campo com o troco necessário visível.
-            page.open(valor_recebido())
+            container_troco.visible = True # Deixa o campo que mostrará o campo com o troco necessário visível.
+            page.open(layout_valor)
             page.update()
         
         if e.control.value == "débito":
@@ -274,8 +310,8 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
     layout = ft.Container(
         ft.Row(
             [
-                ft.Column([area_tabela, novo_total_compra], alignment=ft.MainAxisAlignment.START),
-                ft.Column([menu_forma_pagamento, botao_finalizar, container_qr_code, troco], alignment=ft.MainAxisAlignment.START),
+                ft.Column([area_tabela, novo_total_compra, container_troco], alignment=ft.MainAxisAlignment.START),
+                ft.Column([menu_forma_pagamento, botao_finalizar, container_qr_code], alignment=ft.MainAxisAlignment.START),
             ],
 
             spacing=10,
