@@ -40,9 +40,15 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                     "quantidade": 1,
                 }
         return None
+    
+    # Função para formatar o total da compra para a formataçõa contábil brasileira:
+    def formatar_total(valor):
+        v = valor
+        total_formatado = f"R$ {v:,.2f}".replace(".", "v").replace(",", ".").replace("v", ",")
+        return total_formatado
 
     total = 0
-    texto_total = ft.Text(value=f"Total: R$ {total:.2f}", weight="bold", size=40)
+    texto_total = ft.Text(value=f"Total: R$ {total:,.2f}", weight="bold", size=40)
 
     def atualizar(e):
         nonlocal total # nonlocal se refere ao total declarado acima
@@ -69,7 +75,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                 )
             )
 
-        texto_total.value = f"Total: R$ {total:.2f}"
+        texto_total.value = f"Total: {formatar_total(total)}"
         codigo.value = ""
         codigo.focus()
         page.update()
@@ -194,6 +200,8 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         page.close(layout_valor)
         page.update()
 
+    # Função para validar o troco:
+    
 
     # Janela que irá ser aberta ao selecionar o método de pagamento "Dinheiro":
     layout_valor = ft.AlertDialog( # Cria um alert dialog que é a mini-janela ou popup.
@@ -206,11 +214,12 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         modal=True, # Desabilita a interação do usuário com qualquer elemento fora da mini-janela.
         title=ft.Text("Valor Recebido"),
         actions=[ # Ações da janela: 
-            ft.TextButton("Cancelar", on_click=cancelar), # Botão para cancelar
-            ft.ElevatedButton("Confirmar", on_click=confirmar), # Botão para confirmar.
+            ft.TextButton(content=ft.Text("Cancelar", size=16), on_click=cancelar, style=ft.ButtonStyle(color="#9B3E3E")), # Botão para cancelar
+            ft.ElevatedButton(content=ft.Text("Confirmar", size=16), on_click=confirmar, color="#507656"), # Botão para confirmar.
         ],
 
         actions_alignment=ft.MainAxisAlignment.END,
+        bgcolor="#E8E3DE",
     )
 
     
@@ -228,23 +237,32 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
 
     # Texto com o troco total:
     total_troco = 0 # Variável para calcular o troco
-    texto_troco = ft.Text(value=f"Troco: R${total_troco}", weight="bold", size=40)
+    texto_troco = ft.Text(value=f"Troco: R${total_troco:.2f}", weight="bold", size=40)
+
+    # Foramatando o troco para a formatação contábil brasileira:
+    def formatar_troco(valor):
+        v = valor 
+        troco_formatado = f"R$ {v:,.2f}".replace(".", "v").replace(",", ".").replace("v", ",") # Precisa ser :,.2f pois assim ele adiciona uma vírgula para separar os milhares, senão ficaria apenas "1000.00"
+        return troco_formatado
 
     # Recalculando o total para utilizar no cálculo do troco:
     def calcular_total(resumo_compra):
         valor_total = 0
+
         for p in resumo_compra:
             valor_total += p["preco_venda"] * p["quantidade"]
+
         return valor_total
 
     # Função que calculará o troco:
     def calcular_troco(valor_recebido):
         v = valor_recebido.value
-        total = calcular_total()
+        total = calcular_total(resumo_compra)
+        print(total)
+
         nonlocal total_troco
-        print(total_troco)
         total_troco = float(v) - total
-        texto_troco.value = f"Troco: R${total_troco}"
+        texto_troco.value = f"Troco: {formatar_troco(total_troco)}"
         page.update()
 
     # Container onde ficará o troco que será necessário retornar ao cliente:
@@ -255,7 +273,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         visible=False,
         bgcolor="#507656",
         border_radius=10,
-        alignment=ft.alignment.center_right,
+        alignment=ft.alignment.center,
     )
 
     # escolha conforme o método de pagamento

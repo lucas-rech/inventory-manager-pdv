@@ -76,7 +76,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
 
             if p_texto: # Se p_texto == True, ou seja, tem algo
                 lucro = int(p_texto) / 100 # Trasforma em int e divide a porcentagem digitada por 100
-                valor = custo * (1 + lucro) # Multiplica pelo preco de custo
+                valor = custo * (1 + lucro) # Multiplica pelo preco de custo a porcentagem digitada.
 
             else: # Senão, apenas passa o preço de custo como preço de venda
                 valor = custo
