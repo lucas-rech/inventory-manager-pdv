@@ -7,11 +7,27 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
     # Função que permitirá apenas números no campo de código:
     def formatar_codigo(e):
         texto = "".join(filter(str.isdigit, e.control.value)) # Apenas junte a string do que está sendo digitado o que for número.
+        texto = texto[:13]
+
         codigo.value = texto # Atualiza o campo enquanto o usuário digita.
         page.update() # Atualiza a tela
 
+    def formatar_quantidade(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:5]
+        quantidade.value = texto
+        page.update()
+
+    erro_quantidade = ft.AlertDialog(
+        content=ft.Container(
+            content=ft.Column()
+        )
+    )
+
 
     codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"), on_change=formatar_codigo)
+
+    quantidade = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"), on_change=formatar_codigo)
 
     tabela_resumo_venda = ft.DataTable(
         columns=[
@@ -25,18 +41,23 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
     )
 
     # Função que irá formatar o preco de venda para float novamente sem a formatação contábil para que não dê TypeError, já que o preco_venda está armazenado como string na lista de produtos:
-    def formatar_preco_venda(pvenda):
+    def desformatar_preco_venda(pvenda):
         valor_pvenda = pvenda.replace("R$", "").replace(".", "").replace(",", ".") # Retira o cifrão e muda as vírgulas para o padrão de pontos.
         return valor_pvenda # Retorna o valor bruto, sem formatação nenhuma.
+    
+    def formatar_preco_venda(pvenda):
+        formatado = f"R$ {pvenda:,.2f}".replace(".", "v").replace(",", ".").replace("v", ",") # Adiciona à variável de retorno.
+
+        return formatado # Retorno a variável.
 
     def get_informacoes_produto(codigo):
         for c in produtos:
             if c["codigo"] == codigo:
-                formatar_preco_venda(c["preco_venda"])
+
                 return {
                     "codigo": c["codigo"],
                     "nome": c["nome"],
-                    "preco_venda": float(formatar_preco_venda(c["preco_venda"])),
+                    "preco_venda": float(desformatar_preco_venda(c["preco_venda"])),
                     "quantidade": 1,
                 }
         return None
@@ -49,6 +70,12 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
 
     total = 0
     texto_total = ft.Text(value=f"Total: R$ {total:,.2f}", weight="bold", size=40)
+
+    def formatar_subtotal(subtotal):
+        formatado = f"R$ {subtotal:,.2f}".replace(".", "v").replace(",", ".").replace("v", ",")
+
+        return formatado
+
 
     def atualizar(e):
         nonlocal total # nonlocal se refere ao total declarado acima
@@ -68,9 +95,9 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                     cells=[
                         ft.DataCell(ft.Text(value=p["codigo"])),
                         ft.DataCell(ft.Text(p["nome"])),
-                        ft.DataCell(ft.Text(p["preco_venda"])),
+                        ft.DataCell(ft.Text(formatar_preco_venda(p["preco_venda"]))),
                         ft.DataCell(ft.Text(p["quantidade"])),
-                        ft.DataCell(ft.Text(f"{subtotal:.2f}")),
+                        ft.DataCell(ft.Text(formatar_subtotal(subtotal))),
                     ],
                 )
             )
@@ -80,7 +107,14 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         codigo.focus()
         page.update()
 
-    botao_adicionar = criar_botao_adicionar(atualizar)
+    botao_adicionar = ft.Container(
+        content=ft.Text("Adicionar"),
+        bgcolor="#507656",
+        width=110,
+        height=100,
+        ink=True,
+        on_click=True,
+    )
 
     # 🔹 Área da tabela limitada (com scroll)
     area_tabela = ft.Container(
@@ -130,7 +164,11 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                     [
                         ft.Column(
                             [
-                                ft.Row([codigo, botao_adicionar]),
+                                ft.Row(controls=[
+                                    ft.Column([codigo, quantidade]),
+                                    botao_adicionar,
+                                ]),
+
                                 area_tabela,  # à esquerda
                                 ft.Row([botao_finalizar_compra], width=750, alignment=ft.MainAxisAlignment.END),
                             ],
@@ -186,7 +224,24 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         visible=False,
     )
 
-    campo_valor_recebido = ft.TextField(label="Valor Recebido: ", width=300) # Campo que receberá a quantida de dinheiro dado pelo cliente.
+    def formatar_valor_recebido(e):
+        texto = "".join(filter(str.isdigit, e.control.value)) # Junte à string apenas o que for número 
+        texto = texto[:13] # Limita o tamanho máximo para 13 caracteres
+
+        if not texto:
+            campo_valor_recebido.value = "R$ 0,00"
+            page.update()
+            return # O return está vazio aqui para quefuncione como um "Break" da função, ou seja para aqui.
+
+        valor_texto = float(texto) / 100 # Altera o tipo da variável para float e divide por 100 para que comece preenchendo pela direita nos centavos.
+
+        formatado = f"R$ {valor_texto:,.2f}".replace(".", "v").replace(",", ".").replace("v", ",") # Muda o que for "." para "v" temporariamente, o que for  "," por "." e o que for "v" para ",".
+
+        campo_valor_recebido.value = formatado # Atualiza o que está sendo escrito coma formatação
+        page.update() # Atualiza a página.
+        
+
+    campo_valor_recebido = ft.TextField(label="Valor Recebido: ", width=300, on_change=formatar_valor_recebido) # Campo que receberá a quantida de dinheiro dado pelo cliente.
 
     # Ações que serão executadas dentro da mini-janela:
     # Confirmar valor recebido:
@@ -194,7 +249,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         total = calcular_total(resumo_compra) # Recalculo o total para que eu possa usar depois.
 
         # Se o troco for menor que o total da compra:
-        if float(campo_valor_recebido.value) < total:
+        if float(campo_valor_recebido.value.replace("R$ ", "").replace(".", "").replace(",", ".")) < total:
             page.open(troco_errado) # Mensagem de erro
             page.update()
         
@@ -206,6 +261,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
     # Cancelar ação:
     def cancelar(e):
         page.close(layout_valor)
+        campo_valor_recebido.value = ""
         page.update()
 
     def fechar_erro(e):
@@ -288,7 +344,9 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
 
     # Função que calculará o troco:
     def calcular_troco(valor_recebido):
-        v = valor_recebido.value
+        v = valor_recebido.value.replace("R$ ", "").replace(".", "").replace(",", ".")
+        print(v)
+
         total = calcular_total(resumo_compra)
 
         nonlocal total_troco
