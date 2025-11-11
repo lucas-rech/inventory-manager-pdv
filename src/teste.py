@@ -1,48 +1,61 @@
 import flet as ft
+import asyncio
 
-def main(page: ft.Page):
-    imagem = ft.Image(src="src/assets/pagamento-cartao.jpg")
+async def main(page: ft.Page):
+    popups = []  # aqui guardamos as barras ativas
 
-    # Funções de controle
-    def abrir_modal(e):
-        page.open(dlg)
-        page.update()
+    async def criar_popup():
+        # índice da nova barra
+        idx = len(popups)
 
-    def fechar_modal(e=None):
-        page.close(dlg)
-        page.update()
+        pb = ft.ProgressBar(width=200, value=0)
 
-    def confirmar(e):
-        print("Valor digitado:")
-        fechar_modal()
+        # calculo do bottom para empilhar dinamicamente
+        bottom_offset = 20 + (idx * 80)
 
-    # Definição do modal
-    dlg = ft.AlertDialog(
-        content=ft.Container(
-            ft.Column(
-                [
-                    ft.Row([imagem], alignment=ft.MainAxisAlignment.CENTER),
-                    ft.Row([ft.Text("Aproxime ou insira o cartão na maquininha", size=20)], alignment=ft.MainAxisAlignment.CENTER)
-                ], 
-                alignment=ft.MainAxisAlignment.CENTER,
+        container_pb = ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Text("Venda Realizada!", size=18, color=ft.Colors.WHITE),
+                    pb,
+                ],
+                alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            width=500,
-            height=400,
-        ),
+            width=300,
+            bgcolor="#85a289",
+            opacity=0.6,
+            right=20,
+            bottom=bottom_offset,
+        )
 
-        modal=True,
-        title=ft.Text("Adicionar informação"),
-        actions=[
-            ft.TextButton("Cancelar", on_click=fechar_modal),
-            ft.ElevatedButton("Confirmar", on_click=confirmar),
-        ],
-        actions_alignment=ft.MainAxisAlignment.END,
-        bgcolor=ft.Colors.WHITE,
-    )
+        # adiciona à lista antes de exibir
+        popups.append(container_pb)
 
-    # Botão que abre o modal
-    page.add(
-        ft.ElevatedButton("Abrir modal", on_click=abrir_modal)
-    )
+        page.add(container_pb)
+        page.update()
+
+        # animação da barra
+        for i in range(101):
+            pb.value = i / 100
+            page.update()
+            await asyncio.sleep(0.02)
+
+        # remover após terminar
+        page.controls.remove(container_pb)
+        popups.remove(container_pb)
+
+        # reimprimir offsets dos restantes
+        for idx, c in enumerate(popups):
+            c.bottom = 20 + (idx * 80)
+
+        page.update()
+
+    async def iniciar(e):
+        # dispara uma nova barra de progresso (não bloqueia as outras)
+        asyncio.create_task(criar_popup())
+
+    btn = ft.ElevatedButton("Iniciar", on_click=iniciar)
+
+    page.add(btn)
 
 ft.app(target=main)

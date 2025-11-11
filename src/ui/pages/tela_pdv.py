@@ -166,7 +166,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
 
     botao_finalizar_compra = criar_botao_finalizar(finalizar_compra)
 
-    # 🔹 Layout principal com Stack (mantém o total fixo)
+    # Layout principal com Stack (mantém o total fixo)
     layout = ft.Container(
             ft.Stack(
             controls=[
@@ -530,6 +530,17 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         border=ft.border.all(1, "#765070"),
         border_radius=10,
     )
+
+    popups = []
+
+    def mostrar_popup(e):
+        pb = ft.ProgressBar(width=200, value=0)
+
+        popup = ft.Container(
+            content=ft.Column(
+                
+            )
+        )
 
     botao_finalizar = criar_botao_finalizar(voltar_venda_inicio)
     botao_finalizar.width = 250
