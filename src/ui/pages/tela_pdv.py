@@ -27,7 +27,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
 
     codigo = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"), on_change=formatar_codigo)
 
-    quantidade = ft.TextField(label="Código:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"), on_change=formatar_codigo)
+    quantidade = ft.TextField(label="Quantidade:", width=630, bgcolor=ft.Colors.WHITE, border=ft.border.all(1, color="#765070"), on_change=formatar_quantidade, value="1")
 
     tabela_resumo_venda = ft.DataTable(
         columns=[
@@ -58,7 +58,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                     "codigo": c["codigo"],
                     "nome": c["nome"],
                     "preco_venda": float(desformatar_preco_venda(c["preco_venda"])),
-                    "quantidade": 1,
+                    "quantidade": int(quantidade.value),
                 }
         return None
     
@@ -77,18 +77,26 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         return formatado
 
 
+    # Função que atualiza a tabela de resumo de venda:
     def atualizar(e):
         nonlocal total # nonlocal se refere ao total declarado acima
+
+        if not quantidade.value: # Se não for passada quantidade, o valor padrão passado é 1.
+            quantidade.value = "1"
+
         produto_encontrado = get_informacoes_produto(codigo.value)
+
         if not produto_encontrado: # Se não encontrar o produto não retorna nada e para a função aqui.
             return
 
         resumo_compra.append(produto_encontrado)
         tabela_resumo_venda.rows.clear()
         total = 0
+        subtotal = 0
 
         for p in resumo_compra:
             subtotal = p["preco_venda"] * p["quantidade"]
+
             total += subtotal
             tabela_resumo_venda.rows.append(
                 ft.DataRow(
@@ -108,12 +116,14 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         page.update()
 
     botao_adicionar = ft.Container(
-        content=ft.Text("Adicionar"),
+        content=ft.Text("Adicionar", color=ft.Colors.WHITE, size=20),
         bgcolor="#507656",
         width=110,
         height=100,
         ink=True,
-        on_click=True,
+        on_click=atualizar,
+        alignment=ft.alignment.center,
+        border_radius=10,
     )
 
     # 🔹 Área da tabela limitada (com scroll)
@@ -485,6 +495,7 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
             transacao_aceita.visible = False # Esconde o sinal de validação da transação
             container_troco.visible = True # Deixa o campo que mostrará o campo com o troco necessário visível.
             page.open(layout_valor)
+            campo_valor_recebido.focus()
             page.update()
         
         elif metodo == "débito":
