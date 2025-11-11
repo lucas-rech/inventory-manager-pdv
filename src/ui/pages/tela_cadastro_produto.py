@@ -32,12 +32,6 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         texto = e.control.value
         texto = texto[:90]
          
-        if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Verifica se os caracteres contidos em "texto" casam com o filtro especificado (A até Z, a até Z, letras com acentos e espaços).
-            nome.error_text = None
-
-        else: # Se não bater com o filtro
-            nome.error_text = "O nome deve conter apenas letras!"
-
         # Remove espaços duplicados acidentalmente
         nome.value = re.sub(r"\s{2,}", " ", texto) # Aqui ele substitui qualquer espaço que apareça 2 ou mais vezes ({2,}) por um espaço apenas (" ").
         page.update() # Atulaiza a página para mostrar as alterações.
@@ -198,7 +192,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
                 ft.Row([quantidade, validade, selecionar_data], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([porcentagem_preco_venda, porcentagem], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao_adicionar, botao_cancelar, botao_limpar_campos], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([botao_adicionar, botao_limpar_campos, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
             ],
 
             alignment=ft.MainAxisAlignment.CENTER,

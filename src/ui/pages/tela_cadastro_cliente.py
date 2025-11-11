@@ -195,7 +195,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
                 ft.Row([campo_nome], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([campo_numero], alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([cpf_cnpj, campo_cpf, campo_cnpj], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao_adicionar, botao_cancelar, botao_limpar_campos], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([botao_adicionar, botao_limpar_campos, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=15
