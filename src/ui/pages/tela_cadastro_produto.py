@@ -8,6 +8,13 @@ from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
 
 # Função que criará a tela de cadastro de produto
 def cadastrar_produtos(page, produtos, voltar_para_escolha):
+
+    # essas linhas padronizam formatos da página em português (especialmente datepicker)
+    page.locale_configuration = ft.LocaleConfiguration(
+        supported_locales=[ft.Locale(language_code="pt", country_code="BR")],
+        current_locale=ft.Locale(language_code="pt", country_code="BR")
+    )
+
     # Função que fará a verificação da opção do cálculo do preço de venda escolhida.
     def selecionar_porcentagem(e):
         if porcentagem_preco_venda.value == "porcentagem": # Teste se o valor selecionado é "porcentagem"
