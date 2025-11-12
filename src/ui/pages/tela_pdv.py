@@ -531,17 +531,6 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         border_radius=10,
     )
 
-    popups = []
-
-    def mostrar_popup(e):
-        pb = ft.ProgressBar(width=200, value=0)
-
-        popup = ft.Container(
-            content=ft.Column(
-                
-            )
-        )
-
     botao_finalizar = criar_botao_finalizar(voltar_venda_inicio)
     botao_finalizar.width = 250
 
