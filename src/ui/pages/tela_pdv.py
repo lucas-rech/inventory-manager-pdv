@@ -1,5 +1,7 @@
 import flet as ft
 import asyncio
+import subprocess
+import sys
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
 
@@ -379,15 +381,85 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
 
     # Função caso pix seja a forma de pagamento selecionada:
     async def processsar_pix():
-        container_troco.visible = False
-        container_qr_code.visible = True
-        transacao_aceita.visible = False    
+        # Cria um script temporário para a nova janela, importante pois tem outras bibliotecas dentro dele
+            script = f"""
+
+import flet as ft
+import asyncio
+import screeninfo
+
+def nova_janela(page: ft.Page):
+    page.title = "Nova janela"
+    page.window.width = 500
+    page.window.height = 550
+
+    # Obtem tamanho da tela principal
+    screen = screeninfo.get_monitors()[0]
+
+    # Calcula posição central
+    page.window.left = (screen.width - page.window.width) // 2
+    page.window.top = (screen.height - page.window.height) // 2
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+
+    # QR code:
+    qr_code = ft.Image(src="src/assets/qr-code.png", width=350, height=350) # Imagem do qrcode.
+    transacao_aceita = ft.Icon( # Icone de transação validada
+        name=ft.Icons.CHECK_CIRCLE,
+        color="#507656",
+        size=50,
+        visible=False,
+    )
+    container_qr_code = ft.Container( # Container onde ficarão a imagem do qrcode e o icone de validação.
+        content=ft.Column(
+            controls=[
+                ft.Row([qr_code], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([transacao_aceita], alignment=ft.MainAxisAlignment.CENTER),
+            ],
+
+            alignment=ft.MainAxisAlignment.CENTER,
+        ),
+
+        # alignment=ft.alignment.center,
+        bgcolor="#E8E3DE",
+        width=450,
+        height=500,
+        border_radius=10,
+        # visible=False,
+    )
+
+
+
+
+    page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
+
+    page.add(container_qr_code)
+
+    async def processsar_pix():
+        # container_troco.visible = False
+        # container_qr_code.visible = True
+        # transacao_aceita.visible = False
         page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
 
-        await asyncio.sleep(3) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!  
+        await asyncio.sleep(4) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
 
         transacao_aceita.visible = True
         page.update()
+
+        await asyncio.sleep(2)
+
+        page.window.close()
+
+    # Inicia o fechamento automático em uma thread separada
+    asyncio.run(processsar_pix())
+
+ft.app(target=nova_janela)
+"""
+        # Executa o script em um novo processo Python
+            subprocess.Popen([sys.executable, "-c", script])
+
+            container_troco.visible = False
 
     task_pix = None # Variável para guardar o estado atual da forma de pagamento via pix.
 
