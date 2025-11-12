@@ -165,6 +165,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         page.update() # Atualiza a página para mostrar as alterações
 
     botao_finalizar_compra = criar_botao_finalizar(finalizar_compra)
+    botao_finalizar_compra.content.value = "Ir Para o Pagamento"
 
     # Layout principal com Stack (mantém o total fixo)
     layout = ft.Container(
@@ -191,7 +192,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                 ),
                 ft.Container(
                     content=total_compra,
-                    right=30,   # canto inferior direito
+                    right=300,   # canto inferior direito
                     bottom=30,
                 ),
             ],

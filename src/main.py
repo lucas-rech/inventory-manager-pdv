@@ -10,6 +10,7 @@ from ui.pages.tela_estoque import criar_tela_estoque
 from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
 from ui.pages.tela_pdv import criar_tela_pdv
+from ui.components.conteudo.popup import criar_popup
 
 def main(page: ft.Page):
     page.title = "Sistema Mercado"
@@ -32,6 +33,9 @@ def main(page: ft.Page):
         header.content.value = "Venda"
         conteudo_completo.controls.append(header)
         conteudo_completo.controls.append(criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio))
+
+        mensagem = "Venda Realizada!" # A mensagem que será exibida no popup.
+        page.run_task(criar_popup, mensagem, page) # assim que voltar para a página tela_pdv ao clicar em finalizar compra.
         page.update()
 
     # Função para trocar para a tela de cadastro de produtos:

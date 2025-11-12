@@ -7,25 +7,27 @@ async def main(page: ft.Page):
     async def criar_popup():
         idx = len(popups)
 
-        pb = ft.ProgressBar(width=200, value=0)
+        pb = ft.ProgressBar(width=200, value=0, color="#507656")
 
         # cálculo do offset vertical
-        bottom_offset = 20 + (idx * 80)
+        bottom_offset = 20 + (idx * 90)
 
         container_pb = ft.Container(
             content=ft.Column(
                 controls=[
-                    ft.Text("Venda Realizada!", size=18, color=ft.Colors.WHITE),
+                    ft.Row([ft.Text("Venda Realizada!", size=18, color=ft.Colors.WHITE)], alignment=ft.MainAxisAlignment.CENTER),
                     pb,
                 ],
                 alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            width=300,
+            width=230,
+            height=80,
             bgcolor="#85a289",
-            opacity=0.6,
+            opacity=0.7,
             right=20,
             bottom=bottom_offset,
-            padding=15,
+            alignment=ft.alignment.center,
+            padding=25,
             border_radius=10,
         )
 
@@ -46,7 +48,7 @@ async def main(page: ft.Page):
 
         # reordena os popups restantes
         for idx, c in enumerate(popups):
-            c.bottom = 20 + (idx * 80)
+            c.bottom = 20 + (idx * 90)
 
         page.update()
 
