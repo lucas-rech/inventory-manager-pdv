@@ -18,7 +18,7 @@ def main(page: ft.Page):
     page.theme_mode = ft.ThemeMode.LIGHT
     page.horizontal_alignment = "center"
     page.window.maximized = True
-    page.window.resizable = True
+    page.window.resizable = False
 
     def voltar_para_escolha(e):
         conteudo_completo.controls.clear()

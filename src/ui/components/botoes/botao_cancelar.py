@@ -45,4 +45,7 @@ def criar_botao_cancelar(action, page):
         width=125,
     )
 
-    return layout_botao  # retorna o botão criado
+    return ft.Container(
+        content=layout_botao,
+        col={"xs": 12, "sm": 4, "md": 3, "lg": 2}
+    )

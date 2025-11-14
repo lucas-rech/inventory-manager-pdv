@@ -190,20 +190,57 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
     # Layout:
     layout = ft.Container(
-        ft.Column(
-            [
-                ft.Row([campo_nome], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([campo_numero], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([cpf_cnpj, campo_cpf, campo_cnpj], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao_adicionar, botao_limpar_campos, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=15
-        ), 
+        content=ft.ResponsiveRow(
+            controls=[
+                # Será preciso adiconar cada campo dentro de um container porque o Textfield, não é redimensionável.
+                # Nome
+                ft.Column(
+                    controls=[
+                        # Nome
+                        ft.Container(
+                            content=campo_nome,
+                            col={"xs": 12, "sm": 10, "md": 8, "lg": 6},
+                            alignment=ft.alignment.center,
+                        ),
 
+                        # Número
+                        ft.Container(
+                            content=campo_numero,
+                            col={"xs": 12, "sm": 10, "md": 8, "lg": 6},
+                            alignment=ft.alignment.center,
+                        ),
+
+                        ft.Container(
+                            content=ft.Row(
+                                    controls=[
+                                        cpf_cnpj,
+                                        campo_cpf,
+                                        campo_cnpj,
+                                    ],
+
+                                    alignment=ft.MainAxisAlignment.CENTER
+                                ),
+
+                            col={"xs": 12, "sm": 10, "md": 8, "lg": 2},
+                        ),
+                    ],
+                ),
+
+                botao_cancelar,
+                botao_limpar_campos,
+                botao_adicionar,
+            ],
+
+            alignment=ft.MainAxisAlignment.CENTER,
+            run_spacing=15,
+            spacing=15,
+        ),
+
+        alignment=ft.alignment.center,
         expand=True,
         bgcolor="#E8E3DE",
         margin=0,
+        padding=20,
         border_radius=15,
     )
 
