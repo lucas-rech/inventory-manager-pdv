@@ -2,8 +2,11 @@ import flet as ft
 import asyncio
 import subprocess
 import sys
+
+from flet.core.types import CrossAxisAlignment, MainAxisAlignment
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
+from ui.pages.cpfs import dicionario  
 
 def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio):
     # Função que permitirá apenas números no campo de código:
@@ -145,6 +148,64 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         border_radius=10,
     )
 
+    # código da pesquisa do cliente
+    def open_pesquisa(e):
+        pesquisa.open_view()
+
+    # esta função fecha a pesquisa e mostra o nome do cliente selecionado
+    def close_pesquisa(e):
+        pesquisa.close_view(f" {e.control.data[1]}, {e.control.data[0]}") # pode ser alterado
+
+    # função que lida com a mudança no campo de pesquisa
+    def handle_change(e):
+        if len(e.data) > 0:
+            pesquisar = e.data[:3] # Se o len de e.data for maior que 0, apenas junta o que foi digitado.
+        if len(e.data) > 3:
+            pesquisar += "." + e.data[3:6] # Se for maior que 3, adiciona um ponto antes e junta com o que foi digitado.
+        if len(e.data) > 6:
+            pesquisar += "." + e.data[6:9] # Se for maior que 6, adiciona um ponto antes e junta com o que foi digitado.
+        if len(e.data) > 9:
+            pesquisar += "-" + e.data[9:11]
+        if len(e.data) > 11:
+            pesquisar = f"{e.data[:2]}.{e.data[2:5]}.{e.data[5:8]}"
+            if len(e.data) > 8:
+                pesquisar += "/" + e.data[8:12]
+            if len(e.data) > 12:
+                pesquisar += "-" + e.data[12:14]
+        
+        # lista que armazena o dicionário com os clientes
+        list_to_show = [
+            (cpf, nome)
+            for cpf, nome in dicionario.items()
+            if pesquisar in cpf
+        ]
+        lv.controls.clear()
+        for i in list_to_show:
+            lv.controls.append(ft.ListTile(title=ft.Text(f"{i[0]}"), subtitle=ft.Text(f"{i[1]}"), on_click=close_pesquisa, data=i))
+        pesquisa.update()
+
+
+    lv = ft.ListView()
+    pesquisa = ft.SearchBar(
+        width=630,
+        bar_bgcolor=ft.Colors.WHITE,
+        bar_shape=ft.RoundedRectangleBorder(radius=10),
+        bar_shadow_color=None,
+        bar_leading=ft.Icon(ft.Icons.SEARCH, color="#765070"),
+        view_leading=ft.Icon(ft.Icons.SEARCH, color="#765070"),
+        view_elevation=2,
+        divider_color=ft.Colors.WHITE,
+        bar_hint_text="Digite o CPF/CNPJ para buscar o cliente",
+        view_hint_text="Digite o CPF/CNPJ para buscar o cliente",
+        view_shape=ft.RoundedRectangleBorder(radius=10),
+        view_bgcolor=ft.Colors.WHITE,
+        on_change=handle_change,
+        on_tap=open_pesquisa,
+        controls=[
+            lv
+        ],
+    )
+
     # 🔹 Campo total fixo
     total_compra = ft.Container(
         content=texto_total,
@@ -170,43 +231,77 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
     botao_finalizar_compra.content.value = "Ir Para o Pagamento"
 
     # Layout principal com Stack (mantém o total fixo)
+
     layout = ft.Container(
             ft.Stack(
             controls=[
                 ft.Row(
-                    [
+                    expand=True,
+                    controls=[
                         ft.Column(
                             [
                                 ft.Row(controls=[
                                     ft.Column([codigo, quantidade]),
                                     botao_adicionar,
-                                ]),
-
+                                ]
+                            ),
                                 area_tabela,  # à esquerda
                                 ft.Row([botao_finalizar_compra], width=750, alignment=ft.MainAxisAlignment.END),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER
                         ),
-
-                        ft.Image(src="src/assets/Logo_semfundo.png", expand=True)  
+                        ft.Column(
+                            horizontal_alignment=CrossAxisAlignment.CENTER,
+                            alignment=MainAxisAlignment.CENTER,
+                            expand=True,
+                            controls=[
+                                ft.Container(
+                                    expand=True,
+                                    alignment=ft.alignment.center,
+                                    content=ft.Column(
+                                        horizontal_alignment=CrossAxisAlignment.CENTER,
+                                        alignment=MainAxisAlignment.CENTER,
+                                        controls=[
+                                            pesquisa,
+                                            ft.Image(src="src/assets/Logo_semfundo.png", expand=True)
+                                        ],
+                                    ),
+                                ),
+                                ft.Row(
+                                    vertical_alignment=CrossAxisAlignment.CENTER,
+                                    alignment=MainAxisAlignment.END,
+                                    controls=[
+                                        ft.Container(
+                                            # expand=True,
+                                            content=total_compra,
+                                            # right=200,   # canto inferior direito
+                                            # bottom=30,
+                                        ),
+                                        ft.Container(
+                                            width=200,
+                                            height=100
+                                        )
+                                    ],
+                                )
+                            ],
+                        )
                     ],
-                    expand=True,
                 ),
-                ft.Container(
-                    content=total_compra,
-                    right=300,   # canto inferior direito
-                    bottom=30,
-                ),
+                # coloquei este container dentro da row acima para alinhar com os outros elemmentos, resotu apenas seus restos mortais aqui
+                # ft.Container(
+                #     content=total_compra,
+                #     right=200,   # canto inferior direito
+                #     bottom=30,
+                # ),
             ],
             expand=True,
         ),
 
-        expand=True, 
+        expand=True,
         bgcolor=ft.Colors.WHITE,
         padding=20,
         border_radius=13,
     )
-
     return layout
 
 def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio, resumo_compra): # Aqui será inserido a tabela com o resumo da compra, já formatada.
@@ -384,78 +479,78 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         # Cria um script temporário para a nova janela, importante pois tem outras bibliotecas dentro dele
             script = f"""
 
-import flet as ft
-import asyncio
-import screeninfo
+    import flet as ft
+    import asyncio
+    import screeninfo
 
-def nova_janela(page: ft.Page):
-    page.title = "Nova janela"
-    page.window.width = 500
-    page.window.height = 550
+    def nova_janela(page: ft.Page):
+        page.title = "Nova janela"
+        page.window.width = 500
+        page.window.height = 550
 
-    # Obtem tamanho da tela principal
-    screen = screeninfo.get_monitors()[0]
+        # Obtem tamanho da tela principal
+        screen = screeninfo.get_monitors()[0]
 
-    # Calcula posição central
-    page.window.left = (screen.width - page.window.width) // 2
-    page.window.top = (screen.height - page.window.height) // 2
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-
-
-    # QR code:
-    qr_code = ft.Image(src="src/assets/qr-code.png", width=350, height=350) # Imagem do qrcode.
-    transacao_aceita = ft.Icon( # Icone de transação validada
-        name=ft.Icons.CHECK_CIRCLE,
-        color="#507656",
-        size=50,
-        visible=False,
-    )
-    container_qr_code = ft.Container( # Container onde ficarão a imagem do qrcode e o icone de validação.
-        content=ft.Column(
-            controls=[
-                ft.Row([qr_code], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([transacao_aceita], alignment=ft.MainAxisAlignment.CENTER),
-            ],
-
-            alignment=ft.MainAxisAlignment.CENTER,
-        ),
-
-        # alignment=ft.alignment.center,
-        bgcolor="#E8E3DE",
-        width=450,
-        height=500,
-        border_radius=10,
-        # visible=False,
-    )
+        # Calcula posição central
+        page.window.left = (screen.width - page.window.width) // 2
+        page.window.top = (screen.height - page.window.height) // 2
+        page.vertical_alignment = ft.MainAxisAlignment.CENTER
+        page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
 
+        # QR code:
+        qr_code = ft.Image(src="src/assets/qr-code.png", width=350, height=350) # Imagem do qrcode.
+        transacao_aceita = ft.Icon( # Icone de transação validada
+            name=ft.Icons.CHECK_CIRCLE,
+            color="#507656",
+            size=50,
+            visible=False,
+        )
+        container_qr_code = ft.Container( # Container onde ficarão a imagem do qrcode e o icone de validação.
+            content=ft.Column(
+                controls=[
+                    ft.Row([qr_code], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([transacao_aceita], alignment=ft.MainAxisAlignment.CENTER),
+                ],
+
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+
+            # alignment=ft.alignment.center,
+            bgcolor="#E8E3DE",
+            width=450,
+            height=500,
+            border_radius=10,
+            # visible=False,
+        )
 
 
-    page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
 
-    page.add(container_qr_code)
 
-    async def processsar_pix():
-        # container_troco.visible = False
-        # container_qr_code.visible = True
-        # transacao_aceita.visible = False
         page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
 
-        await asyncio.sleep(4) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
+        page.add(container_qr_code)
 
-        transacao_aceita.visible = True
-        page.update()
+        async def processsar_pix():
+            # container_troco.visible = False
+            # container_qr_code.visible = True
+            # transacao_aceita.visible = False
+            page.update() # atualiza a UI de forma assíncrona, permitindo que outras tarefas continuem rodando enquanto a tela é atualizada.
 
-        await asyncio.sleep(2)
+            await asyncio.sleep(4) # Mesmo que o sleep porém de forma assíncrona. SEMPRE UTILIZAR ASYNC AO INVÉS DO SLEEP!
 
-        page.window.close()
+            transacao_aceita.visible = True
+            page.update()
 
-    # Inicia o fechamento automático em uma thread separada
-    asyncio.run(processsar_pix())
+            await asyncio.sleep(2)
 
-ft.app(target=nova_janela)
-"""
+            page.window.close()
+
+        # Inicia o fechamento automático em uma thread separada
+        asyncio.run(processsar_pix())
+
+    ft.app(target=nova_janela)
+    """
         # Executa o script em um novo processo Python
             subprocess.Popen([sys.executable, "-c", script])
 
