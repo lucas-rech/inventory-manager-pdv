@@ -14,6 +14,8 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes, acao_usuarios):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=5
         ),
+
+        col={"xs":12, "sm":6, "md":4, "lg":2},
         width=200,
         height=150,
         bgcolor="#765070",
@@ -34,6 +36,8 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes, acao_usuarios):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=5
         ),
+
+        col={"xs":12, "sm":6, "md":4, "lg":2},
         bgcolor= "#765070",
         width= 200,
         height= 150,
@@ -54,6 +58,8 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes, acao_usuarios):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=5
         ),
+
+        col={"xs":12, "sm":6, "md":4, "lg":2},
         bgcolor= "#765070",
         width= 200,
         height= 150,
@@ -65,7 +71,10 @@ def criar_botoes_cadastro(acao_produtos, acao_clientes, acao_usuarios):
 
     # Juntando os dois botões em um container só:
     return ft.Container(
-        ft.Row([clientes, produtos, usuarios], alignment=ft.MainAxisAlignment.CENTER),
+        content=ft.ResponsiveRow(
+            controls=[clientes, produtos, usuarios], alignment=ft.MainAxisAlignment.CENTER,
+        ),
+
         alignment=ft.alignment.center,   
         expand=True
     )

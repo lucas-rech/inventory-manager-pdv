@@ -51,25 +51,36 @@ def criar_tela_login(page, entrar):
         alerta.open = False
         page.update()
 
-    # Tela de login:
-    return ft.Container(
-        padding=20,
-        width=650,
-        height=450,
-        bgcolor="#507656",
-        alignment=ft.alignment.center,
-        border_radius=20,
-        content=ft.Column(
-            [
-                ft.Image(src="src/assets/Logo.jpg", width=150, height=150, fit=ft.ImageFit.CONTAIN, border_radius=10),
-                ft.Text("Login", size=40, weight="bold"),
-                usuario,
-                senha,
-                botao_entrar,
-                alerta
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=10,
-        ),
+    # Tela de login (layout responsivo):
+    layout = ft.ResponsiveRow(
+        controls=[
+            ft.Container(
+                col={"xs": 12, "sm": 8, "md": 6, "lg": 4},
+                padding=20,
+                bgcolor="#507656",
+                width=650,
+                height=450,
+                alignment=ft.alignment.center,
+                border_radius=20,
+                content=ft.Column(
+                    [
+                        ft.Image(src="src/assets/Logo.jpg", width=150, height=150, fit=ft.ImageFit.CONTAIN, border_radius=10),
+
+                        ft.Text("Login", size=40, weight="bold"),
+
+                        usuario,
+                        senha,
+                        botao_entrar,
+                        alerta
+                    ],
+                    
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=10,
+                ),
+            )
+        ],
+        alignment=ft.MainAxisAlignment.CENTER
     )
+
+    return layout
