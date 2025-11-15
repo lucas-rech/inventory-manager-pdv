@@ -196,7 +196,7 @@ def criar_tela_clientes(clientes, page):
         border_radius=10
     )
 
-    return ft.Container(
+    layout = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Clientes Cadastrados", size=30, weight="bold"),
@@ -213,3 +213,5 @@ def criar_tela_clientes(clientes, page):
         border_radius=15,
         alignment=ft.alignment.center,
     )
+
+    return layout

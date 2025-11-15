@@ -233,68 +233,77 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
     # Layout principal com Stack (mantém o total fixo)
 
     layout = ft.Container(
-            ft.Stack(
+        content=ft.ResponsiveRow(
             controls=[
-                ft.Row(
-                    expand=True,
-                    controls=[
-                        ft.Column(
-                            [
-                                ft.Row(controls=[
-                                    ft.Column([codigo, quantidade]),
-                                    botao_adicionar,
+
+                # ------------------------------------------------------------------
+                # COLUNA ESQUERDA (CÓDIGO, QUANTIDADE, TABELA, BOTÃO FINALIZAR)
+                # ------------------------------------------------------------------
+                ft.Container(
+                    col={"xs": 12, "md": 7, "lg": 6},
+                    content=ft.Column(
+                        [
+                            # Linha responsiva com Código + Quantidade + Botão
+                            ft.ResponsiveRow(
+                                controls=[
+                                    ft.Container(
+                                        content=ft.Column([codigo, quantidade]),
+                                        col={"xs": 12, "sm": 9, "md":8},
+                                    ),
+                                    ft.Container(
+                                        content=botao_adicionar,
+                                        col={"xs": 12, "sm": 3, "md":2.5},
+                                        alignment=ft.alignment.center,
+                                    ),
                                 ]
                             ),
-                                area_tabela,  # à esquerda
-                                ft.Row([botao_finalizar_compra], width=750, alignment=ft.MainAxisAlignment.END),
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER
-                        ),
-                        ft.Column(
-                            horizontal_alignment=CrossAxisAlignment.CENTER,
-                            alignment=MainAxisAlignment.CENTER,
-                            expand=True,
-                            controls=[
-                                ft.Container(
-                                    expand=True,
-                                    alignment=ft.alignment.center,
-                                    content=ft.Column(
-                                        horizontal_alignment=CrossAxisAlignment.CENTER,
-                                        alignment=MainAxisAlignment.CENTER,
-                                        controls=[
-                                            pesquisa,
-                                            ft.Image(src="src/assets/Logo_semfundo.png", expand=True)
-                                        ],
-                                    ),
-                                ),
-                                ft.Row(
-                                    vertical_alignment=CrossAxisAlignment.CENTER,
-                                    alignment=MainAxisAlignment.END,
-                                    controls=[
-                                        ft.Container(
-                                            # expand=True,
-                                            content=total_compra,
-                                            # right=200,   # canto inferior direito
-                                            # bottom=30,
-                                        ),
-                                        ft.Container(
-                                            width=250,
-                                            height=100
-                                        )
-                                    ],
-                                )
-                            ],
-                        )
-                    ],
+
+                            area_tabela,
+
+                            ft.Row(
+                                [botao_finalizar_compra],
+                                width=750,
+                                alignment=ft.MainAxisAlignment.END
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
                 ),
-                # coloquei este container dentro da row acima para alinhar com os outros elemmentos, resotu apenas seus restos mortais aqui
-                # ft.Container(
-                #     content=total_compra,
-                #     right=200,   # canto inferior direito
-                #     bottom=30,
-                # ),
+
+                # ------------------------------------------------------------------
+                # COLUNA DIREITA (Pesquisa, Logo, Total)
+                # ------------------------------------------------------------------
+                ft.Container(
+                    col={"xs": 12, "md": 5, "lg": 6},
+                    content=ft.Column(
+                        horizontal_alignment=CrossAxisAlignment.CENTER,
+                        alignment=MainAxisAlignment.CENTER,
+                        expand=True,
+                        controls=[
+                            ft.Container(
+                                expand=True,
+                                alignment=ft.alignment.center,
+                                content=ft.Column(
+                                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                                    alignment=MainAxisAlignment.CENTER,
+                                    controls=[
+                                        pesquisa,
+                                        ft.Image(src="src/assets/Logo_semfundo.png", expand=True)
+                                    ],
+                                ),
+                            ),
+
+                            ft.Container(
+                                content=total_compra,
+                                col={"xs":12, "md":5, "lg":3},
+                            ),
+
+                        ],
+                    ),
+                ),
+
             ],
-            expand=True,
+            alignment=ft.MainAxisAlignment.CENTER,
         ),
 
         expand=True,
@@ -302,7 +311,10 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
         padding=20,
         border_radius=13,
     )
+
+
     return layout
+
 
 def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_inicio, resumo_compra): # Aqui será inserido a tabela com o resumo da compra, já formatada.
     # QR code: 
@@ -703,16 +715,47 @@ ft.app(target=nova_janela)
     botao_finalizar.width = 250
 
     layout = ft.Container(
-        ft.Row(
-            [
-                ft.Column([area_tabela, novo_total_compra, container_troco], alignment=ft.MainAxisAlignment.START),
-                ft.Column([menu_forma_pagamento, botao_finalizar, container_qr_code], alignment=ft.MainAxisAlignment.START),
-            ],
+        content=ft.ResponsiveRow(
+            controls=[
 
-            spacing=10,
-            alignment=ft.MainAxisAlignment.CENTER,
+                # -------------------------------------------------------
+                # COLUNA ESQUERDA (tabela, total, troco)
+                # -------------------------------------------------------
+                ft.Container(
+                    col={"xs": 12, "md": 7, "lg": 5},
+                    content=ft.Column(
+                        controls=[
+                            area_tabela,
+                            novo_total_compra,
+                            container_troco,
+                        ],
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.START,
+                    ),
+                ),
+
+                # -------------------------------------------------------
+                # COLUNA DIREITA (pagamentos, botão finalizar, QR)
+                # -------------------------------------------------------
+                ft.Container(
+                    col={"xs": 12, "md": 5, "lg": 3},
+                    content=ft.Column(
+                        controls=[
+                            menu_forma_pagamento,
+                            botao_finalizar,
+                            container_qr_code,
+                        ],
+                        spacing=20,
+                        alignment=ft.MainAxisAlignment.START,
+                    ),
+                ),
+
+            ],
+            alignment=ft.CrossAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.START,
         ),
 
+        alignment=ft.alignment.center,
         bgcolor=ft.Colors.WHITE,
         expand=True,
         padding=20,

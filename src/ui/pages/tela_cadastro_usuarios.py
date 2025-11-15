@@ -127,14 +127,15 @@ def cadastro_usuarios(page, voltar_para_escolha):
                         senha,
                         confirmar_senha,
                         alerta,
-                        ft.Row(
-                            alignment=ft.MainAxisAlignment.CENTER, 
+                        ft.ResponsiveRow(
                             controls=[
                                 botao_cancelar,
                                 botao_cadastrar,
-                            ]
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER, 
                         ),
                     ],
+                    
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     alignment=ft.MainAxisAlignment.CENTER,
                     spacing=10,
