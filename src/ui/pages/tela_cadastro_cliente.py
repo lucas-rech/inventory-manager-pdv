@@ -125,10 +125,10 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
     )
 
     # Campo para que o cpf seja digitado:
-    campo_cpf = ft.TextField(label="CPF:", hint_text="EX: XXX.XXX.XXX-XX", visible=True, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cpf) # A função de formatação funcionará em tempo de execução enquanto o usuário estiver digitando, sempre que houver uma maudança no Text Field, no caso, algum caracter a mais ou a menos, a função é acionada.
+    campo_cpf = ft.TextField(label="CPF:", hint_text="EX: XXX.XXX.XXX-XX", visible=True, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cpf, col={"xs": 12, "sm": 10, "md": 8, "lg": 2}) # A função de formatação funcionará em tempo de execução enquanto o usuário estiver digitando, sempre que houver uma maudança no Text Field, no caso, algum caracter a mais ou a menos, a função é acionada.
 
     # Campo para que o cnpj seja digitado:
-    campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cnpj)
+    campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cnpj, col={"xs": 12, "sm": 10, "md": 8, "lg": 2})
 
     campos = [campo_nome, campo_numero, campo_cpf, campo_cnpj]
     cpf_valid = CPF()

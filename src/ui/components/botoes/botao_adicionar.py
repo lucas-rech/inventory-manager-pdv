@@ -12,5 +12,5 @@ def criar_botao_adicionar(action):
 
     return ft.Container(
         content=layout_botao,
-        col={"xs": 12, "sm": 4, "md": 3, "lg": 2}
+        col={"xs": 12, "sm": 4, "md": 3, "lg": 1.3}
     )

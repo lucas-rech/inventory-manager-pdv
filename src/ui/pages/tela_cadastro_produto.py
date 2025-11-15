@@ -192,24 +192,98 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
     botao_limpar_campos = criar_botao_limpar(campos, page)
 
     # Tela onde serão inseridas as informações dos produtos:
-    tela_informacoes_produto = ft.Container(
-        ft.Column(
-            [
-                ft.Row([codigo, nome], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([quantidade, validade, selecionar_data], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([porcentagem_preco_venda, porcentagem], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([botao_adicionar, botao_limpar_campos, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
+    layout = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=codigo,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+
+                        ft.Container(
+                            content=nome,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=quantidade,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+
+                        ft.Container(
+                            content=validade,
+                            col={"xs": 10, "sm": 5, "md":2.5},
+                        ),
+
+                        ft.Container(
+                            content=selecionar_data,
+                            col={"xs": 2, "sm": 1, "md":0.5}
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=preco_custo,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+
+                        ft.Container(
+                            content=preco_venda,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=porcentagem_preco_venda,
+                            col={"xs": 12, "sm": 4, "md":2, "lg":1},
+                        ),
+
+                        ft.Container(
+                            content=porcentagem,
+                            col={"xs": 12, "sm": 8, "md":4, "lg":3},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        botao_cancelar,
+                        botao_limpar_campos,
+                        botao_adicionar,
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
             ],
 
             alignment=ft.MainAxisAlignment.CENTER,
-            spacing=15,
+            spacing=10,
         ),
 
+        alignment=ft.alignment.center,
         expand=True,
-        bgcolor=ft.Colors.WHITE,
-        margin=0,
+        bgcolor="#E8E3DE",
+        padding=20,
         border_radius=15,
     )
 
-    return tela_informacoes_produto
+    return layout

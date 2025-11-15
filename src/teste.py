@@ -1,62 +1,54 @@
 import flet as ft
-import asyncio
 
-async def main(page: ft.Page):
-    popups = []  # guardamos os popups ativos
 
-    async def criar_popup():
-        idx = len(popups)
+def main(page: ft.Page):
+    codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE)
+    nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE) 
+    preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610)
+    preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True)
 
-        pb = ft.ProgressBar(width=200, value=0, color="#507656")
+    layout = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=codigo,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                        ft.Container(
+                            content=nome,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                    ],
 
-        # cálculo do offset vertical
-        bottom_offset = 20 + (idx * 90)
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
 
-        container_pb = ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Row([ft.Text("Venda Realizada!", size=18, color=ft.Colors.WHITE)], alignment=ft.MainAxisAlignment.CENTER),
-                    pb,
-                ],
-                alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            width=230,
-            height=80,
-            bgcolor="#85a289",
-            opacity=0.7,
-            right=20,
-            bottom=bottom_offset,
-            alignment=ft.alignment.center,
-            padding=25,
-            border_radius=10,
-        )
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=preco_custo,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
 
-        # adiciona o popup ao overlay
-        popups.append(container_pb)
-        page.overlay.append(container_pb)
-        page.update()
+                        ft.Container(
+                            content=preco_venda,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                    ],
 
-        # animação da progress bar
-        for i in range(101):
-            pb.value = i / 100
-            page.update()
-            await asyncio.sleep(0.02)
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+            ],
 
-        # remove o popup após término
-        page.overlay.remove(container_pb)
-        popups.remove(container_pb)
+            alignment=ft.MainAxisAlignment.CENTER,
+        ),
 
-        # reordena os popups restantes
-        for idx, c in enumerate(popups):
-            c.bottom = 20 + (idx * 90)
+        expand=True
+    )
 
-        page.update()
+    page.add(layout)
 
-    async def iniciar(e):
-        asyncio.create_task(criar_popup())
-
-    btn = ft.ElevatedButton("Iniciar", on_click=iniciar)
-
-    page.add(btn)
 
 ft.app(target=main)
