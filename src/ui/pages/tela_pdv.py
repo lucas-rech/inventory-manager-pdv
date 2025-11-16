@@ -751,7 +751,7 @@ ft.app(target=nova_janela)
                 ),
 
             ],
-            alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.START,
         ),
 
