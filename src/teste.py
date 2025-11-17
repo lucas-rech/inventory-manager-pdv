@@ -33,6 +33,14 @@ def main(page: ft.Page):
         # Ação quando o DatePicker é fechado sem selecionar
         page.close(date_picker)
 
+    def salvar(e):
+        page.close(editar)
+
+    botao_salvar = ft.ElevatedButton(
+        content=ft.Text("Salvar", color="#507656", size=16),
+        on_click=salvar,
+    )
+
     # Cria o DatePicker com as configurações
     date_picker = ft.DatePicker(
         first_date=datetime.datetime(year=2025, month=1, day=1),
@@ -101,6 +109,17 @@ def main(page: ft.Page):
                             ft.Container(
                                 content=preco_venda,
                                 col={"xs": 12, "sm":9, "md":6, "lg":6},
+                            ),
+                        ],
+
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(
+                                content=botao_salvar,
+                                col={"xs": 12, "sm":4, "md":3, "lg":2},
                             ),
                         ],
 
