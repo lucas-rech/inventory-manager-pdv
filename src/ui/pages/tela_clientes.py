@@ -100,7 +100,7 @@ def criar_tela_clientes(clientes, page):
         page.update()
 
     # Função que cancelará qualquer alteração feita
-    def cancelar(index): # Recebe o index dos dados do cliente.
+    def cancelar(e):
         page.close(janela_editar)
         page.update()
         
@@ -142,6 +142,43 @@ def criar_tela_clientes(clientes, page):
 
 
 
+    # Função para buscar o cliente:
+    def buscar_cliente(e):
+        texto = e.control.value.lower().strip()
+
+        tabela_clientes.rows.clear()
+
+        for i, cliente in enumerate(clientes):
+            # Botão para editar as informações:
+            botao_editar = ft.IconButton(
+                icon=ft.Icons.EDIT,
+                on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                style=ft.ButtonStyle(color="#507656"), # Cor do texto.
+            )
+
+            if texto in cliente["nome"].lower() or texto in cliente["numero"].lower() or texto in cliente["cpf_cnpj"].lower():
+                tabela_clientes.rows.append(
+                    ft.DataRow(
+                        cells=[
+                            ft.DataCell(ft.Text(cliente["nome"])),
+                            ft.DataCell(ft.Text(cliente["numero"])),
+                            ft.DataCell(ft.Text(cliente["cpf_cnpj"])),
+                            ft.DataCell(botao_editar),
+                        ],
+                    ),
+                )
+
+        page.update()
+
+
+    # Campo para busca de clientes:
+    campo_buscar = ft.TextField(label="Buscar Cliente:", hint_text="Nome, Número, CPF/CNPJ", width=300, on_change=buscar_cliente)
+
+
+
+
+
+
     # Popup de erro caso algum campo esteja em branco:
     erro = ft.AlertDialog(
         title=ft.Text("Erro!", weight="bold"),
@@ -165,17 +202,16 @@ def criar_tela_clientes(clientes, page):
     # Botão para salvar as alterações:
     botao_salvar = ft.TextButton(
         content=ft.Text("Salvar", size=16),
-        on_click=lambda e, index=index_editado: salvar(index, campo_nome, campo_numero),
+        on_click=lambda e: salvar(index_editado, campo_nome, campo_numero),
         style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
     )
 
     # Botão para cancelar a edição:
     botao_cancelar = ft.TextButton(
         content=ft.Text("Cancelar", size=16),
-        on_click=lambda e, index=index_editado: cancelar(index),
+        on_click=cancelar,
         style=ft.ButtonStyle(color="#9B3E3E"),
     )
-
 
     campo_nome = ft.TextField(label="Nome:", value="", width=200, on_change=formatar_nome)
 
@@ -251,6 +287,7 @@ def criar_tela_clientes(clientes, page):
 
 
 
+
     # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
     container_tabela = ft.Container(
         content=ft.Column(
@@ -267,12 +304,27 @@ def criar_tela_clientes(clientes, page):
 
 
 
+
     layout = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Clientes Cadastrados", size=30, weight="bold"),
+                ft.Text("Clientes Cadastrados", size=30, 
+                weight="bold"),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=campo_buscar,
+                            col={"xs":12, "sm":12, "md":6, "lg":4},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.START,
+                ),
+
                 container_tabela,
             ],
+
             spacing=10,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         ),
