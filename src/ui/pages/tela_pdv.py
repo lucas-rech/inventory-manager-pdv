@@ -385,9 +385,9 @@ def criar_tela_finalizar_compra(area_tabela, texto_total, page, voltar_venda_ini
         page.update()
 
     def fechar_erro(e):
-        page.close(troco_errado) # Abre o popup de erro.
+        page.close(troco_errado) # Fecha o popup de erro.
         page.update() # Atualiza a interface primeiro.
-        page.run_task(reabrir_valor) # Depois de atualizar dá run no próximo processo para evitar deadlock
+        page.run_task(reabrir_valor) # Depois de atualizar, dá run no próximo processo para evitar deadlock
 
     async def reabrir_valor():
         await asyncio.sleep(0.05) # Dá um tempo para a interface até executar o próximo processo para evitar deadlock.
