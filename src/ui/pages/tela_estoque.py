@@ -1,5 +1,7 @@
 import flet as ft
 import re
+import datetime
+import asyncio
 
 # Função que irá criar a tela de estoque:
 def criar_tela_estoque(produtos, page):
@@ -202,10 +204,71 @@ def criar_tela_estoque(produtos, page):
         on_change=formatar_preco_custo,
     )
 
+    # Função que fará a verificação da opção do cálculo do preço de venda escolhida.
+    def selecionar_porcentagem(e):
+        if porcentagem_preco_venda.value == "porcentagem": # Teste se o valor selecionado é "porcentagem"
+            porcentagem.visible = True
+            campo_preco_venda.read_only = True
+
+        if porcentagem_preco_venda.value == "manual": # Teste se o valor selecionado é "manual"
+            porcentagem.visible = False
+            campo_preco_venda.read_only = False
+
+        page.update()
+
+    def formatar_preco_venda(e):
+        # Remove o "R$" e os pontos do preço de custo, troca vírgula por ponto para converter em float
+        custo_texto = campo_preco_custo.value.replace("R$ ", "").replace(".", "").replace(",", ".")
+
+        try:
+            custo = float(custo_texto) # Converte o texto para número decimal (float)
+        except ValueError:
+            custo = 0.0 # Se der algum erro (por exemplo, o campo estiver vazio ou com texto inválido), usamos custo = 0.0
+
+        p_texto = "".join(filter(str.isdigit, porcentagem.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+        p_texto = p_texto[:3]
+
+        if porcentagem_preco_venda.value == "porcentagem": # Se a opção de cálculo for inserindo a porcentagem.
+            if p_texto: # Se p_texto == True, ou seja, tem algo
+                lucro = int(p_texto) / 100 # Trasforma em int e divide a porcentagem digitada por 100
+                valor = custo * (1 + lucro) # Multiplica pelo preco de custo a porcentagem digitada.
+
+            else: # Senão, apenas passa o preço de custo como preço de venda
+                valor = custo
+
+        else:  # Se a opção de cálculo for inserindo manualmente
+            n_texto = "".join(filter(str.isdigit, campo_preco_venda.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+
+            if n_texto: # Se p_texto == True, ou seja, tem algo
+                valor = int(n_texto) / 100 # Converte para int e divide por 100 para conseguir os dois dígitos dos centavos.
+            
+            else: # Senão, apenas passa o preço de custo como preço de venda
+                valor = custo
+
+        # Formata com separador de milhar e decimal
+        formatado = f"R$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
+        campo_preco_venda.value = formatado
+        page.update()
+
+    porcentagem_preco_venda = ft.RadioGroup(
+        content=ft.Column(
+            controls=[
+                ft.Radio(label="Porcentagem", value="porcentagem"),
+                ft.Radio(label="Manual", value="manual"),
+            ],
+        ),
+
+        value="porcentagem",
+        on_change=selecionar_porcentagem,
+    )
+
+    porcentagem = ft.TextField(label= "Porcentagem de lucro:", bgcolor=ft.Colors.WHITE, width=610, visible=True, on_change=formatar_preco_venda)
+
     campo_preco_venda = ft.TextField( # Terminar a formatação deste campo
         label="Preço de Venda:",
         value="",
         width=120,
+        on_change=formatar_preco_venda,
     )
 
     campo_quantidade = ft.TextField(
@@ -222,6 +285,31 @@ def criar_tela_estoque(produtos, page):
         on_change=formatar_validade,
     )
 
+    def handle_change(e):
+        # Atualiza o TextField com a data selecionada formatada
+        data_formatada = e.control.value.strftime('%d/%m/%Y')
+        campo_validade.value = data_formatada
+        campo_validade.update()
+        page.close(date_picker)
+
+    def handle_dismissal(e):
+        # Ação quando o DatePicker é fechado sem selecionar
+        page.close(date_picker)
+
+    # Cria o DatePicker com as configurações
+    date_picker = ft.DatePicker(
+        first_date=datetime.datetime(year=2025, month=1, day=1),
+        last_date=datetime.datetime.today() + datetime.timedelta(90),
+        on_change=handle_change,
+        on_dismiss=handle_dismissal,
+    )
+
+    def abrir_datepicker(e):
+        # Abre o DatePicker quando clicar no botão ou no campo
+        page.open(date_picker)
+
+    selecionar_data = ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, on_click=abrir_datepicker, icon_color=ft.Colors.BLACK)
+
     # Variável para localzar o dado que será editado:
     index_editado = 0
 
@@ -237,12 +325,12 @@ def criar_tela_estoque(produtos, page):
                         controls=[
                             ft.Container(
                                 content=campo_codigo_barras,
-                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                                col={"xs":12, "sm":10, "md":6, "lg":5},
                             ),
 
                             ft.Container(
                                 content=campo_nome_produto,
-                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                                col={"xs":12, "sm":10, "md":6, "lg":5},
                             ),
                         ],
 
@@ -253,12 +341,49 @@ def criar_tela_estoque(produtos, page):
                         controls=[
                             ft.Container(
                                 content=campo_quantidade,
-                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                                col={"xs":12, "sm":10, "md":6, "lg":5},
                             ),
 
                             ft.Container(
                                 content=campo_validade,
-                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                                col={"xs":10, "sm":9, "md":5, "lg":4},
+                            ),
+
+                            ft.Container(
+                                content=selecionar_data,
+                                col={"xs": 2, "sm": 1, "md":1},
+                            ),
+                        ],
+
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(
+                                content=campo_preco_custo,
+                                col={"xs":12, "sm":10, "md":6, "lg":5},
+                            ),
+
+                            ft.Container(
+                                content=campo_preco_venda,
+                                col={"xs":12, "sm":10, "md":6, "lg":5},
+                            ),
+                        ],
+
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(
+                                content=porcentagem_preco_venda,
+                                col={"xs":3, "sm":3, "md":3, "lg":3},
+                            ),
+
+                            ft.Container(
+                                content=porcentagem,
+                                col={"xs":9, "sm":9, "md":6, "lg":5},
                             ),
                         ],
 

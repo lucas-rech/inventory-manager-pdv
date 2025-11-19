@@ -72,21 +72,24 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         except ValueError:
             custo = 0.0 # Se der algum erro (por exemplo, o campo estiver vazio ou com texto inválido), usamos custo = 0.0
 
-        if porcentagem_preco_venda.value == "porcentagem": # Se a opção de cálculo for inserindo a porcentagem.
-            p_texto = "".join(filter(str.isdigit, porcentagem.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+        p_texto = "".join(filter(str.isdigit, porcentagem.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+        p_texto = p_texto[:3]
+        porcentagem.value = str(p_texto)
 
+        if porcentagem_preco_venda.value == "porcentagem": # Se a opção de cálculo for inserindo a porcentagem.
             if p_texto: # Se p_texto == True, ou seja, tem algo
                 lucro = int(p_texto) / 100 # Trasforma em int e divide a porcentagem digitada por 100
                 valor = custo * (1 + lucro) # Multiplica pelo preco de custo a porcentagem digitada.
 
             else: # Senão, apenas passa o preço de custo como preço de venda
                 valor = custo
+                porcentagem.value = ""
 
         else:  # Se a opção de cálculo for inserindo manualmente
-            p_texto = "".join(filter(str.isdigit, preco_venda.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+            n_texto = "".join(filter(str.isdigit, preco_venda.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
 
-            if p_texto: # Se p_texto == True, ou seja, tem algo
-                valor = int(p_texto) / 100 # Converte para int e divide por 100 para conseguir os dois dígitos dos centavos.
+            if n_texto: # Se p_texto == True, ou seja, tem algo
+                valor = int(n_texto) / 100 # Converte para int e divide por 100 para conseguir os dois dígitos dos centavos.
             
             else: # Senão, apenas passa o preço de custo como preço de venda
                 valor = custo
