@@ -53,5 +53,5 @@ def criar_botao_limpar(campos, page):
 
     return ft.Container(
         content=layout_botao,
-        col={"xs": 12, "sm": 4, "md": 3, "lg": 1.3}
+        col={"xs": 12, "sm": 5, "md": 4, "lg": 1.7}
     )

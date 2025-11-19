@@ -221,7 +221,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
                                     alignment=ft.MainAxisAlignment.CENTER
                                 ),
 
-                            col={"xs": 12, "sm": 10, "md": 8, "lg": 2},
+                            col={"xs": 12, "sm": 10, "md": 8, "lg": 3},
                         ),
                     ],
                 ),

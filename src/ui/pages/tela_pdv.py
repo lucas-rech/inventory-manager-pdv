@@ -722,7 +722,7 @@ ft.app(target=nova_janela)
                 # COLUNA ESQUERDA (tabela, total, troco)
                 # -------------------------------------------------------
                 ft.Container(
-                    col={"xs": 12, "md": 7, "lg": 5},
+                    col={"xs": 12, "sm":10, "md": 9, "lg": 7},
                     content=ft.Column(
                         controls=[
                             area_tabela,

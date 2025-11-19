@@ -252,7 +252,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
                     controls=[
                         ft.Container(
                             content=porcentagem_preco_venda,
-                            col={"xs": 12, "sm": 4, "md":2, "lg":1},
+                            col={"xs": 12, "sm": 4, "md":2, "lg":1.5},
                         ),
 
                         ft.Container(
