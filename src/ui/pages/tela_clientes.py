@@ -153,7 +153,7 @@ def criar_tela_clientes(clientes, page):
             botao_editar = ft.IconButton(
                 icon=ft.Icons.EDIT,
                 on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
-                style=ft.ButtonStyle(color="#507656"), # Cor do texto.
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
             )
 
             if texto in cliente["nome"].lower() or texto in cliente["numero"].lower() or texto in cliente["cpf_cnpj"].lower():

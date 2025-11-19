@@ -27,51 +27,7 @@ def criar_tela_estoque(produtos, page):
         for i, produto in enumerate(produtos): # Para cada indice da lista "produtos"
 
             if produto.get("editando", False):
-                global campo_codigo_barras
-                campo_codigo_barras = ft.TextField(
-                    label="Código de Barras",
-                    value=produto["codigo"],
-                    width=100,
-                    on_change=formatar_codigo_barras,
-                )
-
-                global campo_nome_produto
-                campo_nome_produto = ft.TextField(
-                    label="Nome:",
-                    width=120,
-                    value=produto["nome"],
-                    on_change=formatar_nome_produto,
-                )
-
-                global campo_preco_custo
-                campo_preco_custo = ft.TextField(
-                    label="Preço de Custo:",
-                    width=120,
-                    value=produto["preco_custo"],
-                    on_change=formatar_preco_custo,
-                )
-
-                campo_preco_venda = ft.TextField( # Terminar a formatação deste campo
-                    label="Preço de Venda:",
-                    value=produto["preco_venda"],
-                    width=120,
-                )
-
-                global campo_quantidade
-                campo_quantidade = ft.TextField(
-                    label="Quantidade:",
-                    value=produto["quantidade"],
-                    width=100,
-                    on_change=formatar_quantidade,
-                )
-
-                global campo_validade
-                campo_validade = ft.TextField(
-                    label="Validade:",
-                    value=produto["validade"],
-                    width=120,
-                    on_change=formatar_validade,
-                )
+                
 
                 botao_salvar = ft.TextButton(
                     text="Salvar",
@@ -100,16 +56,10 @@ def criar_tela_estoque(produtos, page):
                 )
 
             else:
-                botao_editar = ft.TextButton(
-                    text="Editar", # Texto escrito no botão.
-                    style=ft.ButtonStyle(color="#507656"), # Cor do texto.
+                botao_editar = ft.IconButton(
+                    icon=ft.Icons.EDIT,
+                    style=ft.ButtonStyle(color="#507656"), # Cor do botão.
                     on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
-                )
-
-                botao_excluir = ft.TextButton(
-                    text="Excluir", # Texto escrito no botão
-                    style=ft.ButtonStyle(color="#9B3E3E"), # Cor do texto.
-                    on_click=lambda e, index=i: excluir(index) # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função excluir.
                 )
                 
                 tabela_estoque.rows.append( # Cria uma nova linha na tabela
@@ -122,7 +72,7 @@ def criar_tela_estoque(produtos, page):
                             ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
                             ft.DataCell(ft.Text(produto["quantidade"], size=14)),
                             ft.DataCell(ft.Text(produto["validade"], size=14)),
-                            ft.DataCell(ft.Row([botao_editar, botao_excluir])),
+                            ft.DataCell(botao_editar),
                         ]
                     )
                 ) 
@@ -140,28 +90,11 @@ def criar_tela_estoque(produtos, page):
     # FUNÇÕES DE EDIÇÃO DA TABELA:
     # Função de editar dados da tabela:
     def editar(index): # Recebe o index dos dados que serão editados.
-        produtos[index]["editando"] = True # Altera o valor de editando no index passado para "True".
-        atualizar() # Atualiza a tabela.
+        page.open(janela_editar) # Abre a janela de edição dos dados.
 
-    janela_editar = ft.AlertDialog(
-        title=ft.Text("Editar", weight="bold", text_align=ft.TextAlign.CENTER),
+        nonlocal index_editado
+        index_editado = index
 
-        content=ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.ResponsiveRow(
-                        controls=[
-                            ft.Container(),
-                        ],
-                    ),
-                ],
-            ),
-        ),
-    )
-
-    # Função de excluir dados da tabela:
-    def excluir(index): # Recebe o index dos dados que serão excluidos.
-        produtos.pop(index) # Exclui o item contido no index.
         atualizar() # Atualiza a tabela.
 
     # Função de salvar os novos dados na tabela:
@@ -186,6 +119,7 @@ def criar_tela_estoque(produtos, page):
 
 
 
+
     # FUNÇÕES DE FORMATAÇÃO DOS DADOS DA TABELA: 
     def formatar_codigo_barras(e):
         texto = "".join(filter(str.isdigit, e.control.value))
@@ -194,13 +128,8 @@ def criar_tela_estoque(produtos, page):
 
     def formatar_nome_produto(e):
         texto = e.control.value
-
-        if re.fullmatch(r"[A-Za-zÀ-ÿ ]*", texto): # Verifica se os caracteres contidos em "texto" casam com o filtro especificado (A até Z, a até Z, letras com acentos e espaços).
-            campo_nome_produto.error_text = None
-
-        else: # Se não bater com o filtro
-            campo_nome_produto.error_text = "Apenas letras!"
-
+        texto = texto[:80]
+        
         campo_nome_produto.value = re.sub(r"\s{2,}", " ", texto)
         page.update()
 
@@ -243,6 +172,111 @@ def criar_tela_estoque(produtos, page):
 
         campo_validade.value = formatado
         page.update()
+
+
+
+
+
+
+
+
+    # CAMPOS DE EDIÇÃO DA TABELA:
+    campo_codigo_barras = ft.TextField(
+        label="Código de Barras",
+        value="",
+        width=100,
+        on_change=formatar_codigo_barras,
+    )
+
+    campo_nome_produto = ft.TextField(
+        label="Nome:",
+        width=120,
+        value="",
+        on_change=formatar_nome_produto,
+    )
+
+    campo_preco_custo = ft.TextField(
+        label="Preço de Custo:",
+        width=120,
+        value="",
+        on_change=formatar_preco_custo,
+    )
+
+    campo_preco_venda = ft.TextField( # Terminar a formatação deste campo
+        label="Preço de Venda:",
+        value="",
+        width=120,
+    )
+
+    campo_quantidade = ft.TextField(
+        label="Quantidade:",
+        value="",
+        width=100,
+        on_change=formatar_quantidade,
+    )
+
+    campo_validade = ft.TextField(
+        label="Validade:",
+        value="",
+        width=120,
+        on_change=formatar_validade,
+    )
+
+    # Variável para localzar o dado que será editado:
+    index_editado = 0
+
+
+    # Janela de editar os dados do produto:
+    janela_editar = ft.AlertDialog(
+        title=ft.Text("Editar", weight="bold", text_align=ft.TextAlign.CENTER),
+
+        content=ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(
+                                content=campo_codigo_barras,
+                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                            ),
+
+                            ft.Container(
+                                content=campo_nome_produto,
+                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                            ),
+                        ],
+
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(
+                                content=campo_quantidade,
+                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                            ),
+
+                            ft.Container(
+                                content=campo_validade,
+                                col={"xs":12, "sm":10, "md":6, "lg":4},
+                            ),
+                        ],
+
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                ],
+
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+
+            width=600,
+            height=300,
+        ),
+
+        bgcolor=ft.Colors.WHITE,
+        modal=True,
+        alignment=ft.alignment.center
+    )
 
 
 
