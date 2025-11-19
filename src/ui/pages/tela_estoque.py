@@ -131,11 +131,33 @@ def criar_tela_estoque(produtos, page):
 
     atualizar()
 
+
+
+
+
+
+
     # FUNÇÕES DE EDIÇÃO DA TABELA:
     # Função de editar dados da tabela:
     def editar(index): # Recebe o index dos dados que serão editados.
         produtos[index]["editando"] = True # Altera o valor de editando no index passado para "True".
         atualizar() # Atualiza a tabela.
+
+    janela_editar = ft.AlertDialog(
+        title=ft.Text("Editar", weight="bold", text_align=ft.TextAlign.CENTER),
+
+        content=ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(),
+                        ],
+                    ),
+                ],
+            ),
+        ),
+    )
 
     # Função de excluir dados da tabela:
     def excluir(index): # Recebe o index dos dados que serão excluidos.
@@ -157,6 +179,11 @@ def criar_tela_estoque(produtos, page):
     def cancelar(index): # Recebe o index de onde a alteração está sendo feita.
         produtos[index]["editando"] = False # Muda o valor contido na chave editando, no index passado.
         atualizar() # Atualiza a tabela.
+
+
+
+
+
 
 
     # FUNÇÕES DE FORMATAÇÃO DOS DADOS DA TABELA: 
@@ -217,6 +244,13 @@ def criar_tela_estoque(produtos, page):
         campo_validade.value = formatado
         page.update()
 
+
+
+
+
+
+
+
     # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
     container_tabela = ft.Container(
         content=ft.Column(
@@ -230,7 +264,7 @@ def criar_tela_estoque(produtos, page):
     )
 
     # Tela de estoque:
-    return ft.Container(
+    layout = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Produtos Cadastrados", size=30, weight="bold"),
@@ -247,4 +281,6 @@ def criar_tela_estoque(produtos, page):
         border_radius=15,
         alignment=ft.alignment.center,
     )
+
+    return layout
     

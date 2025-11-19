@@ -218,18 +218,11 @@ def criar_tela_clientes(clientes, page):
     campo_numero = ft.TextField(label="Número:", value="", width=200, on_change=formatar_numero)
 
     janela_editar = ft.AlertDialog(
+        title=ft.Text("Editar", weight="bold", text_align=ft.TextAlign.CENTER),
+
         content=ft.Container(
             content=ft.Column(
                 controls=[
-                    ft.ResponsiveRow(
-                        controls=[
-                            ft.Container(
-                                content=ft.Text("Editar Dados", size=20, weight="bold"),
-                                alignment=ft.alignment.center,
-                            )
-                        ]
-                    ),
-
                     ft.ResponsiveRow(
                         controls=[
                             ft.Container(
