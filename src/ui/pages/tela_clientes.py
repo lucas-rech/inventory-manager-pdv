@@ -301,8 +301,7 @@ def criar_tela_clientes(clientes, page):
     layout = ft.Container(
         content=ft.Column(
             [
-                ft.Text("Clientes Cadastrados", size=30, 
-                weight="bold"),
+                ft.Text("Clientes Cadastrados", size=30, weight="bold"),
 
                 ft.ResponsiveRow(
                     controls=[
@@ -312,7 +311,7 @@ def criar_tela_clientes(clientes, page):
                         ),
                     ],
 
-                    alignment=ft.MainAxisAlignment.START,
+                    alignment=ft.MainAxisAlignment.CENTER,
                 ),
 
                 container_tabela,

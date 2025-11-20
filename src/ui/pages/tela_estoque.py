@@ -27,57 +27,26 @@ def criar_tela_estoque(produtos, page):
         tabela_estoque.rows.clear() # Limpa todas as tabelas anteriores para atualizar tudo do zero.
 
         for i, produto in enumerate(produtos): # Para cada indice da lista "produtos"
+            botao_editar = ft.IconButton(
+                icon=ft.Icons.EDIT,
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+            )
+            
+            tabela_estoque.rows.append( # Cria uma nova linha na tabela
 
-            if produto.get("editando", False):
-                
-
-                botao_salvar = ft.TextButton(
-                    text="Salvar",
-                    style=ft.ButtonStyle(color="#507656"),
-                    on_click=lambda e, index=i: salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade)
+                ft.DataRow( # Cada linha/row (neste caso DataRow por ser a linha de uma tabela) é feita de várias células (DataCell), uma para cada coluna.
+                    cells=[
+                        ft.DataCell(ft.Text(produto["codigo"], size=14)), # Busca o valor atráves do nome no dicionário da função adicionar produto.
+                        ft.DataCell(ft.Text(produto["nome"], size=14)),
+                        ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
+                        ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
+                        ft.DataCell(ft.Text(produto["quantidade"], size=14)),
+                        ft.DataCell(ft.Text(produto["validade"], size=14)),
+                        ft.DataCell(botao_editar),
+                    ]
                 )
-
-                botao_cancelar = ft.TextButton(
-                    text="Cancelar",
-                    style=ft.ButtonStyle(color="#9B3E3E"),
-                    on_click=lambda e, index=i: cancelar(index),
-                )
-
-                tabela_estoque.rows.append(
-                    ft.DataRow( # IMPORTANTE: É obrigatório passar a mesma quantidade de datacells em relação à quantidade de colunas.
-                        cells=[
-                            ft.DataCell(campo_codigo_barras),
-                            ft.DataCell(campo_nome_produto),
-                            ft.DataCell(campo_preco_custo),
-                            ft.DataCell(campo_preco_venda),
-                            ft.DataCell(campo_quantidade),
-                            ft.DataCell(campo_validade),
-                            ft.DataCell(ft.Row([botao_salvar, botao_cancelar])),
-                        ]
-                    )
-                )
-
-            else:
-                botao_editar = ft.IconButton(
-                    icon=ft.Icons.EDIT,
-                    style=ft.ButtonStyle(color="#507656"), # Cor do botão.
-                    on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
-                )
-                
-                tabela_estoque.rows.append( # Cria uma nova linha na tabela
-
-                    ft.DataRow( # Cada linha/row (neste caso DataRow por ser a linha de uma tabela) é feita de várias células (DataCell), uma para cada coluna.
-                        cells=[
-                            ft.DataCell(ft.Text(produto["codigo"], size=14)), # Busca o valor atráves do nome no dicionário da função adicionar produto.
-                            ft.DataCell(ft.Text(produto["nome"], size=14)),
-                            ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
-                            ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
-                            ft.DataCell(ft.Text(produto["quantidade"], size=14)),
-                            ft.DataCell(ft.Text(produto["validade"], size=14)),
-                            ft.DataCell(botao_editar),
-                        ]
-                    )
-                ) 
+            ) 
 
         page.update() # Atualiza a página para mostrar as alterações.
 
@@ -92,6 +61,13 @@ def criar_tela_estoque(produtos, page):
     # FUNÇÕES DE EDIÇÃO DA TABELA:
     # Função de editar dados da tabela:
     def editar(index): # Recebe o index dos dados que serão editados.
+        campo_codigo_barras.value = produtos[index]["codigo"]
+        campo_nome_produto.value = produtos[index]["nome"]
+        campo_preco_custo.value = produtos[index]["preco_custo"]
+        campo_preco_venda.value = produtos[index]["preco_venda"]
+        campo_quantidade.value = produtos[index]["quantidade"]
+        campo_validade.value = produtos[index]["validade"]
+
         page.open(janela_editar) # Abre a janela de edição dos dados.
 
         nonlocal index_editado
@@ -101,19 +77,41 @@ def criar_tela_estoque(produtos, page):
 
     # Função de salvar os novos dados na tabela:
     def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade): # Recebe os campos que recebem as novas informações.
-        produtos[index]["codigo"] = campo_codigo_barras.value # Muda o dado contido na chave codigo, no index passado.
-        produtos[index]["nome"] = campo_nome_produto.value # Muda o dado contido na chave nome, no index passado.
-        produtos[index]["preco_custo"] = campo_preco_custo.value # Muda o dado contido na chave preco_custo, no index passado.
-        produtos[index]["preco_venda"] = campo_preco_venda.value # Muda o dado contido na chave preco_venda, no index passado.
-        produtos[index]["quantidade"] = campo_quantidade.value # Muda o dado contido na chave quantidade, no index passado.
-        produtos[index]["validade"] = campo_validade.value # Muda o dado contido na chave validade, no index passado.
-        produtos[index]["editando"] = False # Muda o valor contido na chave editando, no index passado.
-        atualizar() # Atualiza a tabela.
+        if not campo_codigo_barras.value or not campo_nome_produto.value or not campo_preco_custo.value or not campo_preco_venda.value or not campo_quantidade.value or not campo_validade.value:
+            page.open(erro) # Mensagem de erro
+            page.update()
+
+        else:
+            produtos[index]["codigo"] = campo_codigo_barras.value # Muda o dado contido na chave codigo, no index passado.
+            produtos[index]["nome"] = campo_nome_produto.value # Muda o dado contido na chave nome, no index passado.
+            produtos[index]["preco_custo"] = campo_preco_custo.value # Muda o dado contido na chave preco_custo, no index passado.
+            produtos[index]["preco_venda"] = campo_preco_venda.value # Muda o dado contido na chave preco_venda, no index passado.
+            produtos[index]["quantidade"] = campo_quantidade.value # Muda o dado contido na chave quantidade, no index passado.
+            produtos[index]["validade"] = campo_validade.value # Muda o dado contido na chave validade, no index passado.
+
+            page.close(janela_editar)
+            page.update()
+
+            atualizar() # Atualiza a tabela.
+
+    
+    def fechar_erro(e):
+        page.close(erro)
+        page.update()
+        page.run_task(reabrir_edicao)
+
+    async def reabrir_edicao():
+        await asyncio.sleep(0.05)
+        page.open(janela_editar)
+        page.update()
+
 
     # Função que irá cancelar as alterações:
-    def cancelar(index): # Recebe o index de onde a alteração está sendo feita.
-        produtos[index]["editando"] = False # Muda o valor contido na chave editando, no index passado.
+    def cancelar(e): # Recebe o index de onde a alteração está sendo feita.
+        page.close(janela_editar)
+        page.update()
         atualizar() # Atualiza a tabela.
+
 
 
 
@@ -310,8 +308,97 @@ def criar_tela_estoque(produtos, page):
 
     selecionar_data = ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, on_click=abrir_datepicker, icon_color=ft.Colors.BLACK)
 
+
+
+
+
+
+
+    # Função para buscar o cliente:
+    def buscar_cliente(e):
+        texto = e.control.value.lower().strip()
+
+        tabela_estoque.rows.clear()
+
+        for i, produto in enumerate(produtos):
+            # Botão para editar as informações:
+            botao_editar = ft.IconButton(
+                icon=ft.Icons.EDIT,
+                on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+            )
+
+            if texto in produto["nome"].lower() or texto in produto["codigo"].lower():
+                tabela_estoque.rows.append(
+                    ft.DataRow(
+                        cells=[
+                            ft.DataCell(ft.Text(produto["codigo"], size=14)), # Busca o valor atráves do nome no dicionário da função adicionar produto.
+                            ft.DataCell(ft.Text(produto["nome"], size=14)),
+                            ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
+                            ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
+                            ft.DataCell(ft.Text(produto["quantidade"], size=14)),
+                            ft.DataCell(ft.Text(produto["validade"], size=14)),
+                            ft.DataCell(botao_editar),
+                        ],
+                    ),
+                )
+
+        page.update()
+
+
+    # Campo para busca de clientes:
+    campo_buscar = ft.TextField(label="Buscar Produto:", hint_text="Código de Barras ou Nome", width=300, on_change=buscar_cliente)
+
+
+
+
+
+
+
+    # Popup de erro caso algum campo esteja em branco:
+    erro = ft.AlertDialog(
+        title=ft.Text("Erro!", weight="bold"),
+
+        content=ft.Container(
+            content=ft.Container(
+                content=ft.Text("Todos os campos devem estar preenchidos!", size=16, color="#9B3E3E"),
+                width=300,
+                height=50,
+            ),
+        ),
+
+        actions=[
+            ft.FilledButton(
+                content=ft.Text("Ok", size=16), 
+                style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE), 
+                on_click=fechar_erro
+            ),
+        ],
+
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+    )
+
+
+
+
+
+
+
     # Variável para localzar o dado que será editado:
     index_editado = 0
+
+    botao_salvar = ft.TextButton(
+        content=ft.Text("Salvar", size=16),
+        style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
+        on_click=lambda e: salvar(index_editado, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade)
+    )
+
+    botao_cancelar = ft.TextButton(
+        content=ft.Text("Cancelar", size=16),
+        style=ft.ButtonStyle(color="#9B3E3E"),
+        on_click=cancelar,
+    )
 
 
     # Janela de editar os dados do produto:
@@ -389,6 +476,22 @@ def criar_tela_estoque(produtos, page):
 
                         alignment=ft.MainAxisAlignment.CENTER,
                     ),
+
+                    ft.ResponsiveRow(
+                        controls=[
+                            ft.Container(
+                                content=botao_cancelar,
+                                col={"xs": 12, "sm":5, "md":4, "lg":3},
+                            ),
+
+                            ft.Container(
+                                content=botao_salvar,
+                                col={"xs": 12, "sm":5, "md":4, "lg":3},
+                            ),
+                        ],
+
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
                 ],
 
                 alignment=ft.MainAxisAlignment.CENTER,
@@ -400,7 +503,8 @@ def criar_tela_estoque(produtos, page):
 
         bgcolor=ft.Colors.WHITE,
         modal=True,
-        alignment=ft.alignment.center
+        alignment=ft.alignment.center,
+        actions_alignment=ft.MainAxisAlignment.CENTER,
     )
 
 
@@ -422,11 +526,29 @@ def criar_tela_estoque(produtos, page):
         border_radius=10,
     )
 
+
+
+
+
+
+
     # Tela de estoque:
     layout = ft.Container(
         content=ft.Column(
             [
                 ft.Text("Produtos Cadastrados", size=30, weight="bold"),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=campo_buscar,
+                            col={"xs":12, "sm":12, "md":6, "lg":4},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
                 container_tabela,
             ],
             spacing=10,
