@@ -25,21 +25,52 @@ def main(page: ft.Page):
             ft.DataColumn(ft.Text("Nome")),
             ft.DataColumn(ft.Text("Telefone")),
             ft.DataColumn(ft.Text("CPF/CNPJ")),
+            ft.DataColumn(ft.Text("Ações")),
         ],
         rows=[],
         width=800,
     )
 
+    def duplicar(index):
+        cliente_duplicado = {
+            "nome":clientes[index]["nome"],
+            "numero":clientes[index]["numero"],
+            "cpf_cnpj":clientes[index]["cpf_cnpj"],
+        }
+
+        clientes.append(cliente_duplicado)
+
+        print(clientes)
+
+        page.update()
+
+        atualizar()
+
+    index_editado = 0
+
+    botao_duplicar = ft.IconButton(
+        icon=ft.Icons.COPY,
+        style=ft.ButtonStyle(color="#507656"),
+        on_click=lambda e: duplicar(index_editado),
+    )
+
     # Atualiza tabela completa
     def atualizar():
         tabela_clientes.rows.clear()
-        for cliente in clientes:
+        for i, cliente in enumerate(clientes):
+            botao_duplicar = ft.IconButton(
+                icon=ft.Icons.COPY,
+                style=ft.ButtonStyle(color="#507656"),
+                on_click=lambda e, index=i: duplicar(index),
+            )
+
             tabela_clientes.rows.append(
                 ft.DataRow(
                     cells=[
                         ft.DataCell(ft.Text(cliente["nome"])),
                         ft.DataCell(ft.Text(cliente["numero"])),
                         ft.DataCell(ft.Text(cliente["cpf_cnpj"])),
+                        ft.DataCell(botao_duplicar),
                     ]
                 )
             )
