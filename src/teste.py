@@ -38,21 +38,13 @@ def main(page: ft.Page):
             "cpf_cnpj":clientes[index]["cpf_cnpj"],
         }
 
-        clientes.append(cliente_duplicado)
+        clientes.insert(index+1, cliente_duplicado)
 
         print(clientes)
 
         page.update()
 
         atualizar()
-
-    index_editado = 0
-
-    botao_duplicar = ft.IconButton(
-        icon=ft.Icons.COPY,
-        style=ft.ButtonStyle(color="#507656"),
-        on_click=lambda e: duplicar(index_editado),
-    )
 
     # Atualiza tabela completa
     def atualizar():
