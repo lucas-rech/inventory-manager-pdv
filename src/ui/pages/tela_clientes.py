@@ -31,15 +31,20 @@ def criar_tela_clientes(clientes, page):
                 style=ft.ButtonStyle(color="#507656"), # Cor do texto.
             )
 
+            botao_duplicar = ft.IconButton(
+                icon=ft.Icons.COPY,
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+            )
 
 
             tabela_clientes.rows.append( # Cria uma nova linha na tabela
                 ft.DataRow( # Cada linha/row (neste caso DataRow por ser a linha de uma tabela) é feita de várias células (DataCell), uma para cada coluna.
                     cells = [
                         ft.DataCell(ft.Text(cliente["nome"], size=16)), # Busca o valor atráves do nome no dicionário da função adicionar produto.
-                        ft.DataCell(ft.Text(cliente["numero"], size=16)),
+                        ft.DataCell(ft.Text(cliente["telefone"], size=16)),
                         ft.DataCell(ft.Text(cliente["cpf_cnpj"], size=16)),
-                        ft.DataCell(botao_editar),
+                        ft.DataCell(ft.Row([botao_editar, botao_duplicar])),
                         
                     ]
                 )
@@ -60,7 +65,7 @@ def criar_tela_clientes(clientes, page):
         index_editado = index
 
         campo_nome.value = clientes[index]["nome"]
-        campo_numero.value = clientes[index]["numero"]
+        campo_numero.value = clientes[index]["telefone"]
 
         page.open(janela_editar)
         atualizar() # Atualiza a tabela.
@@ -74,12 +79,22 @@ def criar_tela_clientes(clientes, page):
             
         else:
             clientes[index]["nome"] = campo_nome.value # Muda o valor da chave "nome" no index passado.
-            clientes[index]["numero"] = campo_numero.value # Muda o valor da chave "numero" no index passado.
+            clientes[index]["telefone"] = campo_numero.value # Muda o valor da chave "numero" no index passado.
 
             page.close(janela_editar)
             page.update()
 
             atualizar() # Atualiza a tabela.
+
+    def duplicar(index):
+        cliente_duplicado = {
+            "nome":clientes[index]["nome"],
+            "telefone":clientes[index]["telefone"],
+            "cpf_cnpj":clientes[index]["cpf_cnpj"],
+        }
+
+        clientes.insert(index+1, cliente_duplicado)
+        atualizar()
 
     def fechar_erro(e):
         page.close(erro)
@@ -148,14 +163,20 @@ def criar_tela_clientes(clientes, page):
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
             )
 
-            if texto in cliente["nome"].lower() or texto in cliente["numero"].lower() or texto in cliente["cpf_cnpj"].lower():
+            botao_duplicar = ft.IconButton(
+                icon=ft.Icons.COPY,
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+            )
+
+            if texto in cliente["nome"].lower() or texto in cliente["telefone"].lower() or texto in cliente["cpf_cnpj"].lower():
                 tabela_clientes.rows.append(
                     ft.DataRow(
                         cells=[
                             ft.DataCell(ft.Text(cliente["nome"])),
-                            ft.DataCell(ft.Text(cliente["numero"])),
+                            ft.DataCell(ft.Text(cliente["telefone"])),
                             ft.DataCell(ft.Text(cliente["cpf_cnpj"])),
-                            ft.DataCell(botao_editar),
+                            ft.DataCell(ft.Row([botao_editar, botao_duplicar])),
                         ],
                     ),
                 )
@@ -164,7 +185,7 @@ def criar_tela_clientes(clientes, page):
 
 
     # Campo para busca de clientes:
-    campo_buscar = ft.TextField(label="Buscar Cliente:", hint_text="Nome, Número, CPF/CNPJ", width=300, on_change=buscar_cliente)
+    campo_buscar = ft.TextField(label="Buscar Cliente:", hint_text="Nome, Número de telefone, CPF/CNPJ", width=300, on_change=buscar_cliente)
 
 
 

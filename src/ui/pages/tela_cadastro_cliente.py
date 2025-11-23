@@ -4,6 +4,7 @@ from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
 from validate_docbr import CPF,CNPJ
+from ui.components.conteudo.popup import criar_popup
 
 def cadastrar_clientes(page, clientes, voltar_para_escolha):
     # Função que exibirá cada campo (CPF/CNPJ) com sua formatação própria.
@@ -176,8 +177,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
                     novo_cliente = {
                         "nome":campo_nome.value,
                         "telefone":campo_telefone.value,
-                        "cpf_cnpj":campo_cpf.value,
-                        "editando":False,     
+                        "cpf_cnpj":campo_cpf.value,  
                     }
 
                 else :
@@ -201,6 +201,8 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
             if invalid == False :
                 clientes.append(novo_cliente)
+                page.run_task(criar_popup, "Cliente Adicionado!", page) # Cria o popup quando o cliente for adicionado à lista.
+
                 for campo in [campo_nome, campo_telefone, campo_cpf, campo_cnpj]:
                     campo.value = ""
 

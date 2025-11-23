@@ -4,6 +4,7 @@ import datetime
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
 from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
+from ui.components.conteudo.popup import criar_popup
 
 
 # Função que criará a tela de cadastro de produto
@@ -150,7 +151,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
 
 
     # Campos do formulário:
-    codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_codigo)
+    codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE, autofocus=True, on_change=formatar_codigo)
     nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_nome) 
     preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_preco_custo)
     preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True, on_change=formatar_preco_venda)
@@ -216,6 +217,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
             }
 
             produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
+            page.run_task(criar_popup, "Produto Adicionado!", page) # Cria o popup quando o cliente for adicionado à lista.
 
             for campo in [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]:
                 campo.value = "" # Limpa todos os campos, substituindo o que foi digitado por uma string vazia ("").

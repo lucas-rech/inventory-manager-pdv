@@ -349,6 +349,12 @@ def criar_tela_estoque(produtos, page):
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
             )
 
+            botao_duplicar = ft.IconButton(
+                icon=ft.Icons.COPY,
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+            )
+
             if texto in produto["nome"].lower() or texto in produto["codigo"].lower():
                 tabela_estoque.rows.append(
                     ft.DataRow(
@@ -359,7 +365,7 @@ def criar_tela_estoque(produtos, page):
                             ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
                             ft.DataCell(ft.Text(produto["quantidade"], size=14)),
                             ft.DataCell(ft.Text(produto["validade"], size=14)),
-                            ft.DataCell(botao_editar),
+                            ft.DataCell(ft.Row([botao_editar, botao_duplicar])),
                         ],
                     ),
                 )

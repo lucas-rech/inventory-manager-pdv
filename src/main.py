@@ -93,12 +93,9 @@ def main(page: ft.Page):
     # Tela Login:
     tela_login = criar_tela_login(page, entrar)
     page.add(tela_login)
-    
-    # Tela onde será feita a venda:voltar_para_escolha
-    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio)
 
     # Aqui sim adicionamos o conteúdo inicial:
-    conteudo_completo.controls.extend([header, tela_pdv])
+    conteudo_completo.controls.extend([header, criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio)])
 
 
     # Navegação do menu lateral:
@@ -109,7 +106,7 @@ def main(page: ft.Page):
                 conteudo_completo.controls.clear()
                 header.content.value = "Venda"
                 conteudo_completo.controls.append(header)
-                conteudo_completo.controls.append(tela_pdv)
+                conteudo_completo.controls.append(criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio))
 
             elif index == 1:
                 conteudo_completo.controls.clear()

@@ -19,7 +19,7 @@ async def criar_popup(mensagem, page):
 
         width=250,
         bgcolor="#765070",
-        opacity=0.50,
+        opacity=0.55,
         right=30,
         bottom=bottom_offset, # Aqui passamos a distância já calculada.
         padding=25,

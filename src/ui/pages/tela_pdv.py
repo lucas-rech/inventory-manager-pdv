@@ -4,11 +4,12 @@ import subprocess
 import sys
 
 from flet.core.types import CrossAxisAlignment, MainAxisAlignment
-from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_finalizar import criar_botao_finalizar
 from ui.pages.cpfs import dicionario  
 
 def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio):
+    resumo_compra.clear() # Garante que a lista sempre comece vazia
+
     # Função que permitirá apenas números no campo de código:
     def formatar_codigo(e):
         texto = "".join(filter(str.isdigit, e.control.value)) # Apenas junte a string do que está sendo digitado o que for número.
@@ -141,7 +142,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
             spacing=20,
             scroll=ft.ScrollMode.AUTO,
         ),
-        width=750,  # Define o tamanho máximo da tabela
+        width=770,  # Define o tamanho máximo da tabela
         expand=True,
         padding=20,
         border=ft.border.all(1, color="#765070"),
@@ -227,7 +228,15 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
 
         page.update() # Atualiza a página para mostrar as alterações
 
-    botao_finalizar_compra = criar_botao_finalizar(finalizar_compra)
+    botao_finalizar_compra = ft.ElevatedButton(
+        content= ft.Text(value="Finalizar Compra", size=16),
+        bgcolor= "#507656",
+        color= ft.Colors.WHITE,
+        on_click=finalizar_compra,
+        height=50,
+        width=200,
+    )
+
     botao_finalizar_compra.content.value = "Ir Para o Pagamento"
 
     # Layout principal com Stack (mantém o total fixo)
@@ -240,7 +249,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                 # COLUNA ESQUERDA (CÓDIGO, QUANTIDADE, TABELA, BOTÃO FINALIZAR)
                 # ------------------------------------------------------------------
                 ft.Container(
-                    col={"xs": 12, "md": 7, "lg": 6},
+                    col={"xs": 12, "md": 8, "lg": 7},
                     content=ft.Column(
                         [
                             # Linha responsiva com Código + Quantidade + Botão
@@ -274,7 +283,7 @@ def criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, vol
                 # COLUNA DIREITA (Pesquisa, Logo, Total)
                 # ------------------------------------------------------------------
                 ft.Container(
-                    col={"xs": 12, "md": 5, "lg": 6},
+                    col={"xs": 12, "md": 4, "lg": 5},
                     content=ft.Column(
                         horizontal_alignment=CrossAxisAlignment.CENTER,
                         alignment=MainAxisAlignment.CENTER,
@@ -711,7 +720,8 @@ ft.app(target=nova_janela)
         border_radius=10,
     )
 
-    botao_finalizar = criar_botao_finalizar(voltar_venda_inicio)
+
+    botao_finalizar = criar_botao_finalizar(voltar_venda_inicio, resumo_compra)
     botao_finalizar.width = 250
 
     layout = ft.Container(

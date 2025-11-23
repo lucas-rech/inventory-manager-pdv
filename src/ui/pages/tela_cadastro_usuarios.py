@@ -22,7 +22,7 @@ def cadastro_usuarios(page, voltar_para_escolha):
     page.vertical_alignment = "center"
 
     # Campos de cadastro de usuário:
-    nome = ft.TextField(label="Nome:", width=600, bgcolor=ft.Colors.WHITE)
+    nome = ft.TextField(label="Nome:", width=600, bgcolor=ft.Colors.WHITE, autofocus=True)
     usuario = ft.TextField(label="Usuário:", width=600, bgcolor=ft.Colors.WHITE)
     tipo_de_usuario = ft.DropdownM2(
         label="Tipo de Usuário:",
