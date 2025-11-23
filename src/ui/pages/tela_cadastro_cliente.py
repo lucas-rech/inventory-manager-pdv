@@ -136,17 +136,36 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
     def apenas_digitos(texto):
         return re.sub(r"\D", "", texto or "")
-    
+
+    def fechar_erro(e):
+        page.close(erro)
+        page.update()
+
+    erro = ft.AlertDialog(
+        title=ft.Text("Erro!", weight="bold"),
+
+        content=ft.Container(
+            content=ft.Text("Todos os campos devem estar preenchidos!", size=16, color="#9B3E3E"),
+            width=300,
+            height=50,
+        ),
+
+        actions=[
+            ft.FilledButton(
+                content=ft.Text("Ok", size=16),
+                style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
+                on_click=fechar_erro,
+            ),
+        ],
+
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+    )
+        
     def adicionar_cliente(e):
         
         if not campo_nome.value or not campo_telefone.value or not campo_cpf.value and not campo_cnpj.value:
-            
-            if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
-                campo_cpf.error_text="Por favor, digite todos os campos"
-
-            if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
-                campo_cnpj.error_text="Por favor, digite todos os campos"
-                
+            page.open(erro)                
             page.update()
         
         else:
