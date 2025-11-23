@@ -18,10 +18,6 @@ def criar_tela_clientes(clientes, page):
     )
 
 
-
-
-
-
     # Função que adicionará itens à tabela de estoque:
     def atualizar():
         tabela_clientes.rows.clear() # Limpa todas as tabelas anteriores para atualizar tudo do zero.
@@ -52,10 +48,6 @@ def criar_tela_clientes(clientes, page):
         page.update()
 
     atualizar()
-
-
-
-
 
 
     # FUNÇÕES DE EDIÇÃO DA TABELA:
@@ -215,7 +207,7 @@ def criar_tela_clientes(clientes, page):
 
     campo_nome = ft.TextField(label="Nome:", value="", width=200, on_change=formatar_nome)
 
-    campo_numero = ft.TextField(label="Número:", value="", width=200, on_change=formatar_numero)
+    campo_numero = ft.TextField(label="Telefone:", value="", width=200, on_change=formatar_numero)
 
     janela_editar = ft.AlertDialog(
         title=ft.Text("Editar", weight="bold", text_align=ft.TextAlign.CENTER),

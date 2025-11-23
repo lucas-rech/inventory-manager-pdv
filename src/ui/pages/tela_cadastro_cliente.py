@@ -18,7 +18,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
         page.update()
 
-    # Função que formatará o value to text field "numero" para validar o nome permitindo apenas letras e espaços.:
+    # Função que formatará o value to text field "telefone" para validar o nome permitindo apenas letras e espaços.:
     def formatar_nome(e):
         texto = e.control.value
 
@@ -33,8 +33,8 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
         page.update() # Atulaiza a página para mostrar as alterações.
 
-    # Função que formatará o value to text field "numero" para o formato de número de telefone:
-    def formatar_numero(e):
+    # Função que formatará o value to text field "telefone" para o formato de número de telefone:
+    def formatar_telefone(e):
         # Filtra o que não é número (isdigit) na string (str), e junta ao texto apenas o que passar do filtro (filter).
         texto = "".join(filter(str.isdigit, e.control.value))
 
@@ -51,7 +51,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
         if len(texto) > 7: # Se for maior que 7, adiciona um traço antes e junta com o que foi digitado.
             formatado += "-" + texto[7:11]
 
-        campo_numero.value = formatado # Atualiza o que foi formatado já dentro do text field enquanto o usuário digita.   
+        campo_telefone.value = formatado # Atualiza o que foi formatado já dentro do text field enquanto o usuário digita.   
         page.update() # Atualiza a página para que as alterações sejam mostradas.
 
     # Função que irá formatar o value do text field "cmapo_cpf" para o formato de cpf:
@@ -108,7 +108,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
     # Campos do formulário para o cadastro de um cliente:
     campo_nome = ft.TextField(label="Nome do cliente", bgcolor=ft.Colors.WHITE, width=610, autofocus=True, on_change=formatar_nome)
 
-    campo_numero = ft.TextField(label="Número de telefone do cliente", hint_text="Ex: (XX) XXXX-XXXX", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_numero)
+    campo_telefone = ft.TextField(label="Número de telefone do cliente", hint_text="Ex: (XX) XXXX-XXXX", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_telefone)
 
     # O campo de cadastro do cpf ou cnpj do cliente será diferente para cada tipo, mudando a formatação do campo de acordo com o dado que será diigtado.
     cpf_cnpj = ft.RadioGroup( # Grupo de seleção
@@ -130,7 +130,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
     # Campo para que o cnpj seja digitado:
     campo_cnpj = ft.TextField(label="CNPJ:", hint_text="EX: XX.XXX.XXX/YYYY-ZZ", visible=False, bgcolor=ft.Colors.WHITE, width=532, on_change=formatar_cnpj, col={"xs": 12, "sm": 10, "md": 8, "lg": 2})
 
-    campos = [campo_nome, campo_numero, campo_cpf, campo_cnpj]
+    campos = [campo_nome, campo_telefone, campo_cpf, campo_cnpj]
     cpf_valid = CPF()
     cnpj_valid = CNPJ()
 
@@ -138,45 +138,56 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
         return re.sub(r"\D", "", texto or "")
     
     def adicionar_cliente(e):
-        if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
+        
+        if not campo_nome.value or not campo_telefone.value or not campo_cpf.value and not campo_cnpj.value:
             
+            if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
+                campo_cpf.error_text="Por favor, digite todos os campos"
 
-            invalid = False
-            if cpf_valid.validate(apenas_digitos(campo_cpf.value)):
-                novo_cliente = {
-                    "nome":campo_nome.value,
-                    "numero":campo_numero.value,
-                    "cpf_cnpj":campo_cpf.value,
-                    "editando":False,     
-                }
+            if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
+                campo_cnpj.error_text="Por favor, digite todos os campos"
+                
+            page.update()
+        
+        else:
+            if cpf_cnpj.value == "cpf": # se for escolhido cpf, adiciona o value do text field "campo_cpf"
 
-            else :
-                invalid = True
-                campo_cpf.error_text="CPF INVÁLIDO"
-                campo_cpf.focus()
+                invalid = False
+                if cpf_valid.validate(apenas_digitos(campo_cpf.value)):
+                    novo_cliente = {
+                        "nome":campo_nome.value,
+                        "telefone":campo_telefone.value,
+                        "cpf_cnpj":campo_cpf.value,
+                        "editando":False,     
+                    }
 
-        if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
-            invalid = False
-            if cnpj_valid.validate(apenas_digitos(campo_cnpj.value)):
-                novo_cliente = {
-                    "nome":campo_nome.value,
-                    "numero":campo_numero.value,
-                    "cpf_cnpj":campo_cnpj.value,
-                }
+                else :
+                    invalid = True
+                    campo_cpf.error_text="CPF INVÁLIDO"
+                    campo_cpf.focus()
 
-            else :
-                invalid = True
-                campo_cnpj.error_text="CNPJ INVÁLIDO"
-                campo_cnpj.focus()
+            if cpf_cnpj.value == "cnpj": # Se for escolhido cnpj, adiciona o value do text field "campo_"
+                invalid = False
+                if cnpj_valid.validate(apenas_digitos(campo_cnpj.value)):
+                    novo_cliente = {
+                        "nome":campo_nome.value,
+                        "telefone":campo_telefone.value,
+                        "cpf_cnpj":campo_cnpj.value,
+                    }
 
-        if invalid == False :
-            clientes.append(novo_cliente)
-            for campo in [campo_nome, campo_numero, campo_cpf, campo_cnpj]:
-                campo.value = ""
+                else :
+                    invalid = True
+                    campo_cnpj.error_text="CNPJ INVÁLIDO"
+                    campo_cnpj.focus()
 
-            campo_cpf.error_text = None
-            campo_cnpj.error_text = None
-            campo_nome.focus()
+            if invalid == False :
+                clientes.append(novo_cliente)
+                for campo in [campo_nome, campo_telefone, campo_cpf, campo_cnpj]:
+                    campo.value = ""
+
+                campo_cpf.error_text = None
+                campo_cnpj.error_text = None
+                campo_nome.focus()
 
         page.update()
 
@@ -204,7 +215,7 @@ def cadastrar_clientes(page, clientes, voltar_para_escolha):
 
                         # Número
                         ft.Container(
-                            content=campo_numero,
+                            content=campo_telefone,
                             col={"xs": 12, "sm": 10, "md": 8, "lg": 6},
                             alignment=ft.alignment.center,
                         ),
