@@ -145,6 +145,10 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         page.open(date_picker)
 
 
+
+
+
+
     # Campos do formulário:
     codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_codigo)
     nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_nome) 
@@ -170,21 +174,51 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         on_change=selecionar_porcentagem,
     )
 
+    def fechar_erro(e):
+        page.close(erro)
+        page.update()
+
+    erro = ft.AlertDialog(
+        title=ft.Text("Erro!", weight="bold"),
+
+        content=ft.Container(
+            content=ft.Text("Todos os campos devem estar preenchidos!", size=16, color="#9B3E3E"),
+            width=300,
+            height=50,
+        ),
+
+        actions=[
+            ft.FilledButton(
+                content=ft.Text("Ok", size=16),
+                style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
+                on_click=fechar_erro,
+            ),
+        ],
+
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+    )
+
     # Função que adicionará os items ao estoque:
     def adicionar_produto(e):
-        novo_produto = { # Adiciona os valores digitados em cada campo às respectivas chaves no dicionário.
-            "codigo":codigo.value,
-            "nome":nome.value,
-            "preco_custo":preco_custo.value,
-            "preco_venda":preco_venda.value,
-            "quantidade":quantidade.value,
-            "validade":validade.value,
-        }
+        if not codigo.value or not nome.value or not preco_custo.value or not preco_venda.value or not quantidade.value or not validade.value:
+            page.open(erro)
+            page.update()
 
-        produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
+        else:
+            novo_produto = { # Adiciona os valores digitados em cada campo às respectivas chaves no dicionário.
+                "codigo":codigo.value,
+                "nome":nome.value,
+                "preco_custo":preco_custo.value,
+                "preco_venda":preco_venda.value,
+                "quantidade":quantidade.value,
+                "validade":validade.value,
+            }
 
-        for campo in [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]:
-            campo.value = "" # Limpa todos os campos, substituindo o que foi digitado por uma string vazia ("").
+            produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
+
+            for campo in [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]:
+                campo.value = "" # Limpa todos os campos, substituindo o que foi digitado por uma string vazia ("").
 
         page.update() # Atualiza a página para mostrar o que foi alterado.
 

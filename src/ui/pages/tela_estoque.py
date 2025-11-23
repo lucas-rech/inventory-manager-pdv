@@ -49,7 +49,7 @@ def criar_tela_estoque(produtos, page):
                         ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
                         ft.DataCell(ft.Text(produto["quantidade"], size=14)),
                         ft.DataCell(ft.Text(produto["validade"], size=14)),
-                        ft.DataCell(botao_editar),
+                        ft.DataCell(ft.Row([botao_editar, botao_duplicar])),
                     ]
                 )
             ) 
@@ -83,9 +83,15 @@ def criar_tela_estoque(produtos, page):
 
     def duplicar(index):
         produto_duplicado = {
-            "codigo":produtos[index]["codigo"]
+            "codigo":produtos[index]["codigo"],
+            "nome":produtos[index]["nome"],
+            "preco_custo":produtos[index]["preco_custo"],
+            "preco_venda":produtos[index]["preco_venda"],
+            "quantidade":produtos[index]["quantidade"],
+            "validade":produtos[index]["validade"],
         }
 
+        produtos.insert(index+1, produto_duplicado)
         atualizar()
 
 
