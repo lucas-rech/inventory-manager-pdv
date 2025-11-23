@@ -32,6 +32,12 @@ def criar_tela_estoque(produtos, page):
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
                 on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
             )
+
+            botao_duplicar = ft.IconButton(
+                icon=ft.Icons.COPY,
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+            )
             
             tabela_estoque.rows.append( # Cria uma nova linha na tabela
 
@@ -74,6 +80,15 @@ def criar_tela_estoque(produtos, page):
         index_editado = index
 
         atualizar() # Atualiza a tabela.
+
+    def duplicar(index):
+        produto_duplicado = {
+            "codigo":produtos[index]["codigo"]
+        }
+
+        atualizar()
+
+
 
     # Função de salvar os novos dados na tabela:
     def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade): # Recebe os campos que recebem as novas informações.
