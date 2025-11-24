@@ -9,6 +9,7 @@ from ui.pages.tela_cadastro_produto import cadastrar_produtos
 from ui.pages.tela_estoque import criar_tela_estoque
 from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
+from ui.pages.EasterEgg import nao_mexa
 from ui.pages.tela_pdv import criar_tela_pdv
 from ui.components.conteudo.popup import criar_popup
 
@@ -128,8 +129,13 @@ def main(page: ft.Page):
 
             page.update()
 
+    def abrir_configuracoes(e):
+        page.clean()
+        layout_novo = nao_mexa.easter_egg()
+        page.add(layout_novo)
+
     # Menu lateral:
-    rail = criar_menu_lateral(selecionar_menu)
+    rail = criar_menu_lateral(selecionar_menu, abrir_configuracoes)
 
     # 
     layout = ft.Row(

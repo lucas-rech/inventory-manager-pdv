@@ -1,7 +1,7 @@
 import flet as ft
 
 # Menu lateral:
-def criar_menu_lateral(on_change):
+def criar_menu_lateral(on_change, on_click):
     return ft.NavigationRail(
         selected_index=0,
         bgcolor="#85a289",
@@ -20,7 +20,7 @@ def criar_menu_lateral(on_change):
             content=ft.IconButton(
                 icon=ft.Icons.SETTINGS,
                 tooltip="Configurações",
-                on_click=lambda e: print("Configurações clicadas!"),
+                on_click=on_click,
                 icon_color="#e8e3de"
             ),
             alignment=ft.alignment.bottom_center,
