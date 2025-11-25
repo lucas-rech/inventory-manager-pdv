@@ -2,6 +2,7 @@ import flet as ft
 import re
 import datetime
 import asyncio
+from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 
 # Função que irá criar a tela de estoque:
 def criar_tela_estoque(produtos, page):
@@ -42,6 +43,7 @@ def criar_tela_estoque(produtos, page):
             botao_lotes = ft.IconButton(
                 icon=ft.Icons.ADD_BOX,
                 style=ft.ButtonStyle(color="#507656"),
+                on_click=lambda e: abrir_janela_lote(e),
             )
             
             tabela_estoque.rows.append( # Cria uma nova linha na tabela
@@ -139,6 +141,12 @@ def criar_tela_estoque(produtos, page):
         atualizar() # Atualiza a tabela.
 
 
+    # Função que abrirá a janela de criação de lotes:
+    def abrir_janela_lote(e):
+        page.open(janela_lotes)
+        page.update()
+
+
 
 
 
@@ -196,7 +204,7 @@ def criar_tela_estoque(produtos, page):
         if len(texto) > 4:
             formatado += "/" + texto[4:8]
 
-        campo_validade.value = formatado
+        e.control.value = formatado
         page.update()
 
 
@@ -360,6 +368,12 @@ def criar_tela_estoque(produtos, page):
                 on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
             )
 
+            botao_lotes = ft.IconButton(
+                icon=ft.Icons.ADD_BOX,
+                style=ft.ButtonStyle(color="#507656"),
+                on_click=lambda e: abrir_janela_lote(e),
+            )
+
             if texto in produto["nome"].lower() or texto in produto["codigo"].lower():
                 tabela_estoque.rows.append(
                     ft.DataRow(
@@ -370,7 +384,7 @@ def criar_tela_estoque(produtos, page):
                             ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
                             ft.DataCell(ft.Text(produto["quantidade"], size=14)),
                             ft.DataCell(ft.Text(produto["validade"], size=14)),
-                            ft.DataCell(ft.Row([botao_editar, botao_duplicar])),
+                            ft.DataCell(ft.Row([botao_editar, botao_duplicar, botao_lotes])),
                         ],
                     ),
                 )
@@ -433,6 +447,7 @@ def criar_tela_estoque(produtos, page):
     )
 
 
+    # Mini-janelas:
     # Janela de editar os dados do produto:
     janela_editar = ft.AlertDialog(
         title=ft.Text("Editar", weight="bold", text_align=ft.TextAlign.CENTER),
@@ -537,6 +552,109 @@ def criar_tela_estoque(produtos, page):
         modal=True,
         alignment=ft.alignment.center,
         actions_alignment=ft.MainAxisAlignment.CENTER,
+    )
+
+
+
+
+    # --- LOTES ---
+
+    header = ft.Container(
+        content=ft.Text("Lotes", color=ft.Colors.WHITE, size=25, weight="bold"),
+        bgcolor="#507656",
+        width=800,
+        height=70,
+        alignment=ft.alignment.center,
+        border_radius=10,
+    )
+
+
+    # Função para a criação dos lotes:
+    def criar_lote(e):
+        pass
+
+    def abrir_dados_lote(e):
+        page.open(janela_dados_lote)
+        page.update()
+
+    # Botão adicionar:
+    botao_adicionar = criar_botao_adicionar(abrir_dados_lote)
+
+    # Janela para criação de lotes:
+    janela_lotes = ft.AlertDialog(
+        title=header,
+
+        actions=[
+            botao_adicionar,
+        ],
+
+        content=ft.Container(
+            content=ft.Column(
+                controls=[]
+            ),
+
+            width=900,
+            height=500,
+        ),
+
+        bgcolor=ft.Colors.WHITE,
+        alignment=ft.alignment.center,
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+    )
+
+    # Campos para inserção dos dados do lote:
+    campo_numero_lote = ft.TextField(label="Número do Lote", expand=True, on_change=formatar_codigo_barras)
+    campo_data_fabricacao = ft.TextField(label="Data de Fabricação:", bgcolor=ft.Colors.WHITE, expand=True, on_change=formatar_validade)
+    campo_data_validade = ft.TextField(label="Data de Validade:", bgcolor=ft.Colors.WHITE, expand=True, on_change=formatar_validade)
+    campo_quantidade_lote = ft.TextField(label="Quantidade:", expand=True, on_change=formatar_quantidade)
+
+
+    # Janela para inserção dos dados do lote:
+    janela_dados_lote = ft.AlertDialog(
+        title=ft.Container(
+            content=ft.Text("Insira os Dados do Lote", color=ft.Colors.WHITE, size=20),
+            bgcolor="#507656",
+            border_radius=8,
+            height=50,
+            alignment=ft.alignment.center,
+        ),
+
+        content=ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Container(
+                        content=campo_numero_lote,
+                    ),
+
+                    ft.Container(
+                        content=campo_data_fabricacao,
+                    ),
+
+                    ft.Container(
+                        content=campo_data_validade
+                    ),
+
+                    ft.Container(
+                        content=campo_quantidade_lote,
+                    ),
+                ],
+
+                spacing=20
+            ),
+
+            width=300,
+            height=280,
+            padding=10,
+        ),
+
+        actions=[
+            botao_adicionar,
+        ],
+
+        bgcolor=ft.Colors.WHITE,
+        alignment=ft.alignment.center,
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        modal=True,
     )
 
 
