@@ -14,7 +14,6 @@ def criar_tela_estoque(produtos, page):
             ft.DataColumn(ft.Text("Preço de custo", size=16)),
             ft.DataColumn(ft.Text("Preço de venda", size=16)),
             ft.DataColumn(ft.Text("Quantidade", size=16)),
-            ft.DataColumn(ft.Text("Validade", size=16)),
             ft.DataColumn(ft.Text("Ações", size=16))
         ],
 
@@ -43,7 +42,7 @@ def criar_tela_estoque(produtos, page):
             botao_lotes = ft.IconButton(
                 icon=ft.Icons.ADD_BOX,
                 style=ft.ButtonStyle(color="#507656"),
-                on_click=lambda e: abrir_janela_lote(e),
+                on_click=lambda e, index=i: abrir_janela_lote(e, index),
             )
             
             tabela_estoque.rows.append( # Cria uma nova linha na tabela
@@ -55,7 +54,6 @@ def criar_tela_estoque(produtos, page):
                         ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
                         ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
                         ft.DataCell(ft.Text(produto["quantidade"], size=14)),
-                        ft.DataCell(ft.Text(produto["validade"], size=14)),
                         ft.DataCell(ft.Row([botao_editar, botao_duplicar, botao_lotes])),
                     ]
                 )
@@ -79,7 +77,6 @@ def criar_tela_estoque(produtos, page):
         campo_preco_custo.value = produtos[index]["preco_custo"]
         campo_preco_venda.value = produtos[index]["preco_venda"]
         campo_quantidade.value = produtos[index]["quantidade"]
-        campo_validade.value = produtos[index]["validade"]
 
         page.open(janela_editar) # Abre a janela de edição dos dados.
 
@@ -95,7 +92,6 @@ def criar_tela_estoque(produtos, page):
             "preco_custo":produtos[index]["preco_custo"],
             "preco_venda":produtos[index]["preco_venda"],
             "quantidade":produtos[index]["quantidade"],
-            "validade":produtos[index]["validade"],
         }
 
         produtos.insert(index+1, produto_duplicado)
@@ -105,7 +101,7 @@ def criar_tela_estoque(produtos, page):
 
     # Função de salvar os novos dados na tabela:
     def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade): # Recebe os campos que recebem as novas informações.
-        if not campo_codigo_barras.value or not campo_nome_produto.value or not campo_preco_custo.value or not campo_preco_venda.value or not campo_quantidade.value or not campo_validade.value:
+        if not campo_codigo_barras.value or not campo_nome_produto.value or not campo_preco_custo.value or not campo_preco_venda.value or not campo_quantidade.value:
             page.open(erro) # Mensagem de erro
             page.update()
 
@@ -115,7 +111,6 @@ def criar_tela_estoque(produtos, page):
             produtos[index]["preco_custo"] = campo_preco_custo.value # Muda o dado contido na chave preco_custo, no index passado.
             produtos[index]["preco_venda"] = campo_preco_venda.value # Muda o dado contido na chave preco_venda, no index passado.
             produtos[index]["quantidade"] = campo_quantidade.value # Muda o dado contido na chave quantidade, no index passado.
-            produtos[index]["validade"] = campo_validade.value # Muda o dado contido na chave validade, no index passado.
 
             page.close(janela_editar)
             page.update()
@@ -142,7 +137,10 @@ def criar_tela_estoque(produtos, page):
 
 
     # Função que abrirá a janela de criação de lotes:
-    def abrir_janela_lote(e):
+    def abrir_janela_lote(e, index):
+        nonlocal index_editado
+        index_editado = index
+        mostrar_lotes(index_editado)
         page.open(janela_lotes)
         page.update()
 
@@ -310,18 +308,12 @@ def criar_tela_estoque(produtos, page):
         on_change=formatar_quantidade,
     )
 
-    campo_validade = ft.TextField(
-        label="Validade:",
-        value="",
-        width=120,
-        on_change=formatar_validade,
-    )
 
     def handle_change(e):
         # Atualiza o TextField com a data selecionada formatada
         data_formatada = e.control.value.strftime('%d/%m/%Y')
-        campo_validade.value = data_formatada
-        campo_validade.update()
+        e.control.value = data_formatada
+        e.control.update()
         page.close(date_picker)
 
     def handle_dismissal(e):
@@ -371,7 +363,7 @@ def criar_tela_estoque(produtos, page):
             botao_lotes = ft.IconButton(
                 icon=ft.Icons.ADD_BOX,
                 style=ft.ButtonStyle(color="#507656"),
-                on_click=lambda e: abrir_janela_lote(e),
+                on_click=lambda e, index=i: abrir_janela_lote(e, index),
             )
 
             if texto in produto["nome"].lower() or texto in produto["codigo"].lower():
@@ -383,7 +375,6 @@ def criar_tela_estoque(produtos, page):
                             ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
                             ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
                             ft.DataCell(ft.Text(produto["quantidade"], size=14)),
-                            ft.DataCell(ft.Text(produto["validade"], size=14)),
                             ft.DataCell(ft.Row([botao_editar, botao_duplicar, botao_lotes])),
                         ],
                     ),
@@ -437,7 +428,7 @@ def criar_tela_estoque(produtos, page):
     botao_salvar = ft.TextButton(
         content=ft.Text("Salvar", size=16),
         style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
-        on_click=lambda e: salvar(index_editado, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade)
+        on_click=lambda e: salvar(index_editado, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade)
     )
 
     botao_cancelar = ft.TextButton(
@@ -476,11 +467,6 @@ def criar_tela_estoque(produtos, page):
                             ft.Container(
                                 content=campo_quantidade,
                                 col={"xs":12, "sm":10, "md":6, "lg":5},
-                            ),
-
-                            ft.Container(
-                                content=campo_validade,
-                                col={"xs":10, "sm":9, "md":5, "lg":4},
                             ),
 
                             ft.Container(
@@ -569,9 +555,28 @@ def criar_tela_estoque(produtos, page):
     )
 
 
+    async def reabrir_janela_lotes():
+        await asyncio.sleep(0.05)
+        page.open(janela_lotes)
+        mostrar_lotes(index_editado)
+        page.update()
+
+
     # Função para a criação dos lotes:
-    def criar_lote(e):
-        pass
+    def criar_lote(e, index):
+        produto = produtos[index]
+        
+        novo_lote = {
+            "numero_lote":campo_numero_lote.value,
+            "data_fabricacao":campo_data_fabricacao.value,
+            "data_validade":campo_data_validade.value,
+            "quantidade":campo_quantidade_lote.value,
+        }
+
+        produto["lotes"].append(novo_lote)
+        page.run_task(reabrir_janela_lotes)
+        page.close(janela_dados_lote)
+        page.update()
 
     def abrir_dados_lote(e):
         page.open(janela_dados_lote)
@@ -580,17 +585,63 @@ def criar_tela_estoque(produtos, page):
     # Botão adicionar:
     botao_adicionar = criar_botao_adicionar(abrir_dados_lote)
 
+    # Tabela com os lotes atrelados ao produto:
+    tabela_lotes = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("Número do Lote")),
+            ft.DataColumn(ft.Text("Data de Fabricação")),
+            ft.DataColumn(ft.Text("Data de Validade")),
+            ft.DataColumn(ft.Text("Quantidade")),
+        ],
+
+        rows=[],
+
+        width=850,
+        height=450,
+    )
+
+    def mostrar_lotes(index):
+        tabela_lotes.rows.clear()
+        produto = produtos[index]
+
+        for i, lote in enumerate(produto["lotes"]):
+            tabela_lotes.rows.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(lote["numero_lote"])),
+                        ft.DataCell(ft.Text(lote["data_fabricacao"])),
+                        ft.DataCell(ft.Text(lote["data_validade"])),
+                        ft.DataCell(ft.Text(lote["quantidade"])),
+                    ],
+                ),
+            )
+        
+        page.update()
+
+
+    # Container que conterá a tabela de lotes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
+    container_tabela_lotes = ft.Container(
+        content=ft.Column(
+            [tabela_lotes],
+            scroll=ft.ScrollMode.AUTO # Habilita o scroll automaticamente quando a altura máxima é atingida.
+        ),
+
+        expand=True,
+        border=ft.border.all(2, color="#765070"),
+        border_radius=10,
+    )
+
+
     # Janela para criação de lotes:
     janela_lotes = ft.AlertDialog(
         title=header,
 
-        actions=[
-            botao_adicionar,
-        ],
-
         content=ft.Container(
             content=ft.Column(
-                controls=[]
+                controls=[
+                    ft.Row([botao_adicionar], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([container_tabela_lotes], alignment=ft.MainAxisAlignment.CENTER),
+                ],
             ),
 
             width=900,
@@ -599,7 +650,6 @@ def criar_tela_estoque(produtos, page):
 
         bgcolor=ft.Colors.WHITE,
         alignment=ft.alignment.center,
-        actions_alignment=ft.MainAxisAlignment.CENTER,
     )
 
     # Campos para inserção dos dados do lote:
@@ -608,6 +658,15 @@ def criar_tela_estoque(produtos, page):
     campo_data_validade = ft.TextField(label="Data de Validade:", bgcolor=ft.Colors.WHITE, expand=True, on_change=formatar_validade)
     campo_quantidade_lote = ft.TextField(label="Quantidade:", expand=True, on_change=formatar_quantidade)
 
+    # Botão para confirmar a criação do lote:
+    botao_confirmar = ft.ElevatedButton(
+        content= ft.Text(value="Confirmar", size=16),
+        bgcolor= "#507656",
+        color= ft.Colors.WHITE,
+        on_click=lambda e: criar_lote(e, index_editado),
+        height=50,
+        width=110,
+    ) 
 
     # Janela para inserção dos dados do lote:
     janela_dados_lote = ft.AlertDialog(
@@ -648,7 +707,7 @@ def criar_tela_estoque(produtos, page):
         ),
 
         actions=[
-            botao_adicionar,
+            botao_confirmar,
         ],
 
         bgcolor=ft.Colors.WHITE,
@@ -664,7 +723,7 @@ def criar_tela_estoque(produtos, page):
 
 
 
-    # Container que conterá a tabela de clientes (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
+    # Container que conterá a tabela de estoque (Ajudará a viabilizar algumas funções como o scroll e fixar o título no topo da tabela)
     container_tabela = ft.Container(
         content=ft.Column(
             [tabela_estoque],
