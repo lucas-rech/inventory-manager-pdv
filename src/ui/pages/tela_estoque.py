@@ -145,10 +145,14 @@ def criar_tela_estoque(produtos, page):
         atualizar() # Atualiza a tabela.
 
 
-    # Função que abrirá a janela de criação de lotes:
     def abrir_janela_lote(e, index_produto):
-        nonlocal index_produto_atual
-        index_produto_atual = index_produto
+        # capture explicitamente o produto atual para evitar leitura de variáveis mutáveis depois
+        nonlocal index_produto_editado
+        index_produto_editado = index_produto
+
+        # atualiza o comportamento do botão "Adicionar" para abrir o diálogo com o índice correto
+        # (botao_adicionar existe no escopo dos lotes; garantimos que ele use index_produto)
+        botao_adicionar.on_click = lambda ev, ip=index_produto_editado: abrir_dados_lote(ev, ip)
 
         mostrar_lotes(index_produto)
         page.open(janela_lotes)
@@ -627,9 +631,9 @@ def criar_tela_estoque(produtos, page):
 
     
     # Função de cancelar edição do lote:
-    def cancelar_lote(e):
+    def cancelar_lote(index_produto):
         page.close(janela_dados_lote)
-        mostrar_lotes(index_produto_editado)
+        mostrar_lotes(index_produto)
         page.run_task(reabrir_janela_lotes)
         page.update()
 
@@ -656,14 +660,36 @@ def criar_tela_estoque(produtos, page):
         
             
 
-    # Função para abrir a janela de inserção dos dados do lote:
-    def abrir_dados_lote(e):
+    def abrir_dados_lote(e, index_produto):
+        botao_confirmar.on_click = lambda ev, ip=index_produto: criar_lote(ev, ip)
+
+        # Limpa campos - SEM update()
+        campo_numero_lote.value = ""
+        campo_data_fabricacao.value = ""
+        campo_data_validade.value = ""
+        campo_quantidade_lote.value = ""
+
         page.open(janela_dados_lote)
         campo_numero_lote.focus()
         page.update()
 
+
+    # Função para fechar a janela de listagem dos lotes:
+    def fechar_janela_lote(e):
+        page.close(janela_lotes)
+        page.update()
+
     # Botão adicionar:
-    botao_adicionar = criar_botao_adicionar(abrir_dados_lote)
+    botao_adicionar = criar_botao_adicionar(lambda e: abrir_dados_lote(e, index_produto_editado))
+
+    botao_fechar = ft.ElevatedButton(
+        bgcolor="#9B3E3E", 
+        content=ft.Text("Fechar", size=16),
+        color=ft.Colors.WHITE,
+        on_click=fechar_janela_lote,
+        height=50,
+        width=125,
+    )
 
     # Tabela com os lotes atrelados ao produto:
     tabela_lotes = ft.DataTable(
@@ -742,7 +768,7 @@ def criar_tela_estoque(produtos, page):
         content=ft.Container(
             content=ft.Column(
                 controls=[
-                    ft.Row([botao_adicionar], alignment=ft.MainAxisAlignment.CENTER),
+                    ft.Row([botao_fechar, botao_adicionar], alignment=ft.MainAxisAlignment.CENTER),
                     ft.Row([container_tabela_lotes], alignment=ft.MainAxisAlignment.CENTER),
                 ],
             ),
@@ -761,15 +787,15 @@ def criar_tela_estoque(produtos, page):
     campo_data_validade = ft.TextField(label="Data de Validade:", bgcolor=ft.Colors.WHITE, expand=True, on_change=formatar_validade)
     campo_quantidade_lote = ft.TextField(label="Quantidade:", expand=True, on_change=formatar_quantidade)
 
-    # Botão para confirmar a criação do lote:
     botao_confirmar = ft.ElevatedButton(
         content= ft.Text(value="Confirmar", size=16),
         bgcolor= "#507656",
         color= ft.Colors.WHITE,
-        on_click=lambda e: criar_lote(e, index_produto_editado),
+        # on_click será substituído dinamicamente em abrir_dados_lote
+        on_click=lambda e: None,
         height=50,
         width=110,
-    ) 
+    )
 
     # Janela para inserção dos dados de criação do lote:
     janela_dados_lote = ft.AlertDialog(
@@ -829,13 +855,13 @@ def criar_tela_estoque(produtos, page):
     botao_salvar_lote = ft.TextButton(
         content=ft.Text("Salvar", size=16),
         style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
-        on_click=lambda e: salvar_lote(index_produto_editado, index_lote_editado, campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote)
+        on_click=lambda e: None,  # será sobrescrito por editar_lote
     )
 
     botao_cancelar_lote = ft.TextButton(
         content=ft.Text("Cancelar", size=16),
         style=ft.ButtonStyle(color="#9B3E3E"),
-        on_click=cancelar_lote,
+        on_click=lambda e, ip=index_produto_editado: cancelar_lote(ip),
     )
 
 
