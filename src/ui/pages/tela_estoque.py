@@ -30,13 +30,13 @@ def criar_tela_estoque(produtos, page):
             botao_editar = ft.IconButton(
                 icon=ft.Icons.EDIT,
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
-                on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                on_click=lambda e, index=i: editar_produto(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
             )
 
             botao_duplicar = ft.IconButton(
                 icon=ft.Icons.COPY,
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
-                on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                on_click=lambda e, index=i: duplicar_produto(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
             )
 
             botao_lotes = ft.IconButton(
@@ -71,7 +71,7 @@ def criar_tela_estoque(produtos, page):
 
     # FUNÇÕES DE EDIÇÃO DA TABELA:
     # Função de editar dados da tabela:
-    def editar(index): # Recebe o index dos dados que serão editados.
+    def editar_produto(index): # Recebe o index dos dados que serão editados.
         campo_codigo_barras.value = produtos[index]["codigo"]
         campo_nome_produto.value = produtos[index]["nome"]
         campo_preco_custo.value = produtos[index]["preco_custo"]
@@ -80,18 +80,19 @@ def criar_tela_estoque(produtos, page):
 
         page.open(janela_editar) # Abre a janela de edição dos dados.
 
-        nonlocal index_editado
-        index_editado = index
+        nonlocal index_produto_editado
+        index_produto_editado = index
 
         atualizar() # Atualiza a tabela.
 
-    def duplicar(index):
+    def duplicar_produto(index):
         produto_duplicado = {
             "codigo":produtos[index]["codigo"],
             "nome":produtos[index]["nome"],
             "preco_custo":produtos[index]["preco_custo"],
             "preco_venda":produtos[index]["preco_venda"],
             "quantidade":produtos[index]["quantidade"],
+            "lotes":produtos[index]["lotes"]
         }
 
         produtos.insert(index+1, produto_duplicado)
@@ -100,7 +101,7 @@ def criar_tela_estoque(produtos, page):
 
 
     # Função de salvar os novos dados na tabela:
-    def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade, campo_validade): # Recebe os campos que recebem as novas informações.
+    def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda): # Recebe os campos que recebem as novas informações.
         if not campo_codigo_barras.value or not campo_nome_produto.value or not campo_preco_custo.value or not campo_preco_venda.value or not campo_quantidade.value:
             page.open(erro) # Mensagem de erro
             page.update()
@@ -110,7 +111,6 @@ def criar_tela_estoque(produtos, page):
             produtos[index]["nome"] = campo_nome_produto.value # Muda o dado contido na chave nome, no index passado.
             produtos[index]["preco_custo"] = campo_preco_custo.value # Muda o dado contido na chave preco_custo, no index passado.
             produtos[index]["preco_venda"] = campo_preco_venda.value # Muda o dado contido na chave preco_venda, no index passado.
-            produtos[index]["quantidade"] = campo_quantidade.value # Muda o dado contido na chave quantidade, no index passado.
 
             page.close(janela_editar)
             page.update()
@@ -138,9 +138,9 @@ def criar_tela_estoque(produtos, page):
 
     # Função que abrirá a janela de criação de lotes:
     def abrir_janela_lote(e, index):
-        nonlocal index_editado
-        index_editado = index
-        mostrar_lotes(index_editado)
+        nonlocal index_produto_editado
+        index_produto_editado = index
+        mostrar_lotes(index_produto_editado)
         page.open(janela_lotes)
         page.update()
 
@@ -340,7 +340,7 @@ def criar_tela_estoque(produtos, page):
 
 
 
-    # Função para buscar o cliente:
+    # Função para buscar o produto:
     def buscar_cliente(e):
         texto = e.control.value.lower().strip()
 
@@ -350,14 +350,15 @@ def criar_tela_estoque(produtos, page):
             # Botão para editar as informações:
             botao_editar = ft.IconButton(
                 icon=ft.Icons.EDIT,
-                on_click=lambda e, index=i: editar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                on_click=lambda e, index=i: editar_produto(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
             )
 
+            # Botão para duplicar os produtos:
             botao_duplicar = ft.IconButton(
                 icon=ft.Icons.COPY,
                 style=ft.ButtonStyle(color="#507656"), # Cor do botão.
-                on_click=lambda e, index=i: duplicar(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                on_click=lambda e, index=i: duplicar_produto(index), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
             )
 
             botao_lotes = ft.IconButton(
@@ -423,12 +424,12 @@ def criar_tela_estoque(produtos, page):
 
 
     # Variável para localzar o dado que será editado:
-    index_editado = 0
+    index_produto_editado = 0
 
     botao_salvar = ft.TextButton(
         content=ft.Text("Salvar", size=16),
         style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
-        on_click=lambda e: salvar(index_editado, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda, campo_quantidade)
+        on_click=lambda e: salvar(index_produto_editado, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda)
     )
 
     botao_cancelar = ft.TextButton(
@@ -456,22 +457,6 @@ def criar_tela_estoque(produtos, page):
                             ft.Container(
                                 content=campo_nome_produto,
                                 col={"xs":12, "sm":10, "md":6, "lg":5},
-                            ),
-                        ],
-
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-
-                    ft.ResponsiveRow(
-                        controls=[
-                            ft.Container(
-                                content=campo_quantidade,
-                                col={"xs":12, "sm":10, "md":6, "lg":5},
-                            ),
-
-                            ft.Container(
-                                content=selecionar_data,
-                                col={"xs": 2, "sm": 1, "md":1},
                             ),
                         ],
 
@@ -545,8 +530,10 @@ def criar_tela_estoque(produtos, page):
 
     # --- LOTES ---
 
+    index_lote_editado = 0
+
     header = ft.Container(
-        content=ft.Text("Lotes", color=ft.Colors.WHITE, size=25, weight="bold"),
+        content=ft.Text("Lotes Do Produto", color=ft.Colors.WHITE, size=25, weight="bold"),
         bgcolor="#507656",
         width=800,
         height=70,
@@ -558,7 +545,7 @@ def criar_tela_estoque(produtos, page):
     async def reabrir_janela_lotes():
         await asyncio.sleep(0.05)
         page.open(janela_lotes)
-        mostrar_lotes(index_editado)
+        mostrar_lotes(index_produto_editado)
         page.update()
 
 
@@ -574,12 +561,96 @@ def criar_tela_estoque(produtos, page):
         }
 
         produto["lotes"].append(novo_lote)
+
+        for campo in [campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote]:
+            campo.value = ""
+
         page.run_task(reabrir_janela_lotes)
         page.close(janela_dados_lote)
         page.update()
 
+
+    # Função de editar os dados do lote:
+    def editar_lote(index_produto, index_lote):
+        produto = produtos[index_produto]
+
+        campo_numero_lote.value = produto["lotes"][index_lote]["numero_lote"]
+        campo_data_fabricacao.value = produto["lotes"][index_lote]["data_fabricacao"]
+        campo_data_validade.value = produto["lotes"][index_lote]["data_validade"]
+        campo_quantidade_lote.value = produto["lotes"][index_lote]["quantidade"]
+
+        page.open(janela_edicao_lote) # Abre a janela de inserção dos dados do lote
+
+        nonlocal index_lote_editado
+        index_lote_editado = index_lote # Atribui o index atual para  a variável global index_lote_editado
+
+        mostrar_lotes(index_produto) # Atualiza a tabela de lotes
+
+        page.update()
+
+
+    # Função de salvar os novos dados do lote na tabela:
+    def salvar_lote(index_produto, index_lote, campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote): # Recebe os campos que recebem as novas informações.
+        produto = produtos[index_produto]
+
+        if not campo_numero_lote.value or not campo_data_fabricacao.value or not campo_data_validade.value or not campo_quantidade_lote.value:
+            page.open(erro) # Mensagem de erro
+            page.update()
+
+        else:
+            produto["lotes"][index_lote]["numero_lote"] = campo_numero_lote.value # Muda o dado contido na chave codigo, no index_lote passado.
+            produto["lotes"][index_lote]["data_fabricacao"] = campo_data_fabricacao.value # Muda o dado contido na chave nome, no index_lote passado.
+            produto["lotes"][index_lote]["data_validade"] = campo_data_validade.value # Muda o dado contido na chave preco_custo, no index_lote passado.
+            produto["lotes"][index_lote]["quantidade"] = campo_quantidade_lote.value # Muda o dado contido na chave preco_venda, no index_lote passado.
+
+            for campo in [campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote]:
+                campo.value = ""
+
+            mostrar_lotes(index_produto) # Atualiza a tabela.
+
+            page.close(janela_dados_lote)
+            page.run_task(reabrir_janela_lotes)
+
+        page.update()
+
+    
+    # Função de cancelar edição do lote:
+    def cancelar_lote(e):
+        page.close(janela_dados_lote)
+        mostrar_lotes(index_produto_editado)
+        page.run_task(reabrir_janela_lotes)
+        page.update()
+
+
+    # Função para duplicar lotes:
+    def duplicar_lote(index_produto, index_lote):
+        produto = produtos[index_produto]
+
+        lote_duplicado = {
+            "numero_lote":produto["lotes"][index_lote]["numero_lote"],
+            "data_fabricacao":produto["lotes"][index_lote]["data_fabricacao"],
+            "data_validade":produto["lotes"][index_lote]["data_validade"],
+            "quantidade":produto["lotes"][index_lote]["quantidade"],
+        }
+
+        produto["lotes"].insert(index_lote+1, lote_duplicado)
+        mostrar_lotes(index_produto)
+        page.update()
+
+
+    # Função para excluir lotes:
+    def excluir_lote(index_produto, index_lote):
+        produto = produtos[index_produto]["lotes"]
+        produto.pop(index_lote)
+        mostrar_lotes(index_produto)
+        page.update()
+        
+            
+
+    # Função para abrir a janela de inserção dos dados do lote:
     def abrir_dados_lote(e):
         page.open(janela_dados_lote)
+        campo_numero_lote.focus()
         page.update()
 
     # Botão adicionar:
@@ -592,6 +663,7 @@ def criar_tela_estoque(produtos, page):
             ft.DataColumn(ft.Text("Data de Fabricação")),
             ft.DataColumn(ft.Text("Data de Validade")),
             ft.DataColumn(ft.Text("Quantidade")),
+            ft.DataColumn(ft.Text("Ações")),
         ],
 
         rows=[],
@@ -600,11 +672,33 @@ def criar_tela_estoque(produtos, page):
         height=450,
     )
 
+
+    # Função para atualizar a tabela dos lotes:
     def mostrar_lotes(index):
         tabela_lotes.rows.clear()
         produto = produtos[index]
 
         for i, lote in enumerate(produto["lotes"]):
+            # Botão para editar as informações:
+            botao_editar = ft.IconButton(
+                icon=ft.Icons.EDIT,
+                on_click=lambda e, index_lote=i: editar_lote(index_produto_editado, index_lote), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+            )
+
+            # Botão para duplicar os produtos:
+            botao_duplicar = ft.IconButton(
+                icon=ft.Icons.COPY,
+                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                on_click=lambda e, index_lote=i: duplicar_lote(index_produto_editado, index_lote), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+            )
+
+            botao_excluir = ft.IconButton(
+                icon=ft.Icons.DELETE,
+                style=ft.ButtonStyle(color="#9B3E3E"),
+                on_click=lambda e, index_lote=i: excluir_lote(index_produto_editado, index_lote)
+            )
+
             tabela_lotes.rows.append(
                 ft.DataRow(
                     cells=[
@@ -612,6 +706,7 @@ def criar_tela_estoque(produtos, page):
                         ft.DataCell(ft.Text(lote["data_fabricacao"])),
                         ft.DataCell(ft.Text(lote["data_validade"])),
                         ft.DataCell(ft.Text(lote["quantidade"])),
+                        ft.DataCell(ft.Row([botao_editar, botao_duplicar, botao_excluir]))
                     ],
                 ),
             )
@@ -663,12 +758,12 @@ def criar_tela_estoque(produtos, page):
         content= ft.Text(value="Confirmar", size=16),
         bgcolor= "#507656",
         color= ft.Colors.WHITE,
-        on_click=lambda e: criar_lote(e, index_editado),
+        on_click=lambda e: criar_lote(e, index_produto_editado),
         height=50,
         width=110,
     ) 
 
-    # Janela para inserção dos dados do lote:
+    # Janela para inserção dos dados de criação do lote:
     janela_dados_lote = ft.AlertDialog(
         title=ft.Container(
             content=ft.Text("Insira os Dados do Lote", color=ft.Colors.WHITE, size=20),
@@ -720,6 +815,70 @@ def criar_tela_estoque(produtos, page):
 
 
 
+
+
+    
+    botao_salvar_lote = ft.TextButton(
+        content=ft.Text("Salvar", size=16),
+        style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
+        on_click=lambda e: salvar_lote(index_produto_editado, index_lote_editado, campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote)
+    )
+
+    botao_cancelar_lote = ft.TextButton(
+        content=ft.Text("Cancelar", size=16),
+        style=ft.ButtonStyle(color="#9B3E3E"),
+        on_click=cancelar_lote,
+    )
+
+
+    # Janela para inserção dos dados de edição do lote:
+    janela_edicao_lote = ft.AlertDialog(
+        title=ft.Container(
+            content=ft.Text("Insira os Novos Dados do Lote", color=ft.Colors.WHITE, size=20),
+            bgcolor="#507656",
+            border_radius=8,
+            height=50,
+            alignment=ft.alignment.center,
+        ),
+
+        content=ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Container(
+                        content=campo_numero_lote,
+                    ),
+
+                    ft.Container(
+                        content=campo_data_fabricacao,
+                    ),
+
+                    ft.Container(
+                        content=campo_data_validade
+                    ),
+
+                    ft.Container(
+                        content=campo_quantidade_lote,
+                    ),
+                ],
+
+                spacing=20
+            ),
+
+            width=300,
+            height=280,
+            padding=10,
+        ),
+
+        actions=[
+            botao_cancelar_lote,
+            botao_salvar_lote,
+        ],
+
+        bgcolor=ft.Colors.WHITE,
+        alignment=ft.alignment.center,
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        modal=True,
+    )
 
 
 
