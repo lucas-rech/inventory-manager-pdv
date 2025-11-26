@@ -7,6 +7,8 @@ import copy
 
 # Função que irá criar a tela de estoque:
 def criar_tela_estoque(produtos, page):
+    index_produto_atual = None
+
     # Tabela dos itens em estoque:
     tabela_estoque = ft.DataTable(
         columns=[ # Define as 6 colunas que terão dados (Código, Nome, Preço de custo, Preço de venda, Quantidade e Validade)
@@ -22,6 +24,12 @@ def criar_tela_estoque(produtos, page):
 
         width=1500,
     )
+
+
+    # Função calcular quantidade total, baseado na quantidade declarada nos lotes:
+    def calcular_quantidade_total(produto):
+    # Retorna a soma da quantidade de todos os lotes
+        return sum(int(lote["quantidade"]) for lote in produto["lotes"])
 
     # Função que adicionará itens à tabela de estoque:
     def atualizar(): 
@@ -54,7 +62,7 @@ def criar_tela_estoque(produtos, page):
                         ft.DataCell(ft.Text(produto["nome"], size=14)),
                         ft.DataCell(ft.Text(produto["preco_custo"], size=14)),
                         ft.DataCell(ft.Text(produto["preco_venda"], size=14)),
-                        ft.DataCell(ft.Text(produto["quantidade"], size=14)),
+                        ft.DataCell(ft.Text(str(calcular_quantidade_total(produto)), size=14)),
                         ft.DataCell(ft.Row([botao_editar, botao_duplicar, botao_lotes])),
                     ]
                 )
@@ -139,6 +147,9 @@ def criar_tela_estoque(produtos, page):
 
     # Função que abrirá a janela de criação de lotes:
     def abrir_janela_lote(e, index_produto):
+        nonlocal index_produto_atual
+        index_produto_atual = index_produto
+
         mostrar_lotes(index_produto)
         page.open(janela_lotes)
         page.update()
@@ -545,12 +556,21 @@ def criar_tela_estoque(produtos, page):
     def criar_lote(e, index_produto):
         produto = produtos[index_produto]
 
-        novo_lote = {
-            "numero_lote": campo_numero_lote.value,
-            "data_fabricacao": campo_data_fabricacao.value,
-            "data_validade": campo_data_validade.value,
-            "quantidade": campo_quantidade_lote.value,
-        }
+        if not campo_quantidade_lote.value:
+            novo_lote = {
+                "numero_lote": campo_numero_lote.value,
+                "data_fabricacao": campo_data_fabricacao.value,
+                "data_validade": campo_data_validade.value,
+                "quantidade": 0,
+            }
+
+        else:
+            novo_lote = {
+                "numero_lote": campo_numero_lote.value,
+                "data_fabricacao": campo_data_fabricacao.value,
+                "data_validade": campo_data_validade.value,
+                "quantidade": campo_quantidade_lote.value,
+            }
 
         produto["lotes"].append(novo_lote)
 
@@ -560,9 +580,8 @@ def criar_tela_estoque(produtos, page):
         page.close(janela_dados_lote)
         # Recarrega lotes com o índice CORRETO
         mostrar_lotes(index_produto)
-
-        # Reabre imediatamente a janela, SEM TASK async
-        page.open(janela_lotes)
+        atualizar()
+        page.run_task(reabrir_janela_lotes)
         page.update()
 
 
@@ -590,13 +609,19 @@ def criar_tela_estoque(produtos, page):
         produto["numero_lote"] = campo_numero_lote.value
         produto["data_fabricacao"] = campo_data_fabricacao.value
         produto["data_validade"] = campo_data_validade.value
-        produto["quantidade"] = campo_quantidade_lote.value
+
+        if not campo_quantidade_lote.value:
+            produto["quantidade"] = 0
+
+        else:
+            produto["quantidade"] = campo_quantidade_lote.value
 
         for campo in [campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote]:
             campo.value = ""
 
         page.close(janela_edicao_lote)
         mostrar_lotes(index_produto)
+        atualizar()
         page.run_task(reabrir_janela_lotes)
         page.update()
 
@@ -617,6 +642,7 @@ def criar_tela_estoque(produtos, page):
         produto.insert(index_lote + 1, lote)
 
         mostrar_lotes(index_produto)
+        atualizar()
         page.update()
 
 
@@ -625,6 +651,7 @@ def criar_tela_estoque(produtos, page):
         produtos[index_produto]["lotes"].pop(index_lote)
 
         mostrar_lotes(index_produto)
+        atualizar()
         page.update()
         
             
