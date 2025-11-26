@@ -3,6 +3,7 @@ import re
 import datetime
 import asyncio
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
+import copy
 
 # Função que irá criar a tela de estoque:
 def criar_tela_estoque(produtos, page):
@@ -84,17 +85,18 @@ def criar_tela_estoque(produtos, page):
 
         atualizar() # Atualiza a tabela.
 
+    # Função de duplicar produtos:
     def duplicar_produto(index):
         produto_duplicado = {
-            "codigo":produtos[index]["codigo"],
-            "nome":produtos[index]["nome"],
-            "preco_custo":produtos[index]["preco_custo"],
-            "preco_venda":produtos[index]["preco_venda"],
-            "quantidade":produtos[index]["quantidade"],
-            "lotes":produtos[index]["lotes"]
+            "codigo": produtos[index]["codigo"],
+            "nome": produtos[index]["nome"],
+            "preco_custo": produtos[index]["preco_custo"],
+            "preco_venda": produtos[index]["preco_venda"],
+            "quantidade": produtos[index]["quantidade"],
+            "lotes": copy.deepcopy(produtos[index]["lotes"]),
         }
 
-        produtos.insert(index+1, produto_duplicado)
+        produtos.insert(index + 1, produto_duplicado)
         atualizar()
 
 
@@ -136,10 +138,8 @@ def criar_tela_estoque(produtos, page):
 
 
     # Função que abrirá a janela de criação de lotes:
-    def abrir_janela_lote(e, index):
-        nonlocal index_produto_editado
-        index_produto_editado = index
-        mostrar_lotes(index_produto_editado)
+    def abrir_janela_lote(e, index_produto):
+        mostrar_lotes(index_produto)
         page.open(janela_lotes)
         page.update()
 
@@ -333,7 +333,7 @@ def criar_tela_estoque(produtos, page):
 
 
     # Função para buscar o produto:
-    def buscar_cliente(e):
+    def buscar_produto(e):
         texto = e.control.value.lower().strip()
 
         tabela_estoque.rows.clear()
@@ -377,7 +377,7 @@ def criar_tela_estoque(produtos, page):
 
 
     # Campo para busca de clientes:
-    campo_buscar = ft.TextField(label="Buscar Produto:", hint_text="Código de Barras ou Nome", width=300, on_change=buscar_cliente)
+    campo_buscar = ft.TextField(label="Buscar Produto:", hint_text="Código de Barras ou Nome", width=300, on_change=buscar_produto)
 
 
 
@@ -542,14 +542,14 @@ def criar_tela_estoque(produtos, page):
 
 
     # Função para a criação dos lotes:
-    def criar_lote(e, index):
-        produto = produtos[index]
-        
+    def criar_lote(e, index_produto):
+        produto = produtos[index_produto]
+
         novo_lote = {
-            "numero_lote":campo_numero_lote.value,
-            "data_fabricacao":campo_data_fabricacao.value,
-            "data_validade":campo_data_validade.value,
-            "quantidade":campo_quantidade_lote.value,
+            "numero_lote": campo_numero_lote.value,
+            "data_fabricacao": campo_data_fabricacao.value,
+            "data_validade": campo_data_validade.value,
+            "quantidade": campo_quantidade_lote.value,
         }
 
         produto["lotes"].append(novo_lote)
@@ -557,52 +557,47 @@ def criar_tela_estoque(produtos, page):
         for campo in [campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote]:
             campo.value = ""
 
-        page.run_task(reabrir_janela_lotes)
         page.close(janela_dados_lote)
+        # Recarrega lotes com o índice CORRETO
+        mostrar_lotes(index_produto)
+
+        # Reabre imediatamente a janela, SEM TASK async
+        page.open(janela_lotes)
         page.update()
 
 
     # Função de editar os dados do lote:
     def editar_lote(index_produto, index_lote):
         produto = produtos[index_produto]
+        lote = produto["lotes"][index_lote]
 
-        campo_numero_lote.value = produto["lotes"][index_lote]["numero_lote"]
-        campo_data_fabricacao.value = produto["lotes"][index_lote]["data_fabricacao"]
-        campo_data_validade.value = produto["lotes"][index_lote]["data_validade"]
-        campo_quantidade_lote.value = produto["lotes"][index_lote]["quantidade"]
+        campo_numero_lote.value = lote["numero_lote"]
+        campo_data_fabricacao.value = lote["data_fabricacao"]
+        campo_data_validade.value = lote["data_validade"]
+        campo_quantidade_lote.value = lote["quantidade"]
 
-        page.open(janela_edicao_lote) # Abre a janela de inserção dos dados do lote
+        # salvar terá referência correta
+        botao_salvar_lote.on_click = lambda e, ip=index_produto, il=index_lote: salvar_lote(ip, il)
 
-        nonlocal index_lote_editado
-        index_lote_editado = index_lote # Atribui o index atual para  a variável global index_lote_editado
-
-        mostrar_lotes(index_produto) # Atualiza a tabela de lotes
-
+        page.open(janela_edicao_lote)
         page.update()
 
 
     # Função de salvar os novos dados do lote na tabela:
-    def salvar_lote(index_produto, index_lote, campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote): # Recebe os campos que recebem as novas informações.
-        produto = produtos[index_produto]
+    def salvar_lote(index_produto, index_lote):
+        produto = produtos[index_produto]["lotes"][index_lote]
 
-        if not campo_numero_lote.value or not campo_data_fabricacao.value or not campo_data_validade.value or not campo_quantidade_lote.value:
-            page.open(erro) # Mensagem de erro
-            page.update()
+        produto["numero_lote"] = campo_numero_lote.value
+        produto["data_fabricacao"] = campo_data_fabricacao.value
+        produto["data_validade"] = campo_data_validade.value
+        produto["quantidade"] = campo_quantidade_lote.value
 
-        else:
-            produto["lotes"][index_lote]["numero_lote"] = campo_numero_lote.value # Muda o dado contido na chave codigo, no index_lote passado.
-            produto["lotes"][index_lote]["data_fabricacao"] = campo_data_fabricacao.value # Muda o dado contido na chave nome, no index_lote passado.
-            produto["lotes"][index_lote]["data_validade"] = campo_data_validade.value # Muda o dado contido na chave preco_custo, no index_lote passado.
-            produto["lotes"][index_lote]["quantidade"] = campo_quantidade_lote.value # Muda o dado contido na chave preco_venda, no index_lote passado.
+        for campo in [campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote]:
+            campo.value = ""
 
-            for campo in [campo_numero_lote, campo_data_fabricacao, campo_data_validade, campo_quantidade_lote]:
-                campo.value = ""
-
-            mostrar_lotes(index_produto) # Atualiza a tabela.
-
-            page.close(janela_dados_lote)
-            page.run_task(reabrir_janela_lotes)
-
+        page.close(janela_edicao_lote)
+        mostrar_lotes(index_produto)
+        page.run_task(reabrir_janela_lotes)
         page.update()
 
     
@@ -616,24 +611,19 @@ def criar_tela_estoque(produtos, page):
 
     # Função para duplicar lotes:
     def duplicar_lote(index_produto, index_lote):
-        produto = produtos[index_produto]
+        produto = produtos[index_produto]["lotes"]
 
-        lote_duplicado = {
-            "numero_lote":produto["lotes"][index_lote]["numero_lote"],
-            "data_fabricacao":produto["lotes"][index_lote]["data_fabricacao"],
-            "data_validade":produto["lotes"][index_lote]["data_validade"],
-            "quantidade":produto["lotes"][index_lote]["quantidade"],
-        }
+        lote = produto[index_lote].copy()
+        produto.insert(index_lote + 1, lote)
 
-        produto["lotes"].insert(index_lote+1, lote_duplicado)
         mostrar_lotes(index_produto)
         page.update()
 
 
     # Função para excluir lotes:
     def excluir_lote(index_produto, index_lote):
-        produto = produtos[index_produto]["lotes"]
-        produto.pop(index_lote)
+        produtos[index_produto]["lotes"].pop(index_lote)
+
         mostrar_lotes(index_produto)
         page.update()
         
@@ -666,29 +656,28 @@ def criar_tela_estoque(produtos, page):
 
 
     # Função para atualizar a tabela dos lotes:
-    def mostrar_lotes(index):
+    def mostrar_lotes(index_produto):
         tabela_lotes.rows.clear()
-        produto = produtos[index]
+        produto = produtos[index_produto]
 
-        for i, lote in enumerate(produto["lotes"]):
-            # Botão para editar as informações:
-            botao_editar = ft.IconButton(
+        for index_lote, lote in enumerate(produto["lotes"]):
+
+            btn_editar = ft.IconButton(
                 icon=ft.Icons.EDIT,
-                on_click=lambda e, index_lote=i: editar_lote(index_produto_editado, index_lote), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
-                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
+                style=ft.ButtonStyle(color="#507656"),
+                on_click=lambda e, ip=index_produto, il=index_lote: editar_lote(ip, il),
             )
 
-            # Botão para duplicar os produtos:
-            botao_duplicar = ft.IconButton(
+            btn_duplicar = ft.IconButton(
                 icon=ft.Icons.COPY,
-                style=ft.ButtonStyle(color="#507656"), # Cor do botão.
-                on_click=lambda e, index_lote=i: duplicar_lote(index_produto_editado, index_lote), # Quando for clicado: passa o valor de i par ao parâmetro index da função editar e chama a função editar.
+                style=ft.ButtonStyle(color="#507656"),
+                on_click=lambda e, ip=index_produto, il=index_lote: duplicar_lote(ip, il),
             )
 
-            botao_excluir = ft.IconButton(
+            btn_excluir = ft.IconButton(
                 icon=ft.Icons.DELETE,
                 style=ft.ButtonStyle(color="#9B3E3E"),
-                on_click=lambda e, index_lote=i: excluir_lote(index_produto_editado, index_lote)
+                on_click=lambda e, ip=index_produto, il=index_lote: excluir_lote(ip, il),
             )
 
             tabela_lotes.rows.append(
@@ -698,11 +687,11 @@ def criar_tela_estoque(produtos, page):
                         ft.DataCell(ft.Text(lote["data_fabricacao"])),
                         ft.DataCell(ft.Text(lote["data_validade"])),
                         ft.DataCell(ft.Text(lote["quantidade"])),
-                        ft.DataCell(ft.Row([botao_editar, botao_duplicar, botao_excluir]))
-                    ],
-                ),
+                        ft.DataCell(ft.Row([btn_editar, btn_duplicar, btn_excluir])),
+                    ]
+                )
             )
-        
+
         page.update()
 
 
