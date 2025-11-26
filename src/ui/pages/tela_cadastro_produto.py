@@ -100,52 +100,6 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
         preco_venda.value = formatado
         page.update()
 
-    def formatar_quantidade(e):
-        texto = "".join(filter(str.isdigit, e.control.value))
-        texto = texto[:5]
-        quantidade.value = texto
-        page.update()
-
-    def formatar_validade(e):
-        texto = "".join(filter(str.isdigit, e.control.value))
-        texto = texto[:8]
-        
-        formatado = ""
-
-        if len(texto) > 0:
-            formatado += texto[:2]
-        if len(texto) > 2:
-            formatado += "/" + texto[2:4]
-        if len(texto) > 4:
-            formatado += "/" + texto[4:8]
-
-        validade.value = formatado
-        page.update()
-
-    def handle_change(e):
-        # Atualiza o TextField com a data selecionada formatada
-        data_formatada = e.control.value.strftime('%d/%m/%Y')
-        validade.value = data_formatada
-        validade.update()
-        page.close(date_picker)
-
-    def handle_dismissal(e):
-        # Ação quando o DatePicker é fechado sem selecionar
-        page.close(date_picker)
-
-    # Cria o DatePicker com as configurações
-    date_picker = ft.DatePicker(
-        first_date=datetime.datetime(year=2025, month=1, day=1),
-        last_date=datetime.datetime.today() + datetime.timedelta(90),
-        on_change=handle_change,
-        on_dismiss=handle_dismissal,
-    )
-
-    def abrir_datepicker(e):
-        # Abre o DatePicker quando clicar no botão ou no campo
-        page.open(date_picker)
-
-
 
 
 
@@ -155,13 +109,9 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
     nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_nome) 
     preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_preco_custo)
     preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True, on_change=formatar_preco_venda)
-    quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_quantidade)
-    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=560, on_change=formatar_validade)
-    selecionar_data = ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, on_click=abrir_datepicker, icon_color=ft.Colors.BLACK)
-    
     porcentagem = ft.TextField(label= "Porcentagem de lucro:", bgcolor=ft.Colors.WHITE, width=610, visible=True, on_change=formatar_preco_venda)
 
-    campos = [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]
+    campos = [codigo, nome, preco_custo, preco_venda, porcentagem]
 
     porcentagem_preco_venda = ft.RadioGroup(
         content=ft.Column(
@@ -202,7 +152,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
 
     # Função que adicionará os items ao estoque:
     def adicionar_produto(e):
-        if not codigo.value or not nome.value or not preco_custo.value or not preco_venda.value or not quantidade.value or not validade.value:
+        if not codigo.value or not nome.value or not preco_custo.value or not preco_venda.value:
             page.open(erro)
             page.update()
 
@@ -212,15 +162,14 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
                 "nome":nome.value,
                 "preco_custo":preco_custo.value,
                 "preco_venda":preco_venda.value,
-                "quantidade":quantidade.value,
-                "validade":validade.value,
+                "quantidade":0,
                 "lotes":[],
             }
 
             produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
             page.run_task(criar_popup, "Produto Adicionado!", page) # Cria o popup quando o cliente for adicionado à lista.
 
-            for campo in [codigo, nome, preco_custo, preco_venda, quantidade, validade, porcentagem]:
+            for campo in [codigo, nome, preco_custo, preco_venda, porcentagem]:
                 campo.value = "" # Limpa todos os campos, substituindo o que foi digitado por uma string vazia ("").
 
         page.update() # Atualiza a página para mostrar o que foi alterado.
@@ -250,27 +199,7 @@ def cadastrar_produtos(page, produtos, voltar_para_escolha):
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
 
-                ft.ResponsiveRow(
-                    controls=[
-                        ft.Container(
-                            content=quantidade,
-                            col={"xs": 12, "sm": 6, "md":3},
-                        ),
-
-                        ft.Container(
-                            content=validade,
-                            col={"xs": 10, "sm": 5, "md":2.5},
-                        ),
-
-                        ft.Container(
-                            content=selecionar_data,
-                            col={"xs": 2, "sm": 1, "md":0.5}
-                        ),
-                    ],
-
-                    alignment=ft.MainAxisAlignment.CENTER,
-                ),
-
+                
                 ft.ResponsiveRow(
                     controls=[
                         ft.Container(

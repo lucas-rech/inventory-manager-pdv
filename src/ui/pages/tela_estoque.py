@@ -76,7 +76,6 @@ def criar_tela_estoque(produtos, page):
         campo_nome_produto.value = produtos[index]["nome"]
         campo_preco_custo.value = produtos[index]["preco_custo"]
         campo_preco_venda.value = produtos[index]["preco_venda"]
-        campo_quantidade.value = produtos[index]["quantidade"]
 
         page.open(janela_editar) # Abre a janela de edição dos dados.
 
@@ -102,7 +101,7 @@ def criar_tela_estoque(produtos, page):
 
     # Função de salvar os novos dados na tabela:
     def salvar(index, campo_codigo_barras, campo_nome_produto, campo_preco_custo, campo_preco_venda): # Recebe os campos que recebem as novas informações.
-        if not campo_codigo_barras.value or not campo_nome_produto.value or not campo_preco_custo.value or not campo_preco_venda.value or not campo_quantidade.value:
+        if not campo_codigo_barras.value or not campo_nome_produto.value or not campo_preco_custo.value or not campo_preco_venda.value:
             page.open(erro) # Mensagem de erro
             page.update()
 
@@ -186,7 +185,7 @@ def criar_tela_estoque(produtos, page):
     def formatar_quantidade(e):
         texto = "".join(filter(str.isdigit, e.control.value))
         texto = texto[:5]
-        campo_quantidade.value = texto
+        e.control.value = texto
         page.update()
 
     def formatar_validade(e):
@@ -299,13 +298,6 @@ def criar_tela_estoque(produtos, page):
         value="",
         width=120,
         on_change=formatar_preco_venda,
-    )
-
-    campo_quantidade = ft.TextField(
-        label="Quantidade:",
-        value="",
-        width=100,
-        on_change=formatar_quantidade,
     )
 
 
