@@ -1,83 +1,55 @@
-# Branch Cliente
+# 🖥️ Client - Inventory Manager PDV
 
-# InventoryManagerPdv app
+Aplicação desktop desenvolvida em **Python** com **Flet** para o gerenciamento de inventário e ponto de venda.
 
-## Run the app
+## 📁 Estrutura Técnica
 
-### uv
+O código fonte encontra-se no diretório `src/` e está organizado da seguinte forma:
 
-Run as a desktop app:
+- **`main.py`**: Ponto de entrada da aplicação. Configura a janela principal e inicia o loop de eventos do Flet.
+- **`ui/`**: Contém a camada de interface do usuário.
+    - **`pages/`**: Telas completas da aplicação (Login, PDV, Estoque, Cadastro).
+    - **`components/`**: Componentes reutilizáveis (Botões, Inputs, Headers, Menus).
+- **`app/`**: Contém a lógica de negócios e classes auxiliares.
+- **`assets/`**: Recursos estáticos como imagens, ícones e fontes.
 
-```
-uv run flet run
-```
+## 🚀 Como Rodar
 
-Run as a web app:
+Certifique-se de ter o **Python 3.9+** instalado.
 
-```
-uv run flet run --web
-```
+### Usando `uv` (Recomendado)
 
-### Poetry
+Se você utiliza o gerenciador de pacotes `uv`:
 
-Install dependencies from `pyproject.toml`:
+1.  Instale as dependências e rode a aplicação:
+    ```bash
+    uv run flet run src/main.py
+    ```
 
-```
-poetry install
-```
+### Usando `Poetry`
 
-Run as a desktop app:
+1.  Instale as dependências:
+    ```bash
+    poetry install
+    ```
+2.  Rode a aplicação:
+    ```bash
+    poetry run flet run src/main.py
+    ```
 
-```
-poetry run flet run
-```
+### Usando `pip` padrão
 
-Run as a web app:
-
-```
-poetry run flet run --web
-```
-
-For more details on running the app, refer to the [Getting Started Guide](https://flet.dev/docs/getting-started/).
-
-## Build the app
-
-### Android
-
-```
-flet build apk -v
-```
-
-For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://flet.dev/docs/publish/android/).
-
-### iOS
-
-```
-flet build ipa -v
-```
-
-For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://flet.dev/docs/publish/ios/).
-
-### macOS
-
-```
-flet build macos -v
-```
-
-For more details on building macOS package, refer to the [macOS Packaging Guide](https://flet.dev/docs/publish/macos/).
-
-### Linux
-
-```
-flet build linux -v
-```
-
-For more details on building Linux package, refer to the [Linux Packaging Guide](https://flet.dev/docs/publish/linux/).
-
-### Windows
-
-```
-flet build windows -v
-```
-
-For more details on building Windows package, refer to the [Windows Packaging Guide](https://flet.dev/docs/publish/windows/).
+1.  Crie um ambiente virtual (opcional mas recomendado):
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # Linux/Mac
+    .venv\Scripts\activate     # Windows
+    ```
+2.  Instale as dependências:
+    ```bash
+    pip install flet screeninfo validate-docbr
+    ```
+3.  Rode a aplicação:
+    ```bash
+    flet run src/main.py
+    ```
