@@ -1,0 +1,13 @@
+{
+    "id": 1,
+    "batchId": "123ABC456",
+    "product": {
+        "id": 1,
+        "name": "Fandangos"
+    },
+    "cost": 200.00,
+    "quantity": 350,
+    "validationDate": "2023-10-01T10:00:00",
+    "createdAt": "2023-10-01T10:00:00",
+    "updatedAt": "2023-10-01T10:00:00"
+}

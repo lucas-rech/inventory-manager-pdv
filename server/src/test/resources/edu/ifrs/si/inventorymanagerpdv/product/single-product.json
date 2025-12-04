@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "name": "Fandangos",
+  "description": "Salgadinho sabor queijo",
+  "gtin": "7891991000137",
+  "ncm": "19059020",
+  "price": 9.5,
+  "cost": 5.0,
+  "createdAt": "2023-10-01T10:00:00",
+  "updatedAt": "2023-10-15T12:00:00"
+}

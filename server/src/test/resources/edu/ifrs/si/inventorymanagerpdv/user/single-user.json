@@ -1,0 +1,11 @@
+{
+  "id": 1,
+  "name": "Lucas Rech",
+  "username": "lucasrech00",
+  "phoneNumber": "54996041744",
+  "role": "ADMIN",
+  "password": "abc123",
+  "createdAt": "2023-10-01T10:00:00",
+  "updatedAt": "2023-10-01T10:00:00",
+  "deleted": false
+}
