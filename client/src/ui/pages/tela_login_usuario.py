@@ -1,7 +1,5 @@
 import flet as ft
-
-usuarios = ["admin"]
-senhas = ["admin"]
+from ui.pages.tela_cadastro_usuarios import primeiro_acesso, cadastro_usuarios, usuarios
 
 def criar_tela_login(page, entrar):
 
@@ -16,11 +14,26 @@ def criar_tela_login(page, entrar):
 
     # Função que verifica se os campos foram preenchidos corretamente:
     def verificar_login(e):
-        if usuario.value in usuarios and senha.value in senhas: # Verifica se o usuário e senha estão corretos
-            entrar() # Chama a função entrar (que está em main.py) para entrar no sistema
+
+        if usuario.value in usuarios and senha.value == usuarios[usuario.value]: # Verifica se o usuário e senha estão corretos
+            # Esse if é para o primeiro acesso do sistema, onde o usuário e senha são "admin", por enquanto não está operando, pois o if principal já verifica se o usuário e senha estão corretos.
+            # if usuario.value.lower() == "admin" and senha.value.lower() == "admin":
+            #     page.clean()
+            #     primeiro_acesso(usuario.value, senha.value)
+            #     page.theme_mode = ft.ThemeMode.LIGHT
+            #     page.window.maximized = True
+            #     page.window.resizable = True
+
+            #     conteudo_cadastro_usuarios = cadastro_usuarios(page)
+            #     page.add(conteudo_cadastro_usuarios)
+            # else:
+                entrar() # Chama a função entrar (que está em main.py) para entrar no sistema
+            
         else:
-            alerta.content.value = "Usuário ou senha incorretos!" # Se estiverem errados, mostra uma mensagem de erro
+            alerta.content.value = "Usuário e/ou senha incorretos!" # Se estiverem errados, mostra uma mensagem de erro
             alerta.open = True # Abre o alerta
+            print(usuario.value)
+            print(senha.value)
             page.update() # Atualiza a página para mostrar o alerta
 
     botao_entrar = ft.ElevatedButton("Entrar", on_click=verificar_login, width=300, height=40, bgcolor="#E8E3DE", color="#507656")
@@ -38,25 +51,36 @@ def criar_tela_login(page, entrar):
         alerta.open = False
         page.update()
 
-    # Tela de login:
-    return ft.Container(
-        padding=20,
-        width=650,
-        height=450,
-        bgcolor="#507656",
-        alignment=ft.alignment.center,
-        border_radius=20,
-        content=ft.Column(
-            [
-                ft.Image(src="src/assets/Logo.jpeg", width=150, height=150, fit=ft.ImageFit.CONTAIN),
-                ft.Text("Login", size=40, weight="bold"),
-                usuario,
-                senha,
-                botao_entrar,
-                alerta
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=10,
-        ),
+    # Tela de login (layout responsivo):
+    layout = ft.ResponsiveRow(
+        controls=[
+            ft.Container(
+                col={"xs": 12, "sm": 8, "md": 6, "lg": 4},
+                padding=20,
+                bgcolor="#507656",
+                width=650,
+                height=450,
+                alignment=ft.alignment.center,
+                border_radius=20,
+                content=ft.Column(
+                    [
+                        ft.Image(src="src/assets/Logo.jpg", width=150, height=150, fit=ft.ImageFit.CONTAIN, border_radius=10),
+
+                        ft.Text("Login", size=40, weight="bold"),
+
+                        usuario,
+                        senha,
+                        botao_entrar,
+                        alerta
+                    ],
+                    
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=10,
+                ),
+            )
+        ],
+        alignment=ft.MainAxisAlignment.CENTER
     )
+
+    return layout

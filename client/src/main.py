@@ -1,5 +1,6 @@
 import flet as ft
 
+from ui.pages.tela_cadastro_usuarios import cadastro_usuarios
 from ui.pages.tela_login_usuario import criar_tela_login
 from ui.components.conteudo.header import criar_header
 from ui.components.conteudo.menu_lateral import criar_menu_lateral
@@ -8,9 +9,10 @@ from ui.pages.tela_cadastro_produto import cadastrar_produtos
 from ui.pages.tela_estoque import criar_tela_estoque
 from ui.pages.tela_cadastro_cliente import cadastrar_clientes
 from ui.pages.tela_clientes import criar_tela_clientes
+from ui.pages.EasterEgg import nao_mexa
 from ui.pages.tela_pdv import criar_tela_pdv
+from ui.components.conteudo.popup import criar_popup
 
-#hello
 def main(page: ft.Page):
     page.title = "Sistema Mercado"
     page.bgcolor = "#E8E3DE"
@@ -19,23 +21,50 @@ def main(page: ft.Page):
     page.window.maximized = True
     page.window.resizable = True
 
+    def voltar_para_escolha(e):
+        conteudo_completo.controls.clear()
+        header.content.value = "Escolha o tipo de cadastro"
+        conteudo_completo.controls.append(header)
+        conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente, informacoes_usuarios))
+
+        page.update()
+
+    def voltar_venda_inicio(e):
+        conteudo_completo.controls.clear()
+        header.content.value = "Venda"
+        conteudo_completo.controls.append(header)
+        conteudo_completo.controls.append(criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio))
+
+        mensagem = "Venda Realizada!" # A mensagem que será exibida no popup.
+        page.run_task(criar_popup, mensagem, page) # assim que voltar para a página tela_pdv ao clicar em finalizar compra.
+        page.update()
 
     # Função para trocar para a tela de cadastro de produtos:
     def informacoes_produto(e):
         conteudo_completo.controls.clear() # Limpa toda a tela (menos o menu lateral).
-        header.content.value = "Cadastro de Produtos"
+        header.content.value = "Cadastrar Produtos"
         conteudo_completo.controls.append(header) # Adiciona o cabeçalho à tela.
-        conteudo_completo.controls.append(tela_produto) # Adiciona os campos de informações do produto à tela.
+        conteudo_completo.controls.append(cadastrar_produtos(page, produtos, voltar_para_escolha)) # Adiciona os campos de informações do produto à tela.
 
         page.update()
 
     def informacoes_cliente(e):
         conteudo_completo.controls.clear()
-        header.content.value = "Cadastro de Clientes"
+        header.content.value = "Cadastrar Clientes"
         conteudo_completo.controls.append(header)
-        conteudo_completo.controls.append(tela_cliente)
+        conteudo_completo.controls.append(cadastrar_clientes(page, clientes, voltar_para_escolha))
 
         page.update()
+
+    def informacoes_usuarios(e):
+        conteudo_completo.controls.clear()
+        header.content.value = "Cadastrar Usuários"
+        conteudo_completo.controls.append(header)
+        conteudo_completo.controls.append(cadastro_usuarios(page, voltar_para_escolha))
+
+        page.update()
+
+    
 
 
     # Lista de produtos que armazenará os produtos adicionados ao estoque:
@@ -44,17 +73,17 @@ def main(page: ft.Page):
     # Lista de clientes que armazenará os clientes cadastrados:
     clientes = []
 
+    # Lista de clientes que armazenará os clientes cadastrados:
+    clientes = []
+
     # Lista com o resumo da compra:
     resumo_compra = []
 
+    # Layout inicial completo: (Começa vazio)
+    conteudo_completo = ft.Column(expand=True)
+
     # Cabeçalho:
     header = criar_header("Venda")
-
-    # Tela Cadastro de Produtos
-    tela_produto = cadastrar_produtos(page, produtos)
-
-    # Tela Cadastro de Clientes:
-    tela_cliente = cadastrar_clientes(page, clientes)
 
     # Método do login no sistema
     def entrar():
@@ -66,14 +95,8 @@ def main(page: ft.Page):
     tela_login = criar_tela_login(page, entrar)
     page.add(tela_login)
 
-    # Layout inicial completo: (Começa vazio)
-    conteudo_completo = ft.Column(expand=True)
-    
-    # Tela onde será feita a venda:
-    tela_pdv = criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo)
-
     # Aqui sim adicionamos o conteúdo inicial:
-    conteudo_completo.controls.extend([header, tela_pdv])
+    conteudo_completo.controls.extend([header, criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio)])
 
 
     # Navegação do menu lateral:
@@ -84,13 +107,13 @@ def main(page: ft.Page):
                 conteudo_completo.controls.clear()
                 header.content.value = "Venda"
                 conteudo_completo.controls.append(header)
-                conteudo_completo.controls.append(tela_pdv)
+                conteudo_completo.controls.append(criar_tela_pdv(resumo_compra, produtos, page, header, conteudo_completo, voltar_venda_inicio))
 
             elif index == 1:
                 conteudo_completo.controls.clear()
                 header.content.value = "Escolha o tipo de cadastro"
                 conteudo_completo.controls.append(header)
-                conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente))
+                conteudo_completo.controls.append(criar_botoes_cadastro(informacoes_produto, informacoes_cliente, informacoes_usuarios))
 
             elif index == 2:
                 conteudo_completo.controls.clear()
@@ -106,8 +129,13 @@ def main(page: ft.Page):
 
             page.update()
 
+    def abrir_configuracoes(e):
+        page.clean()
+        layout_novo = nao_mexa.easter_egg()
+        page.add(layout_novo)
+
     # Menu lateral:
-    rail = criar_menu_lateral(selecionar_menu)
+    rail = criar_menu_lateral(selecionar_menu, abrir_configuracoes)
 
     # 
     layout = ft.Row(

@@ -1,58 +1,257 @@
 import flet as ft
+import re
+import datetime
 from ui.components.botoes.botao_adicionar import criar_botao_adicionar
 from ui.components.botoes.botao_cancelar import criar_botao_cancelar
+from ui.components.botoes.botao_limpar_campos import criar_botao_limpar
+from ui.components.conteudo.popup import criar_popup
 
 
 # Função que criará a tela de cadastro de produto
-def cadastrar_produtos(page, produtos):
+def cadastrar_produtos(page, produtos, voltar_para_escolha):
+
+    # essas linhas padronizam formatos da página em português (especialmente datepicker)
+    page.locale_configuration = ft.LocaleConfiguration(
+        supported_locales=[ft.Locale(language_code="pt", country_code="BR")],
+        current_locale=ft.Locale(language_code="pt", country_code="BR")
+    )
+
+    # Função que fará a verificação da opção do cálculo do preço de venda escolhida.
+    def selecionar_porcentagem(e):
+        if porcentagem_preco_venda.value == "porcentagem": # Teste se o valor selecionado é "porcentagem"
+            porcentagem.visible = True
+            preco_venda.read_only = True
+
+        if porcentagem_preco_venda.value == "manual": # Teste se o valor selecionado é "manual"
+            porcentagem.visible = False
+            preco_venda.read_only = False
+
+        page.update()
+
+    # Função que formatará o código inserido no campo código.
+    def formatar_codigo(e):
+        texto = "".join(filter(str.isdigit, e.control.value)) # Filtra para que apenas números sejam adicionados à string.
+        texto = texto[:13]
+        codigo.value = texto # Atualiza enquanto o usuário digita com o valor formatado.
+        page.update() # Atualiza a página para mostrar as alterações.
+
+    # Função que formatará o nome inserido no campo nome.
+    def formatar_nome(e): 
+        texto = e.control.value
+        texto = texto[:90]
+         
+        # Remove espaços duplicados acidentalmente
+        nome.value = re.sub(r"\s{2,}", " ", texto) # Aqui ele substitui qualquer espaço que apareça 2 ou mais vezes ({2,}) por um espaço apenas (" ").
+        page.update() # Atulaiza a página para mostrar as alterações.
+
+    # Função que formatará o preco de custo inserido no campo preco_custo.
+    def formatar_preco_custo(e):
+        texto = "".join(filter(str.isdigit, e.control.value))
+        texto = texto[:11]
+
+        if not texto:
+            preco_custo.value = "R$ 0,00"
+            page.update()
+            return # O return está vazio aqui para quefuncione como um "Break" da função, ou seja para aqui.
+
+        # Converte para inteiro e divide por 100 para colocar vírgula decimal
+        valor = int(texto) / 100
+
+        # Formata com separador de milhar (.) e decimal (,)
+        formatado = f"R$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".") # A ideia aqui é usar uma letra provisória (v) pra segurar o lugar das vírgulas, e só depois trocar tudo certinho.
+        # essa troca dupla inverte o padrão americano (1,234.56 → 1.234,56)
+
+        preco_custo.value = formatado # Atualiza enquanto o usuário digita com o valor formatado.
+        page.update() # Atualiza a página para mostrar as alterações.
+
+    def formatar_preco_venda(e):
+        # Remove o "R$" e os pontos do preço de custo, troca vírgula por ponto para converter em float
+        custo_texto = preco_custo.value.replace("R$ ", "").replace(".", "").replace(",", ".")
+
+        try:
+            custo = float(custo_texto) # Converte o texto para número decimal (float)
+        except ValueError:
+            custo = 0.0 # Se der algum erro (por exemplo, o campo estiver vazio ou com texto inválido), usamos custo = 0.0
+
+        p_texto = "".join(filter(str.isdigit, porcentagem.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+        p_texto = p_texto[:3]
+        porcentagem.value = str(p_texto)
+
+        if porcentagem_preco_venda.value == "porcentagem": # Se a opção de cálculo for inserindo a porcentagem.
+            if p_texto: # Se p_texto == True, ou seja, tem algo
+                lucro = int(p_texto) / 100 # Trasforma em int e divide a porcentagem digitada por 100
+                valor = custo * (1 + lucro) # Multiplica pelo preco de custo a porcentagem digitada.
+
+            else: # Senão, apenas passa o preço de custo como preço de venda
+                valor = custo
+                porcentagem.value = ""
+
+        else:  # Se a opção de cálculo for inserindo manualmente
+            n_texto = "".join(filter(str.isdigit, preco_venda.value)) # Adiciona ao texto da variavel "p_texto" apenas o que for numero.
+
+            if n_texto: # Se p_texto == True, ou seja, tem algo
+                valor = int(n_texto) / 100 # Converte para int e divide por 100 para conseguir os dois dígitos dos centavos.
+            
+            else: # Senão, apenas passa o preço de custo como preço de venda
+                valor = custo
+
+        # Formata com separador de milhar e decimal
+        formatado = f"R$ {valor:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
+        preco_venda.value = formatado
+        page.update()
+
+
+
+
+
     # Campos do formulário:
-    codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE)
-    nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE) 
-    preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610)
-    preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610)
-    quantidade = ft.TextField(label= "Quantidade:", bgcolor=ft.Colors.WHITE, width=610)
-    validade = ft.TextField(label= "Validade:", bgcolor=ft.Colors.WHITE, width=610)
+    codigo = ft.TextField(label= "Código:", width=610, bgcolor=ft.Colors.WHITE, autofocus=True, on_change=formatar_codigo)
+    nome = ft.TextField(label= "Nome do Produto:", width=610, bgcolor=ft.Colors.WHITE, on_change=formatar_nome) 
+    preco_custo = ft.TextField(label= "Preço de Custo:", bgcolor=ft.Colors.WHITE, width=610, on_change=formatar_preco_custo)
+    preco_venda = ft.TextField(label= "Preço de venda:", bgcolor=ft.Colors.WHITE, width=610, read_only=True, on_change=formatar_preco_venda)
+    porcentagem = ft.TextField(label= "Porcentagem de lucro:", bgcolor=ft.Colors.WHITE, width=610, visible=True, on_change=formatar_preco_venda)
+
+    campos = [codigo, nome, preco_custo, preco_venda, porcentagem]
+
+    porcentagem_preco_venda = ft.RadioGroup(
+        content=ft.Column(
+            controls=[
+                ft.Radio(label="Porcentagem", value="porcentagem"),
+                ft.Radio(label="Manual", value="manual"),
+            ],
+        ),
+
+        value="porcentagem",
+        on_change=selecionar_porcentagem,
+    )
+
+    def fechar_erro(e):
+        page.close(erro)
+        page.update()
+
+    erro = ft.AlertDialog(
+        title=ft.Text("Erro!", weight="bold"),
+
+        content=ft.Container(
+            content=ft.Text("Todos os campos devem estar preenchidos!", size=16, color="#9B3E3E"),
+            width=300,
+            height=50,
+        ),
+
+        actions=[
+            ft.FilledButton(
+                content=ft.Text("Ok", size=16),
+                style=ft.ButtonStyle(bgcolor="#507656", color=ft.Colors.WHITE),
+                on_click=fechar_erro,
+            ),
+        ],
+
+        actions_alignment=ft.MainAxisAlignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+    )
 
     # Função que adicionará os items ao estoque:
     def adicionar_produto(e):
-        novo_produto = { # Adiciona os valores digitados em cada campo às respectivas chaves no dicionário.
-            "codigo":codigo.value,
-            "nome":nome.value,
-            "preco_custo":preco_custo.value,
-            "preco_venda":preco_venda.value,
-            "quantidade":quantidade.value,
-            "validade":validade.value
-        }
+        if not codigo.value or not nome.value or not preco_custo.value or not preco_venda.value:
+            page.open(erro)
+            page.update()
 
-        produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
+        else:
+            novo_produto = { # Adiciona os valores digitados em cada campo às respectivas chaves no dicionário.
+                "codigo":codigo.value,
+                "nome":nome.value,
+                "preco_custo":preco_custo.value,
+                "preco_venda":preco_venda.value,
+                "quantidade":0,
+                "lotes":[],
+            }
 
-        for campo in [codigo, nome, preco_custo, preco_venda, quantidade, validade]:
-            campo.value = "" # Limpa todos os campos, substituindo o que foi digitado por uma string vazia ("").
+            produtos.append(novo_produto) # Adiciona todas as informações do produto à lista "produtos".
+            page.run_task(criar_popup, "Produto Adicionado!", page) # Cria o popup quando o cliente for adicionado à lista.
+
+            for campo in [codigo, nome, preco_custo, preco_venda, porcentagem]:
+                campo.value = "" # Limpa todos os campos, substituindo o que foi digitado por uma string vazia ("").
 
         page.update() # Atualiza a página para mostrar o que foi alterado.
 
 
     botao_adicionar = criar_botao_adicionar(adicionar_produto)
-    botao_cancelar = criar_botao_cancelar(True)
+    botao_cancelar = criar_botao_cancelar(voltar_para_escolha, page)
+    botao_limpar_campos = criar_botao_limpar(campos, page)
 
     # Tela onde serão inseridas as informações dos produtos:
-    tela_informacoes_produto = ft.Container(
-        ft.Column(
-            [
-                ft.Row([codigo, nome], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([preco_custo, preco_venda], alignment=ft.MainAxisAlignment.CENTER),
-                ft.Row([quantidade, validade], alignment=ft.MainAxisAlignment.CENTER),
+    layout = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=codigo,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
 
-                ft.Row([botao_adicionar, botao_cancelar], alignment=ft.MainAxisAlignment.CENTER),
+                        ft.Container(
+                            content=nome,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=preco_custo,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+
+                        ft.Container(
+                            content=preco_venda,
+                            col={"xs": 12, "sm": 6, "md":3},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        ft.Container(
+                            content=porcentagem_preco_venda,
+                            col={"xs": 12, "sm": 4, "md":2, "lg":1.5},
+                        ),
+
+                        ft.Container(
+                            content=porcentagem,
+                            col={"xs": 12, "sm": 8, "md":4, "lg":3},
+                        ),
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+
+                ft.ResponsiveRow(
+                    controls=[
+                        botao_cancelar,
+                        botao_limpar_campos,
+                        botao_adicionar,
+                    ],
+
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
             ],
 
             alignment=ft.MainAxisAlignment.CENTER,
+            spacing=10,
         ),
 
+        alignment=ft.alignment.center,
         expand=True,
-        bgcolor=ft.Colors.WHITE,
-        margin=0,
+        bgcolor="#E8E3DE",
+        padding=20,
         border_radius=15,
     )
 
-    return tela_informacoes_produto
+    return layout
